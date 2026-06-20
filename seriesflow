@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cooling Water System — Control Valve Test Loop</title>
+<style>
+  :root{
+    --navy:#1f4e79;
+    --navy-soft:#2f5f86;
+    --vessel:#d6e8f1;
+    --cream:#fdeacb;
+    --orange:#b5781a;
+    --pipe:#6c7079;
+    --dash:#8a9096;
+    --caption:#5a6675;
+    --flow:#2fb6e6;
+    --ink:#16324d;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{
+    font-family:"Helvetica Neue",Arial,system-ui,sans-serif;
+    color:var(--ink);
+    background:#eef3f9;
+    overflow:hidden;
+  }
+  #scene{
+    position:fixed; inset:0;
+    background:
+      radial-gradient(120% 90% at 50% 8%, #fbfcfe 0%, #eef3f9 45%, #e2eaf4 100%);
+    touch-action:none;
+    overscroll-behavior:none;
+  }
+  #scene canvas{display:block}
+  /* label renderer overlay never blocks pointer/orbit */
+  #scene > div{pointer-events:none}
+
+  /* ---- text overlays ---- */
+  .overlay{position:fixed; left:0; right:0; pointer-events:none; z-index:5; padding:0 18px}
+  header.overlay{top:0; padding-top:clamp(14px,3.2vw,30px); text-align:center}
+  .eyebrow{
+    font-size:clamp(9px,1.6vw,11px); letter-spacing:.34em; text-transform:uppercase;
+    color:var(--navy-soft); font-weight:600; margin:0 0 6px;
+  }
+  h1{
+    margin:0; color:var(--navy); font-weight:700;
+    font-size:clamp(17px,3.6vw,30px); letter-spacing:.01em; line-height:1.12;
+  }
+  footer.overlay{bottom:0; padding-bottom:clamp(12px,2.6vw,22px); text-align:center}
+  .caption{
+    margin:0; color:var(--caption); font-style:italic;
+    font-size:clamp(11px,1.9vw,15px);
+  }
+
+  /* ---- annotation labels (Three CSS2D) ---- */
+  .anno{
+    font-family:"Helvetica Neue",Arial,sans-serif;
+    color:var(--navy); font-weight:600; white-space:nowrap;
+    font-size:clamp(11px,1.7vw,14px); letter-spacing:.02em;
+    text-shadow:0 1px 0 #fff,0 0 6px rgba(255,255,255,.95),0 0 14px rgba(255,255,255,.7);
+    transform:translate(-50%,-50%);
+  }
+  .anno.muted{color:var(--caption); font-style:italic; font-weight:500}
+  .anno.tag{color:var(--navy-soft); font-weight:500; font-size:clamp(10px,1.5vw,12px); letter-spacing:.06em; text-transform:uppercase}
+
+  /* ---- legend ---- */
+  .legend{
+    position:fixed; left:16px; bottom:14px; z-index:6;
+    display:flex; flex-direction:column; gap:7px;
+    padding:11px 13px; border-radius:12px;
+    background:rgba(255,255,255,.74); backdrop-filter:blur(7px);
+    border:1px solid rgba(31,78,121,.14);
+    box-shadow:0 6px 22px rgba(31,78,121,.10);
+    font-size:12px; color:var(--ink);
+  }
+  .legend .row{display:flex; align-items:center; gap:9px; line-height:1}
+  .swatch{width:16px; height:12px; border-radius:3px; flex:0 0 auto; border:1.5px solid rgba(0,0,0,.12)}
+  .swatch.dash{background:transparent; border:none; height:0; position:relative}
+  .swatch.dash::before{content:""; position:absolute; left:0; right:0; top:5px; border-top:2.5px dashed var(--dash)}
+  .swatch.dot{width:12px;height:12px;border-radius:50%;border:none;
+    background:radial-gradient(circle,#7fd6f4 0%,var(--flow) 55%,rgba(47,182,230,0) 100%)}
+
+  /* ---- controls ---- */
+  .controls{position:fixed; right:16px; bottom:14px; z-index:6; display:flex; gap:8px}
+  .controls button{
+    pointer-events:auto; cursor:pointer; font:inherit; font-size:12px; font-weight:600;
+    color:var(--navy); background:rgba(255,255,255,.78); backdrop-filter:blur(7px);
+    border:1px solid rgba(31,78,121,.18); border-radius:10px;
+    padding:9px 12px; line-height:1; transition:background .15s,transform .05s,box-shadow .15s;
+    box-shadow:0 4px 14px rgba(31,78,121,.10);
+  }
+  .controls button:hover{background:#fff}
+  .controls button:active{transform:translateY(1px)}
+  .controls button[aria-pressed="true"]{background:var(--navy); color:#fff; border-color:var(--navy)}
+  .controls button:focus-visible{outline:3px solid #8fc6ec; outline-offset:2px}
+
+  /* ---- hint ---- */
+  .hint{
+    position:fixed; left:50%; bottom:64px; transform:translateX(-50%); z-index:6;
+    pointer-events:none; font-size:12px; color:var(--navy-soft); font-weight:500;
+    letter-spacing:.03em; background:rgba(255,255,255,.7); padding:7px 13px; border-radius:999px;
+    border:1px solid rgba(31,78,121,.12); box-shadow:0 4px 14px rgba(31,78,121,.08);
+    transition:opacity .6s ease; opacity:1;
+  }
+  .hint.gone{opacity:0}
+
+  .fallback{position:fixed;inset:0;display:none;place-items:center;padding:24px;text-align:center;color:var(--navy)}
+
+  @media (max-width:560px){
+    .legend{left:10px; bottom:10px; padding:9px 10px; gap:5px; font-size:11px}
+    .controls{right:10px; bottom:10px; gap:6px}
+    .controls button{padding:8px 10px; font-size:11px}
+    .legend .row.hide-sm{display:none}
+    .hint{bottom:58px}
+  }
+</style>
+<script type="importmap">
+{
+  "imports":{
+    "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+  <div id="scene" aria-label="Interactive 3D diagram of a cooling water control valve test loop"></div>
+
+  <header class="overlay">
+    <p class="eyebrow">P&amp;ID · Experiment 2</p>
+    <h1>Cooling Water System — Control Valve Test Loop</h1>
+  </header>
+
+  <footer class="overlay">
+    <p class="caption">Figure 5.1 — Series flow path used for valve characterization (Experiment 2)</p>
+  </footer>
+
+  <div class="legend" aria-hidden="true">
+    <div class="row"><span class="swatch" style="background:var(--vessel);border-color:var(--navy)"></span>Vessel / equipment</div>
+    <div class="row"><span class="swatch" style="background:var(--cream);border-color:#d99a2b"></span>Control valve</div>
+    <div class="row hide-sm"><span class="swatch" style="background:var(--pipe);border:none"></span>Process pipe</div>
+    <div class="row"><span class="swatch dash"></span>Bypass (study)</div>
+    <div class="row"><span class="swatch dot"></span>Water flow</div>
+  </div>
+
+  <div class="controls">
+    <button id="btnFlow" aria-pressed="true" title="Pause or resume the flow animation">Flow</button>
+    <button id="btnSpin" aria-pressed="false" title="Toggle gentle auto-rotation">Spin</button>
+    <button id="btnReset" title="Return to the default view">Reset</button>
+  </div>
+
+  <div class="hint" id="hint">Drag to orbit · pinch / scroll to zoom</div>
+
+  <div class="fallback" id="fallback">
+    <div>
+      <h1 style="margin-bottom:8px">WebGL unavailable</h1>
+      <p class="caption" style="font-style:normal">This 3D diagram needs a browser with WebGL enabled.</p>
+    </div>
+  </div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+import { Line2 } from 'three/addons/lines/Line2.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
+
+/* ---------- palette (sampled from the source drawing) ---------- */
+const C = {
+  navy:'#1f4e79', navySoft:'#2f5f86',
+  vessel:'#d6e8f1', cream:'#fdeacb',
+  orangeRim:'#d99a2b', orangeTitle:'#b5781a', orangeData:'#9a6b13',
+  pipe:'#6c7079', flange:'#1f4e79', dash:0x8a9096, flow:0x2fb6e6,
+};
+
+const container = document.getElementById('scene');
+let W = container.clientWidth, H = container.clientHeight;
+
+/* ---------- renderer ---------- */
+let renderer;
+try{
+  renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+}catch(e){
+  document.getElementById('fallback').style.display='grid';
+  throw e;
+}
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 2));
+renderer.setSize(W, H);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.setClearColor(0x000000, 0);
+container.appendChild(renderer.domElement);
+const maxAniso = renderer.capabilities.getMaxAnisotropy();
+
+const labelRenderer = new CSS2DRenderer();
+labelRenderer.setSize(W, H);
+labelRenderer.domElement.style.position = 'absolute';
+labelRenderer.domElement.style.top = '0';
+labelRenderer.domElement.style.left = '0';
+labelRenderer.domElement.style.pointerEvents = 'none';
+container.appendChild(labelRenderer.domElement);
+
+/* ---------- scene + camera ---------- */
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(42, W/H, 0.1, 200);
+const VIEW_DIR = new THREE.Vector3(0.05, 0.42, 1).normalize();
+const TARGET = new THREE.Vector3(-1.2, -0.6, 0);
+const FIT_R = 18;
+let initialPos = new THREE.Vector3();
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.minPolarAngle = Math.PI*0.16;
+controls.maxPolarAngle = Math.PI*0.86;
+controls.enablePan = true;
+controls.target.copy(TARGET);
+controls.autoRotate = false;
+controls.autoRotateSpeed = 0.55;
+
+function fitCamera(){
+  const fov = THREE.MathUtils.degToRad(camera.fov);
+  const aspect = camera.aspect;
+  const fitH = FIT_R/Math.sin(fov/2);
+  const hFov = 2*Math.atan(Math.tan(fov/2)*aspect);
+  const fitW = FIT_R/Math.sin(hFov/2);
+  const dist = Math.max(fitH, fitW)*1.06;
+  initialPos.copy(TARGET).add(VIEW_DIR.clone().multiplyScalar(dist));
+  camera.position.copy(initialPos);
+  controls.minDistance = dist*0.35;
+  controls.maxDistance = dist*2.3;
+  controls.update();
+}
+fitCamera();
+
+/* ---------- lighting ---------- */
+scene.add(new THREE.HemisphereLight(0xffffff, 0xdce6f1, 0.85));
+const key = new THREE.DirectionalLight(0xffffff, 1.05);
+key.position.set(-10, 18, 14);
+key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048);
+key.shadow.camera.near = 0.5; key.shadow.camera.far = 70;
+const sc = key.shadow.camera; sc.left=-24; sc.right=24; sc.top=24; sc.bottom=-24;
+key.shadow.bias = -0.0004;
+key.shadow.radius = 4;
+scene.add(key);
+const fill = new THREE.DirectionalLight(0xeaf2fb, 0.32);
+fill.position.set(14, 5, -10);
+scene.add(fill);
+
+/* ---------- ground + grid (drawing surface) ---------- */
+const GY = -6.6;
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(90, 90),
+  new THREE.ShadowMaterial({ color:0x1f3a55, opacity:0.13 })
+);
+ground.rotation.x = -Math.PI/2; ground.position.y = GY; ground.receiveShadow = true;
+scene.add(ground);
+const grid = new THREE.GridHelper(64, 32, 0x9bb4cc, 0xc3d4e6);
+grid.position.y = GY+0.01;
+grid.material.transparent = true; grid.material.opacity = 0.22;
+scene.add(grid);
+
+/* ---------- helpers ---------- */
+function wrap(text, max){
+  const words = text.split(' '); const out=[]; let line='';
+  for(const w of words){
+    const t = line ? line+' '+w : w;
+    if(t.length>max && line){ out.push(line); line=w; } else line=t;
+  }
+  if(line) out.push(line);
+  return out;
+}
+
+function makePanelTexture(v){
+  const ratio = v.h/v.w;
+  const Wp = 560, Hp = Math.round(Wp*ratio);
+  const c = document.createElement('canvas'); c.width=Wp; c.height=Hp;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = v.fill; ctx.fillRect(0,0,Wp,Hp);
+  // soft top sheen
+  const g = ctx.createLinearGradient(0,0,0,Hp);
+  g.addColorStop(0,'rgba(255,255,255,0.38)');
+  g.addColorStop(0.5,'rgba(255,255,255,0)');
+  g.addColorStop(1,'rgba(0,0,0,0.04)');
+  ctx.fillStyle = g; ctx.fillRect(0,0,Wp,Hp);
+  // inner border
+  const bw = Math.round(Wp*0.020);
+  ctx.strokeStyle = v.rim; ctx.lineWidth = bw;
+  ctx.strokeRect(bw/2, bw/2, Wp-bw, Hp-bw);
+
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  const tsize = Math.round(Wp*0.118);
+  const dsize = Math.round(Wp*0.072);
+  const titleFont = `700 ${tsize}px "Helvetica Neue",Arial,sans-serif`;
+  const dataFont  = `500 ${dsize}px "SFMono-Regular",ui-monospace,Menlo,Consolas,monospace`;
+  const titleLines = wrap(v.title, 11);
+  const dataLines = v.lines;
+  const lhT = tsize*1.12, lhD = dsize*1.5, gap = Hp*0.05;
+  const total = titleLines.length*lhT + (dataLines.length ? gap + dataLines.length*lhD : 0);
+  let y = (Hp-total)/2;
+  ctx.font = titleFont; ctx.fillStyle = v.titleCol;
+  titleLines.forEach(l=>{ ctx.fillText(l, Wp/2, y+lhT/2); y+=lhT; });
+  if(dataLines.length){
+    y += gap; ctx.font = dataFont; ctx.fillStyle = v.dataCol;
+    dataLines.forEach(l=>{ ctx.fillText(l, Wp/2, y+lhD/2); y+=lhD; });
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.anisotropy = maxAniso; tex.colorSpace = THREE.SRGBColorSpace; tex.needsUpdate = true;
+  return tex;
+}
+
+function anno(text, x, y, z, cls){
+  const el = document.createElement('div');
+  el.className = 'anno' + (cls? ' '+cls : '');
+  el.textContent = text;
+  const obj = new CSS2DObject(el);
+  obj.position.set(x, y, z);
+  scene.add(obj);
+  return obj;
+}
+
+/* ---------- vessels ---------- */
+const DEPTH = 1.5;
+const vessels = [
+  { id:'inlet',  x:-13.0, w:3.6, h:2.9, title:'Sea Inlet',
+    lines:['1.5 bar','5 m depth'], fill:C.vessel, rim:C.navy, titleCol:C.navy, dataCol:C.navySoft },
+  { id:'valve',  x:-3.8,  w:3.6, h:2.9, title:'Control Valve',
+    lines:['ΔP = 1.0 bar'], fill:C.cream, rim:C.orangeRim, titleCol:C.orangeTitle, dataCol:C.orangeData, actuator:true },
+  { id:'cooler', x:3.6,   w:4.0, h:2.9, title:'Cooler',
+    lines:['Heat Exchanger','0.5 bar drop'], fill:C.vessel, rim:C.navy, titleCol:C.navy, dataCol:C.navySoft },
+  { id:'over',   x:10.4,  w:4.0, h:2.9, title:'Overboard',
+    lines:['0.5 bar gauge','Discharge'], fill:C.vessel, rim:C.navy, titleCol:C.navy, dataCol:C.navySoft },
+];
+
+function buildVessel(v){
+  const geo = new THREE.BoxGeometry(v.w, v.h, DEPTH);
+  const rimMat  = new THREE.MeshStandardMaterial({ color:v.rim, metalness:0.15, roughness:0.55 });
+  const fillMat = new THREE.MeshStandardMaterial({ color:v.fill, metalness:0.05, roughness:0.7 });
+  const panelMat= new THREE.MeshStandardMaterial({ map:makePanelTexture(v), metalness:0.05, roughness:0.65 });
+  // [+x,-x,+y,-y,+z,-z]
+  const mesh = new THREE.Mesh(geo, [rimMat, rimMat, rimMat, rimMat, panelMat, fillMat]);
+  mesh.position.set(v.x, 0, 0);
+  mesh.castShadow = true; mesh.receiveShadow = true;
+  scene.add(mesh);
+
+  if(v.actuator){
+    const stem = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.13, 0.13, 0.95, 20),
+      new THREE.MeshStandardMaterial({ color:C.navy, metalness:0.4, roughness:0.45 })
+    );
+    stem.position.set(v.x, v.h/2 + 0.475, 0);
+    stem.castShadow = true; scene.add(stem);
+    const act = new THREE.Mesh(
+      new THREE.BoxGeometry(1.05, 0.95, 1.05),
+      new THREE.MeshStandardMaterial({ color:C.navy, metalness:0.3, roughness:0.5 })
+    );
+    act.position.set(v.x, v.h/2 + 0.95 + 0.475, 0);
+    act.castShadow = true; scene.add(act);
+    anno('Actuator', v.x, v.h/2 + 0.95 + 1.35, 0);
+  }
+  return v.w;
+}
+vessels.forEach(buildVessel);
+
+const edge = id => { const v = vessels.find(o=>o.id===id); return { l:v.x-v.w/2, r:v.x+v.w/2, x:v.x }; };
+const E = { inlet:edge('inlet'), valve:edge('valve'), cooler:edge('cooler'), over:edge('over') };
+
+/* ---------- pipes + flanges ---------- */
+const pipeMat = new THREE.MeshStandardMaterial({ color:C.pipe, metalness:0.55, roughness:0.4 });
+const flangeMat = new THREE.MeshStandardMaterial({ color:C.flange, metalness:0.35, roughness:0.45 });
+const R_PIPE = 0.3;
+
+function pipe(x1, x2){
+  const len = Math.abs(x2-x1);
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(R_PIPE, R_PIPE, len, 28), pipeMat);
+  m.rotation.z = Math.PI/2;
+  m.position.set((x1+x2)/2, 0, 0);
+  m.castShadow = true; m.receiveShadow = true;
+  scene.add(m);
+}
+function flange(x){
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.18, 28), flangeMat);
+  m.rotation.z = Math.PI/2; m.position.set(x, 0, 0);
+  m.castShadow = true; scene.add(m);
+}
+
+const STUB = 1.5;
+pipe(E.inlet.l - STUB, E.inlet.l);     // inlet stub
+pipe(E.inlet.r, E.valve.l);            // inlet -> control valve (check valve sits here)
+pipe(E.valve.r, E.cooler.l);           // control valve -> cooler
+pipe(E.cooler.r, E.over.l);            // cooler -> overboard
+pipe(E.over.r, E.over.r + STUB);       // overboard stub
+[E.inlet.l, E.inlet.r, E.valve.l, E.valve.r, E.cooler.l, E.cooler.r, E.over.l, E.over.r].forEach(flange);
+
+/* ---------- check valve symbol (triangular prism ▷) ---------- */
+(function buildCheckValve(){
+  const cx = (E.inlet.r + E.valve.l)/2;
+  const shape = new THREE.Shape();
+  shape.moveTo(-0.7, -0.85); shape.lineTo(-0.7, 0.85); shape.lineTo(0.95, 0); shape.lineTo(-0.7,-0.85);
+  const geo = new THREE.ExtrudeGeometry(shape, { depth:0.5, bevelEnabled:false });
+  geo.translate(0, 0, -0.25);
+  const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
+    color:0xf4f9fc, metalness:0.1, roughness:0.6, transparent:true, opacity:0.82
+  }));
+  mesh.position.set(cx, 0, 0); mesh.castShadow = true; scene.add(mesh);
+  const eg = new THREE.LineSegments(
+    new THREE.EdgesGeometry(geo),
+    new THREE.LineBasicMaterial({ color:C.navy })
+  );
+  eg.position.set(cx, 0, 0); scene.add(eg);
+  anno('Check Valve', cx, -1.55, 0.4);
+})();
+
+/* ---------- bypass (dashed Line2) ---------- */
+const bypassCurve = new THREE.CatmullRomCurve3([
+  new THREE.Vector3(E.cooler.l, 0, 0),
+  new THREE.Vector3(E.cooler.l-0.4, -2.6, 2.4),
+  new THREE.Vector3(E.cooler.l+0.4, -4.8, 3.4),
+  new THREE.Vector3((E.cooler.l+E.cooler.r)/2, -5.6, 3.6),
+  new THREE.Vector3(E.cooler.r-0.4, -4.8, 3.4),
+  new THREE.Vector3(E.cooler.r+0.4, -2.6, 2.4),
+  new THREE.Vector3(E.cooler.r, 0, 0),
+], false, 'catmullrom', 0.5);
+
+const bypassMat = new LineMaterial({
+  color:C.dash, linewidth:3.2, dashed:true, dashSize:0.5, gapSize:0.34,
+  transparent:true, opacity:0.95
+});
+bypassMat.resolution.set(W, H);
+(function buildBypass(){
+  const pts = bypassCurve.getPoints(220);
+  const pos = []; pts.forEach(p=>pos.push(p.x,p.y,p.z));
+  const lg = new LineGeometry(); lg.setPositions(pos);
+  const line = new Line2(lg, bypassMat);
+  line.computeLineDistances();
+  scene.add(line);
+  const mid = bypassCurve.getPoint(0.5);
+  anno('Bypass (system load study)', mid.x, mid.y-0.75, mid.z, 'muted');
+})();
+
+/* ---------- flow particles ---------- */
+function flowSprite(){
+  const s=128, c=document.createElement('canvas'); c.width=c.height=s;
+  const ctx=c.getContext('2d');
+  const g=ctx.createRadialGradient(s/2,s/2,0,s/2,s/2,s/2);
+  g.addColorStop(0,'rgba(220,245,255,1)');
+  g.addColorStop(0.35,'rgba(120,212,244,0.95)');
+  g.addColorStop(0.7,'rgba(47,182,230,0.45)');
+  g.addColorStop(1,'rgba(47,182,230,0)');
+  ctx.fillStyle=g; ctx.fillRect(0,0,s,s);
+  const t=new THREE.CanvasTexture(c); t.colorSpace=THREE.SRGBColorSpace; return t;
+}
+const sprite = flowSprite();
+
+const X_START = E.inlet.l - STUB, X_END = E.over.r + STUB;
+const N_MAIN = 30, N_BYP = 14;
+
+function makeStream(count, size){
+  const pos = new Float32Array(count*3);
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const mat = new THREE.PointsMaterial({
+    size, map:sprite, transparent:true, depthWrite:false,
+    blending:THREE.NormalBlending, sizeAttenuation:true
+  });
+  const pts = new THREE.Points(geo, mat);
+  pts.frustumCulled = false;
+  scene.add(pts);
+  return { geo, pos, count };
+}
+const mainStream = makeStream(N_MAIN, 0.62);
+const bypStream  = makeStream(N_BYP, 0.5);
+
+const MAIN_SPEED = 0.10, BYP_SPEED = 0.17;
+function updateFlow(ft){
+  const mp = mainStream.pos;
+  for(let i=0;i<mainStream.count;i++){
+    const f = (ft*MAIN_SPEED + i/mainStream.count) % 1;
+    mp[i*3] = X_START + (X_END-X_START)*f;
+    mp[i*3+1] = 0; mp[i*3+2] = 0;
+  }
+  mainStream.geo.attributes.position.needsUpdate = true;
+  const bp = bypStream.pos; const tmp = new THREE.Vector3();
+  for(let i=0;i<bypStream.count;i++){
+    const u = (ft*BYP_SPEED + i/bypStream.count) % 1;
+    bypassCurve.getPoint(u, tmp);
+    bp[i*3]=tmp.x; bp[i*3+1]=tmp.y; bp[i*3+2]=tmp.z;
+  }
+  bypStream.geo.attributes.position.needsUpdate = true;
+}
+updateFlow(0);
+
+/* ---------- interaction / UI ---------- */
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let flowOn = !reduceMotion;
+let userInteracted = false;
+let flowTime = 0;
+const clock = new THREE.Clock();
+
+const hint = document.getElementById('hint');
+let hintTimer = setTimeout(()=>hint.classList.add('gone'), 6000);
+function killHint(){ hint.classList.add('gone'); clearTimeout(hintTimer); }
+
+controls.addEventListener('start', ()=>{
+  userInteracted = true;
+  if(controls.autoRotate){ controls.autoRotate=false; btnSpin.setAttribute('aria-pressed','false'); }
+  killHint();
+});
+
+const btnFlow = document.getElementById('btnFlow');
+const btnSpin = document.getElementById('btnSpin');
+const btnReset = document.getElementById('btnReset');
+if(reduceMotion) btnFlow.setAttribute('aria-pressed','false');
+
+btnFlow.addEventListener('click', ()=>{
+  flowOn = !flowOn; btnFlow.setAttribute('aria-pressed', String(flowOn));
+});
+btnSpin.addEventListener('click', ()=>{
+  controls.autoRotate = !controls.autoRotate;
+  btnSpin.setAttribute('aria-pressed', String(controls.autoRotate));
+  killHint();
+});
+btnReset.addEventListener('click', ()=>{
+  userInteracted = false;
+  controls.autoRotate = false; btnSpin.setAttribute('aria-pressed','false');
+  fitCamera();
+  controls.target.copy(TARGET);
+  controls.update();
+});
+
+/* ---------- resize ---------- */
+function onResize(){
+  W = container.clientWidth; H = container.clientHeight;
+  camera.aspect = W/H; camera.updateProjectionMatrix();
+  renderer.setSize(W, H);
+  labelRenderer.setSize(W, H);
+  bypassMat.resolution.set(W, H);
+  if(!userInteracted) fitCamera();
+}
+window.addEventListener('resize', onResize);
+if(window.ResizeObserver){ new ResizeObserver(onResize).observe(container); }
+
+/* ---------- render loop ---------- */
+function animate(){
+  requestAnimationFrame(animate);
+  const dt = Math.min(clock.getDelta(), 0.05);
+  if(flowOn){ flowTime += dt; updateFlow(flowTime); }
+  controls.update();
+  renderer.render(scene, camera);
+  labelRenderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>

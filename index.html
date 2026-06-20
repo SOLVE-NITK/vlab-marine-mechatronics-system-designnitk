@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Modulating Process Flow — Marine Control Valve Dynamics</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="css/style.css">
+<script type="importmap">
+{
+  "imports":{
+    "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="mark">Process Flow</span>
+    <h1>Marine Control Valve Dynamics</h1>
+  </div>
+  <div class="meta">Experiment 2 &nbsp;·&nbsp; Fluid Dynamics</div>
+</header>
+
+<section id="stage">
+  <div id="canvas-host" aria-label="Interactive 3D blueprint of a marine control valve flow loop"></div>
+  <div class="blueprint-grid"></div>
+  <div class="vignette"></div>
+  <i class="cross tl"></i><i class="cross tr"></i><i class="cross bl"></i><i class="cross br"></i>
+  
+  <div class="overlay tr">
+    <div class="readout"><span class="k">Formula</span><span class="v">Q = C<sub>v</sub> · √ΔP</span></div>
+  </div>
+
+  <div class="view-toggle">
+    <button id="btnFlow" class="active">Flow On</button>
+    <button id="btnSpin">Auto-Rotate</button>
+    <button id="btnReset">Reset View</button>
+  </div>
+</section>
+
+<aside id="panel">
+
+  <div class="section">
+    <h2>Formula Key</h2>
+    <div class="stat-grid">
+      <div class="stat"><div class="k">Q</div><div class="v">Flow rate</div></div>
+      <div class="stat"><div class="k">C<sub>v</sub></div><div class="v">Flow coefficient</div></div>
+      <div class="stat"><div class="k">ΔP</div><div class="v">Pressure drop</div></div>
+    </div>
+  </div>
+
+  <div class="tabs" style="display:flex; flex-wrap:wrap; gap:2px; border-bottom: 2px solid var(--line); margin-bottom: 16px;">
+    <button id="tab-1" style="flex:1 1 30%; padding:8px; font-size:10px; background:var(--ink); color:var(--paper); border:none; font-weight:bold; cursor:pointer;">Exp 1: Equal %</button>
+    <button id="tab-2" style="flex:1 1 30%; padding:8px; font-size:10px; background:var(--paper); color:var(--text); border:none; font-weight:bold; cursor:pointer;">Exp 2: Linear</button>
+    <button id="tab-3" style="flex:1 1 30%; padding:8px; font-size:10px; background:var(--paper); color:var(--text); border:none; font-weight:bold; cursor:pointer;">Exp 3: Flow Char.</button>
+  </div>
+
+  <div id="content-tab-1">
+    <div class="section" id="experiment-a">
+      <h2>Experiment 1 — Equal % Characterization</h2>
+    
+    <div style="font-size:12px; margin-bottom: 8px;">
+      <strong>Step 1: Steady-State Measurements</strong><br>
+      Set valve opening and pressure drop. Allow to stabilise. Record flow rate.
+    </div>
+
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; background: #0b1f2a; color: #5fd6ef; padding: 8px; border-radius: 4px; margin-bottom: 12px; box-shadow: inset 0 0 8px rgba(0,0,0,0.5);">
+      <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>VALVE OPENING:</span><strong id="sens-open">50 %</strong></div>
+      <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>VALVE ΔP:</span><strong id="sens-dp">1.00 bar</strong></div>
+      <div style="display:flex; justify-content:space-between; color:#ff8a2a; margin-bottom: 4px;"><span>FLOW RATE:</span><strong id="sens-flow">17.0 L/min</strong></div>
+      <div style="display:flex; justify-content:space-between; color:#e63946;"><span>PUMP POWER:</span><strong id="sens-power">0.0 W</strong></div>
+    </div>
+
+    <div style="font-size:12px; margin-bottom: 8px;">
+      <strong style="color:var(--rust)">Start Automated Protocol</strong><br>
+      Automated sequence across all 21 points and 3 pressure drops.
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr; gap: 4px; margin-bottom: 12px;">
+      <button class="preset" id="btn-run-step1" style="justify-content:center; background:var(--rust); color:#fff; border-color:var(--rust); font-weight:bold;">Start Automated Step 1 Test</button>
+    </div>
+
+    <div style="font-size:12px; margin-bottom: 8px; margin-top: 12px; border-top: 1px solid var(--line); padding-top: 8px;">
+      <strong>Manual Override Controls</strong>
+    </div>
+    <div style="margin-bottom: 12px;">
+      <label style="font-size: 11px; font-weight: bold; display: flex; justify-content: space-between;">
+        Valve Opening <span id="lbl-open">50%</span>
+      </label>
+      <input type="range" id="ctrl-open" min="0" max="100" value="50" step="5" style="width:100%; margin-top:4px;">
+    </div>
+    
+    <div style="margin-bottom: 12px;">
+      <label style="font-size: 11px; font-weight: bold;">Pressure Drop (bar)</label>
+      <select id="ctrl-dp" style="width:100%; margin-top:4px; padding: 4px;">
+        <option value="0.5">0.5 bar</option>
+        <option value="1.0" selected>1.0 bar</option>
+        <option value="2.0">2.0 bar</option>
+      </select>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; margin-bottom: 12px;">
+      <button class="preset" id="btn-record" style="justify-content:center; padding:6px 4px; font-size:11px;">Manual Record</button>
+      <button class="preset" id="btn-reset" style="justify-content:center; padding:6px 4px; font-size:11px;">Reset Table</button>
+      <button class="preset" id="btn-csv" style="justify-content:center; padding:6px 4px; font-size:11px; background:var(--ink); color:var(--paper);">Export CSV</button>
+    </div>
+    
+    <div style="background:#fff; border:1px solid var(--line); border-radius:4px; height: 240px; overflow-y: auto;">
+      <table id="obs-table" class="data-table">
+        <thead id="obs-table-head">
+          <tr>
+            <th>Valve Opening (%)</th>
+            <th>ΔP = 0.5 bar</th>
+            <th>ΔP = 1.0 bar</th>
+            <th>ΔP = 2.0 bar</th>
+          </tr>
+        </thead>
+        <tbody id="obs-table-body">
+          <!-- Rows added here -->
+        </tbody>
+      </table>
+    </div>
+
+    <div style="font-size:12px; margin-bottom: 8px; margin-top: 12px; border-top: 1px solid var(--line); padding-top: 8px;">
+      <strong>Step 2: Dynamic Response Testing</strong><br>
+      Step input pressure drop from 0.5 → 2.0 bar at 50% opening. Measure overshoot and settling time (120s).
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr; gap: 4px; margin-bottom: 12px;">
+      <button class="preset" id="btn-dyn" style="justify-content:center; background:#2a5a2a; color:#fff;">Start Dynamic Test</button>
+    </div>
+    
+    <div style="font-size:12px; margin-bottom: 8px; margin-top: 12px; border-top: 1px solid var(--line); padding-top: 8px;">
+      <strong>Analytical Plots (Exp 1)</strong>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <strong style="font-size:11px; color:var(--text);">Plot 1A: Flow vs. Opening (ΔP Variation)</strong>
+      <div style="position:relative; height:180px; width:100%; background:#fff; border:1px solid var(--line); border-radius:4px; margin-top:4px; padding:4px;">
+        <canvas id="canvas-1a"></canvas>
+      </div>
+    </div>
+    
+    <div style="margin-bottom:16px;">
+      <strong style="font-size:11px; color:var(--text);">Plot 1B: Normalized Flow Ratio (Q/Qmax)</strong>
+      <div style="position:relative; height:180px; width:100%; background:#fff; border:1px solid var(--line); border-radius:4px; margin-top:4px; padding:4px;">
+        <canvas id="canvas-1b"></canvas>
+      </div>
+    </div>
+    
+    <div style="margin-bottom:16px;">
+      <strong style="font-size:11px; color:var(--text);">Plot 1C: Inherent vs. Installed Characteristic</strong>
+      <div style="position:relative; height:180px; width:100%; background:#fff; border:1px solid var(--line); border-radius:4px; margin-top:4px; padding:4px;">
+        <canvas id="canvas-1c"></canvas>
+      </div>
+    </div>
+
+    </div>
+  </div> <!-- END TAB 1 -->
+
+  <div id="content-tab-2" style="display:none;">
+    <div class="section" id="experiment-b-table">
+      <h2>Experiment 2 — Linear Valve Characterization</h2>
+      <div style="font-size:12px; margin-bottom: 8px;">
+        Repeat the identical procedure with the linear valve and compare:
+      </div>
+      
+      <!-- LINEAR VALVE CONTROLS -->
+      <div style="background: rgba(0,0,0,0.1); padding: 8px; border-radius: 4px; margin-bottom: 12px; border: 1px solid var(--line);">
+        <strong style="font-size: 11px; display:block; margin-bottom:6px;">Linear Valve Test Procedures</strong>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 8px;">
+          <button class="preset" id="btn-run-step1-b" style="justify-content:center; background:var(--rust); color:#fff; border-color:var(--rust); font-size:10px;">Step 1: Steady-State</button>
+          <button class="preset" id="btn-dyn-b" style="justify-content:center; background:#2a5a2a; color:#fff; font-size:10px;">Step 2: Dynamic Test</button>
+        </div>
+        <button class="preset" id="btn-csv-b" style="width:100%; justify-content:center; padding:6px 4px; font-size:10px; background:var(--ink); color:var(--paper); margin-bottom:8px;">Export Linear CSV</button>
+        
+        <div style="background:#fff; border:1px solid var(--line); border-radius:4px; height: 160px; overflow-y: auto;">
+          <table id="obs-table-b" class="data-table">
+            <thead id="obs-table-head-b">
+              <tr>
+                <th>Valve Opening (%)</th>
+                <th>ΔP = 0.5 bar</th>
+                <th>ΔP = 1.0 bar</th>
+                <th>ΔP = 2.0 bar</th>
+              </tr>
+            </thead>
+            <tbody id="obs-table-body-b">
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <table class="data-table" style="margin-top:12px;">
+        <thead>
+          <tr>
+            <th>Parameter</th>
+            <th>Equal % Valve</th>
+            <th>Linear Valve</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Control range at low opening (5–10%)</td><td>±15 %</td><td>±35 %</td></tr>
+          <tr><td>Stability margin</td><td>High</td><td>Moderate</td></tr>
+          <tr><td>Hysteresis at 50 % opening</td><td>±2 % flow</td><td>±3 % flow</td></tr>
+          <tr><td>Response time (pressure step)</td><td>8 s</td><td>6 s</td></tr>
+          <tr><td>Energy efficiency (power loss)</td><td>12 W avg</td><td>15 W avg</td></tr>
+        </tbody>
+      </table>
+      <div style="font-size:10px; color:#888; margin-top:6px;">
+        Reference figures from typical full-scale marine installations. The live Dynamic Test above reports this rig's own settling time and pump power at its simulated flow scale — expect different absolute numbers, not a 1:1 match.
+      </div>
+
+      <div style="margin-top:16px;">
+        <strong style="font-size:11px; color:var(--text);">Plot: Inherent vs. Installed Characteristic (Linear)</strong>
+        <div style="font-size:10px; color:#888; margin-bottom:2px;">Run Step 1: Steady-State above to populate this curve — compare against Plot 1C on the Equal % tab to see which valve holds a more consistent slope under installed (variable system ΔP) conditions.</div>
+        <div style="position:relative; height:180px; width:100%; background:#fff; border:1px solid var(--line); border-radius:4px; margin-top:4px; padding:4px;">
+          <canvas id="canvas-1c-b"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="content-tab-3" style="display:none;">
+    <div class="section" id="experiment-c" style="padding-top: 8px;">
+      <h2>Experiment 3 — Pressure Drop Variation Study</h2>
+      <div style="font-size:12px; margin-bottom: 8px;">
+        <strong>Objective:</strong> Demonstrate installed vs. inherent characteristics.<br>
+        Fix valve at 50%. Sweep system load (bypass) across 10 settings to plot Flow vs. ΔP.
+      </div>
+      <div style="font-size:10px; color:#888; margin-bottom:8px;">
+        Note: at a fixed opening, Cv is constant, so Q = Cv·√ΔP (§5.1.1) holds for every valve type — all three traces below are √ΔP curves, not straight lines. The "linear vs. exponential" distinction only shows up when plotting flow against <em>opening</em> (Experiments A/B), not against ΔP.
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; margin-bottom: 12px;">
+        <button class="preset" id="btn-run-exp-c" style="justify-content:center; background:#4a3f65; color:#fff; font-size:10px;">Equal %</button>
+        <button class="preset" id="btn-run-exp-c-lin" style="justify-content:center; background:#4a3f65; color:#fff; font-size:10px;">Linear</button>
+        <button class="preset" id="btn-run-exp-c-qo" style="justify-content:center; background:#4a3f65; color:#fff; font-size:10px;">Quick-Open</button>
+      </div>
+      
+      <div style="background:#fff; border:1px solid var(--line); border-radius:4px; margin-bottom:12px; padding:8px; display:none;">
+        <canvas id="chart-c" width="280" height="140" style="width:100%; height:140px;"></canvas>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <strong style="font-size:11px; color:var(--text);">Plot 3: Installed Char Comparison (Eq% vs Linear)</strong>
+        <div style="position:relative; height:180px; width:100%; background:#fff; border:1px solid var(--line); border-radius:4px; margin-top:4px; padding:4px;">
+          <canvas id="canvas-3"></canvas>
+        </div>
+      </div>
+      
+      <div style="background:#fff; border:1px solid var(--line); border-radius:4px; height: 160px; overflow-y: auto;">
+        <table id="obs-table-c" class="data-table">
+          <thead id="obs-table-head-c">
+            <tr>
+              <th>ΔP (bar)</th>
+              <th>Equal % (L/min)</th>
+              <th>Linear (L/min)</th>
+              <th>Quick-Open (L/min)</th>
+            </tr>
+          </thead>
+          <tbody id="obs-table-body-c">
+          </tbody>
+        </table>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 8px;">
+        <button class="preset" id="btn-csv-c" style="justify-content:center; padding:6px 4px; font-size:10px; background:var(--ink); color:var(--paper);">Export Combined CSV</button>
+        <button class="preset" id="btn-clear-c" style="justify-content:center; padding:6px 4px; font-size:10px;">Clear Graph & Data</button>
+      </div>
+    </div>
+  </div>
+    </div>
+  </div>
+
+  <div id="content-tab-4" style="margin-top: 24px; border-top: 2px dashed var(--line);">
+    <div class="section" id="experiment-faults" style="padding-top: 24px;">
+      <h2>Fault Scenarios</h2>
+      <div style="font-size:12px; margin-bottom: 12px;">
+        Inject physical wear and mechanical faults to observe degradation in control stability.
+      </div>
+
+      <div style="background: rgba(255, 90, 0, 0.1); border: 1px solid rgba(255, 90, 0, 0.5); padding: 8px; border-radius: 4px; margin-bottom: 12px;">
+        <label style="font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 6px; cursor:pointer; color: #ff8a2a;">
+          <input type="checkbox" id="chk-fault-leak"> Fault 1: Internal Leakage
+        </label>
+        <div style="font-size: 10px; margin-top: 4px; opacity: 0.8; color:var(--text);">
+          Simulates severe seat wear. Injects 10% base flow at 0% opening and induces steady-state hunting.
+        </div>
+        <div id="instr-fault-1" style="display:none; margin-top:8px; border-top:1px dashed rgba(255,138,42,0.4); padding-top:8px; font-size:11px; color:#ff8a2a;">
+          <strong>Procedure:</strong><br>1. Drag signal to 0%.<br>2. Observe that flow never reaches 0 L/min.<br>3. Notice the 3D valve stem and flow numbers hunting violently.<br><br>
+          <span style="color:#fff;"><strong>Explanation:</strong> The physical seal inside the valve is broken. High pressure fluid forces its way through the gap, rattling the metal stem and preventing complete shutoff.</span>
+        </div>
+      </div>
+
+      <div style="background: rgba(95, 214, 239, 0.1); border: 1px solid rgba(95, 214, 239, 0.5); padding: 8px; border-radius: 4px; margin-bottom: 12px;">
+        <label style="font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 6px; cursor:pointer; color: #5fd6ef;">
+          <input type="checkbox" id="chk-fault-stic"> Fault 2: Actuator Stiction
+        </label>
+        <div style="font-size: 10px; margin-top: 4px; opacity: 0.8; color:var(--text);">
+          Introduces static friction. Creates a 10% dead-band requiring extra controller signal to break free.
+        </div>
+        <div id="instr-fault-2" style="display:none; margin-top:8px; border-top:1px dashed rgba(95,214,239,0.4); padding-top:8px; font-size:11px; color:#5fd6ef;">
+          <strong>Procedure:</strong><br>1. Slowly drag the signal slider.<br>2. Observe that the "Actual Stem Pos" refuses to move initially.<br><br>
+          <span style="color:#fff;"><strong>Explanation:</strong> The mechanical stem is rusted/jammed. Your controller sends the signal, but the stem is physically stuck until enough air pressure builds up to violently snap it free.</span>
+        </div>
+      </div>
+
+      <div style="background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.5); padding: 8px; border-radius: 4px; margin-bottom: 12px;">
+        <label style="font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 6px; cursor:pointer; color: #ff4d4d;">
+          <input type="checkbox" id="chk-fault-air"> Fault 3: Pilot Supply Failure
+        </label>
+        <div style="font-size: 10px; margin-top: 4px; opacity: 0.8; color:var(--text);">
+          Reduces pilot air to 2 bar. Valve loses holding force and slowly drifts closed under high pressure drops.
+        </div>
+        <div id="instr-fault-3" style="display:none; margin-top:8px; border-top:1px dashed rgba(255,77,77,0.4); padding-top:8px; font-size:11px; color:#ff4d4d;">
+          <strong>Procedure:</strong><br>1. Drag signal to 100%.<br>2. Watch the "Actual Stem Pos" bleed out and drift closed against the high pressure drop.<br><br>
+          <span style="color:#fff;"><strong>Explanation:</strong> The pneumatic actuator has lost its 5-bar air supply. It no longer has the mechanical strength to push against the high-pressure water, so it gets slowly forced closed by the fluid.</span>
+        </div>
+      </div>
+
+      <div style="font-size:12px; margin-top: 16px; margin-bottom: 8px; border-top: 1px solid var(--line); padding-top: 8px;">
+        <strong>Manual Actuation</strong>
+      </div>
+      <div style="margin-bottom: 12px;">
+        <label style="font-size: 11px; font-weight: bold; display: flex; justify-content: space-between;">
+          Controller Signal <span id="lbl-open-f">50%</span>
+        </label>
+        <input type="range" id="ctrl-open-f" min="0" max="100" value="50" step="5" style="width:100%; margin-top:4px;">
+        <div style="display:flex; justify-content:space-between; margin-top: 4px; font-size:10px; color:#ff8a2a;">
+          <span>Actual Stem Pos:</span><strong id="lbl-actual-pos">50%</strong>
+        </div>
+      </div>
+      
+      <div style="background:#0b1f2a; color:#5fd6ef; padding:8px; border-radius:4px; font-family: monospace;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>DP:</span><span>2.00 bar</span></div>
+        <div style="display:flex; justify-content:space-between; color:#ff8a2a; margin-bottom:4px;"><span>FLOW:</span><strong id="sens-flow-f">24.0 L/min</strong></div>
+        <div style="display:flex; justify-content:space-between; color:#e63946;"><span>POWER:</span><strong id="sens-power-f">0.0 W</strong></div>
+      </div>
+
+      <div style="margin-bottom:16px; margin-top:16px;">
+        <strong style="font-size:11px; color:var(--text);">Plot 2: Real-Time Dynamic Response</strong>
+        <div style="font-size:9px; color:#999; margin-bottom:2px;">Red: Flow (L/min) | Blue: Stem Pos (%)</div>
+        <div style="position:relative; height:180px; width:100%; background:#fff; border:1px solid var(--line); border-radius:4px; margin-top:2px; padding:4px;">
+          <canvas id="canvas-2"></canvas>
+        </div>
+      </div>
+  </div>
+
+
+</aside>
+
+<footer>
+  <span>Interactive plate · rendered in WebGL</span>
+  <span>Orbit: drag · Zoom: wheel</span>
+</footer>
+
+<div class="fallback" id="fallback"><div><h1 style="font-weight:700; font-family: sans-serif;">WebGL unavailable</h1><p>This 3D scene needs a browser with WebGL.</p></div></div>
+
+<script type="module" src="js/script.js"></script>
+</body>
+</html>
