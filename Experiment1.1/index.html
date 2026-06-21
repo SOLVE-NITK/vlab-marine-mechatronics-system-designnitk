@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Container Ship — Ballast Explainer</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="mark"></span>
+    <h1>Container Ship — A Guide to Ballast</h1>
+  </div>
+  <div class="meta">Plate IV &nbsp;·&nbsp; Hydrostatics</div>
+</header>
+
+<section id="stage">
+  <div id="canvas-host"></div>
+
+  <div class="view-toggle">
+    <button data-view="exterior" class="active">Exterior</button>
+    <button data-view="cutaway">Cutaway</button>
+    <button data-view="xray">X-ray</button>
+  </div>
+
+  <div class="overlay tr">
+    <div class="readout"><span class="k">Draft</span><span class="v" id="r-draft">4.2 m</span></div>
+  </div>
+
+  <div class="overlay bl">
+    <div class="readout"><span class="k">Displacement</span><span class="v" id="r-disp">12,400 t</span></div>
+  </div>
+
+  <div class="warn-flag" id="warn">Unsafe</div>
+  <div class="warn-flag" id="alarm" style="top: 50px; background: #ff0000; font-weight: bold; border: 2px solid white;">ALARM: SYSTEM FAULT</div>
+</section>
+
+<aside id="panel">
+
+  <div class="section">
+    <h2>View</h2>
+    <p style="font-size: 12px; color: rgba(11,31,42,0.7);">
+      <b style="color: var(--rust-2);">Exterior</b> shows the finished ship.
+      <b style="color: var(--rust-2);">Cutaway</b> slices it in half to reveal the ballast tanks filling with water.
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>Loading Conditions</h2>
+    <div class="preset-row">
+      <button class="preset active" data-preset="empty">Empty</button>
+      <button class="preset" data-preset="ballast-only">Ballast only</button>
+      <button class="preset" data-preset="half">Half load</button>
+      <button class="preset" data-preset="full">Full &amp; trim</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Manual Control</h2>
+    <div class="ctrl">
+      <label><span class="name">Cargo</span><span class="val"><span id="v-cargo">0</span>%</span></label>
+      <input type="range" id="s-cargo" min="0" max="100" value="0" step="1" />
+    </div>
+    <div class="ctrl">
+      <label><span class="name">Ballast Water</span><span class="val"><span id="v-ballast">0</span>%</span></label>
+      <input type="range" id="s-ballast" min="0" max="100" value="0" step="1" />
+    </div>
+    <div class="ctrl">
+      <label><span class="name">Sea State</span><span class="val"><span id="v-sea">2</span></span></label>
+      <input type="range" id="s-sea" min="0" max="5" value="2" step="1" />
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Scenario Testing (PLC)</h2>
+    <div style="font-size: 12px; margin-bottom: 12px; padding: 10px; background: rgba(11,31,42,0.05); border: 1px solid var(--line);">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+        <span style="text-transform: uppercase; font-size: 9px; opacity: 0.6;">Active Scenario:</span>
+        <span id="scenario-text" style="font-weight: bold; color: var(--rust);">NONE</span>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span style="text-transform: uppercase; font-size: 9px; opacity: 0.6;">Control Mode:</span>
+        <span id="control-mode" style="font-weight: bold;">MANUAL</span>
+      </div>
+    </div>
+    <div class="preset-row">
+      <button class="preset" onclick="startScenario('A')">Scenario A</button>
+      <button class="preset" onclick="startScenario('B')">Scenario B</button>
+      <button class="preset" onclick="startScenario('C')">Scenario C (Faults)</button>
+    </div>
+    <button class="preset" style="width: 100%; margin-top: 6px; font-style: normal; color: var(--rust-2);" onclick="startScenario('none')">Stop PLC Scenario</button>
+  </div>
+
+  <div class="section" id="scenario-details" style="display: none; margin-bottom: 12px; border-left: 3px solid var(--rust); padding-left: 12px; background: rgba(11,31,42,0.03);">
+    <h2 id="obj-title" style="margin-bottom: 6px;">Objectives</h2>
+    <p id="obj-text" style="font-size: 12px; font-style: italic; color: var(--ink); line-height: 1.4;">
+      Select a scenario to see objectives.
+    </p>
+  </div>
+
+  <div id="fault-section" style="display: none;">
+    <div class="section" style="margin-bottom: 12px;">
+      <h2>Fault Injection</h2>
+      <div class="preset-row" style="margin-bottom: 8px;">
+        <button class="preset" id="f-low" onclick="toggleFault('low_sensor')">I0.0 Fail</button>
+        <button class="preset" id="f-high" onclick="toggleFault('high_stuck')">I0.2 Stuck</button>
+        <button class="preset" id="f-valve" onclick="toggleFault('valve_stuck')">Valve Open</button>
+        <button class="preset" id="f-pump" onclick="toggleFault('cavitation')">Cavitation</button>
+      </div>
+      <!-- Fixed height container to prevent layout jumping -->
+      <div style="height: 48px; position: relative;">
+        <div id="diag-msg" style="position: absolute; inset: 0; padding: 8px; background: rgba(176,68,31,0.08); border: 1px dashed var(--rust); font-size: 11px; font-style: italic; color: var(--rust-2); opacity: 0; transition: opacity 0.2s; pointer-events: none; overflow: hidden;">
+          SYSTEM ALARM: Check sensor integrity.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" style="margin-bottom: 12px; padding-top: 12px;">
+      <h2>PLC Sensor Status</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+        <div id="s-i00" style="padding: 6px; border: 1px solid var(--line); text-align: center; font-size: 10px; transition: all 0.2s;">I0.0 (10%)<br><b id="v-i00">OFF</b></div>
+        <div id="s-i01" style="padding: 6px; border: 1px solid var(--line); text-align: center; font-size: 10px; transition: all 0.2s;">I0.1 (50%)<br><b id="v-i01">OFF</b></div>
+        <div id="s-i02" style="padding: 6px; border: 1px solid var(--line); text-align: center; font-size: 10px; transition: all 0.2s;">I0.2 (90%)<br><b id="v-i02">OFF</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Hydrostatic Readout</h2>
+    <div class="stat-grid">
+      <div class="stat"><div class="k">Draft</div><div class="v"><span id="st-draft">4.2</span><span class="u">m</span></div></div>
+      <div class="stat"><div class="k">Freeboard</div><div class="v"><span id="st-free">5.8</span><span class="u">m</span></div></div>
+      <div class="stat"><div class="k">Total mass</div><div class="v"><span id="st-mass">12.4</span><span class="u">kt</span></div></div>
+      <div class="stat"><div class="k">Stability</div><div class="v" id="st-stab">Good</div></div>
+      <div class="stat"><div class="k">Pump (Q0.0)</div><div class="v" id="v-pump">OFF</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Why Ballast?</h2>
+    <p>When cargo is unloaded, the ship rides high. The propeller lifts partly out of the water and the bow slams in waves. Pumping seawater into ballast tanks re-submerges the hull to a safe draft.</p>
+    <p class="marginalia" style="margin-top: 10px;">Switch to <b>Cutaway</b> to watch the <b>cyan water</b> rise inside the double-bottom and side tanks.</p>
+  </div>
+
+  <div class="section">
+    <h2>Key</h2>
+    <div class="legend">
+      <div class="row"><div class="sw hull"></div>Steel hull</div>
+      <div class="row"><div class="sw cargo"></div>Stacked ISO containers</div>
+      <div class="row"><div class="sw ballast"></div>Ballast water</div>
+      <div class="row"><div class="sw water"></div>Sea water</div>
+    </div>
+  </div>
+
+</aside>
+
+<footer>
+  <span>Interactive plate · rendered in WebGL</span>
+  <span>Orbit: drag · Zoom: wheel</span>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+<script src="js/script.js"></script>
+
+</body>
+</html>

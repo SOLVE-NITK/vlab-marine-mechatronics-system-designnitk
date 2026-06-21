@@ -1,0 +1,69 @@
+:root{
+--panel-bg: #ffffff;
+  --accent: #000000;
+  --accent-glow: rgba(0, 0, 0, 0.1);
+  --danger: #000000;
+  --success: #000000;
+  --text-main: #000000;
+  --text-dim: #666666;
+  --border: #dddddd;}
+
+*,
+*::after,
+*::before{
+  margin: 0;
+  padding: 0;
+  padding: 0;
+}
+
+html{
+  font-size: 62.5%;
+}
+
+body{
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-size: 1.6rem;
+  line-height: 1.7;
+  background-color: var(--panel-bg);
+}
+
+.container{
+  display: flex;
+  flex-direction: column;
+}
+
+.lab-title{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--text-main);
+  color: rgb(229, 210, 210);
+  padding: 1rem;
+  border: 0.5rem solid var(--border);
+  margin-bottom: 2rem;
+}
+
+.experiment-list{
+  justify-self: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap:5rem;
+  margin: 0 auto;
+}
+
+.experiment-card{
+  border: 0.15rem solid rgb(49, 59, 92);
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+.experiment-card:hover{
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
+  transition: all 0.3s;
+}
+
+a{
+  text-decoration: none;
+  font-size: 1.6rem;
+}

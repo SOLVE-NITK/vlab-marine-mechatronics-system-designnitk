@@ -1,0 +1,826 @@
+/* ================================================================
+   STARK WHITE & BLACK DESIGN SYSTEM
+================================================================ */
+:root {
+  --panel-bg: #ffffff;
+  --accent: #000000;
+  --accent-glow: rgba(0, 0, 0, 0.1);
+  --danger: #000000;
+  --success: #000000;
+  --text-main: #000000;
+  --text-dim: #666666;
+  --border: #dddddd;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: #f8f8f8;
+  color: var(--text-main);
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+}
+
+.hidden { display: none !important; }
+
+/* 3D VIEWPORT (75%) */
+#container {
+  width: 75vw;
+  height: 100vh;
+  background: #eeeeee;
+  position: relative;
+}
+
+/* STARK WHITE SIDE PANEL (25%) */
+#side-panel {
+  width: 25vw;
+  height: 100vh;
+  background: var(--panel-bg);
+  border-left: 2px solid #000000;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  overflow-y: auto;
+}
+
+#badge {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  background: #fff;
+  color: #000;
+  padding: 8px 16px;
+  border: 2px solid #000;
+  font-weight: 800;
+  letter-spacing: 2px;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+#hud {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  background: #fff;
+  padding: 20px;
+  border: 2px solid #000;
+  width: 280px;
+  pointer-events: none;
+}
+
+.lbl { font-size: 10px; color: #666; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 1px; font-weight: 700; }
+.val { font-family: 'JetBrains Mono', monospace; font-size: 22px; margin-bottom: 12px; color: #000; font-weight: 800; }
+
+.bar-bg { height: 4px; background: #eee; border: 1px solid #000; margin-bottom: 16px; }
+.bar-fg { height: 100%; background: #000; transition: width 0.3s; }
+
+.panel-header {
+  padding: 24px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  border-bottom: 2px solid #000;
+  text-transform: uppercase;
+}
+
+.section-title {
+  padding: 24px 24px 8px;
+  font-size: 11px;
+  color: #000;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 900;
+}
+
+/* SIDEBAR TABS */
+.sidebar-tabs {
+  display: flex;
+  background: #f0f0f0;
+  border-bottom: 2px solid #000;
+}
+.tab-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background: transparent;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: 0.1s;
+}
+.tab-btn:hover { background: #e0e0e0; }
+.tab-btn.active { background: #000; color: #fff; }
+
+.status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid #000; margin: 0 24px 16px; }
+.status-item { 
+  background: #fff; 
+  padding: 16px; 
+  border: 1px solid #000;
+  display: flex; 
+  flex-direction: column;
+  align-items: center; 
+  gap: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.led, .bit { width: 10px; height: 10px; border: 2px solid #000; background: #fff; transition: 0.2s; }
+.led.active, .bit.active { background: #000; }
+
+/* SCENARIO CARDS - WHITE BG STYLE */
+.scenario-list { padding: 0 24px 16px; display: flex; flex-direction: column; gap: 8px; }
+.scenario-card {
+  border: 2px solid #000;
+  padding: 16px;
+  cursor: pointer;
+  transition: 0.1s;
+}
+.scenario-card:hover { background: #f0f0f0; }
+.scenario-card.active { background: #000; color: #fff; }
+.scenario-card.active p { color: #aaa; }
+.scenario-card h4 { font-size: 13px; margin-bottom: 4px; text-transform: uppercase; font-weight: 800; }
+.scenario-card p { font-size: 11px; color: #666; line-height: 1.4; }
+
+/* CONTROLS */
+.btn-group { padding: 0 24px 24px; display: flex; flex-direction: column; gap: 8px; }
+.btn {
+  background: #fff;
+  border: 2px solid #000;
+  color: #000;
+  padding: 14px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: 0.1s;
+}
+.btn:hover { background: #000; color: #fff; }
+ 
+ .control-group {
+   padding: 8px 0;
+   display: flex;
+   flex-direction: column;
+   gap: 6px;
+ }
+ 
+ .slider {
+   -webkit-appearance: none;
+   width: 100%;
+   height: 6px;
+   background: #eee;
+   border: 2px solid #000;
+   outline: none;
+   cursor: pointer;
+   margin: 8px 0;
+ }
+ 
+ .slider::-webkit-slider-thumb {
+   -webkit-appearance: none;
+   appearance: none;
+   width: 20px;
+   height: 20px;
+   background: #000;
+   border: 2px solid #000;
+   cursor: pointer;
+   transition: transform 0.1s;
+ }
+ 
+ .slider::-webkit-slider-thumb:hover {
+   transform: scale(1.1);
+ }
+ 
+ .slider::-moz-range-thumb {
+   width: 20px;
+   height: 20px;
+   background: #000;
+   border: 2px solid #000;
+   cursor: pointer;
+   transition: transform 0.1s;
+ }
+ 
+ .slider::-moz-range-thumb:hover {
+   transform: scale(1.1);
+ }
+
+.log-box {
+  flex: 1;
+  min-height: 300px; /* Ensure it stays large and legible */
+  background: #fdfdfd;
+  margin: 0 24px 24px;
+  border: 2px solid #000;
+  padding: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  overflow-y: scroll;
+  color: #000;
+  box-shadow: inset 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.log-entry { margin-bottom: 6px; border-bottom: 1px solid #ddd; padding-bottom: 4px; }
+.log-ts { color: #888; margin-right: 8px; font-weight: 700; }
+
+#hint {
+  position: absolute;
+  bottom: 24px;
+  right: 27vw;
+  font-size: 10px;
+  color: #000;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+/* STATUS SUMMARY BOX */
+#status-summary {
+  transition: 0.2s;
+  border: 2px solid #000;
+  text-transform: uppercase;
+}
+
+#realtime-chart {
+  background: #fff !important;
+  border: 2px solid #000 !important;
+}
+
+.hidden { display: none !important; }
+
+/* ================================================================
+   STEP 2: LADDER LOGIC MONITOR
+================================================================ */
+#ladder-monitor { padding: 0 24px 16px; }
+
+.net-block {
+  border: 1px solid #ccc;
+  margin-bottom: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  transition: border-color 0.15s, background 0.15s;
+}
+.net-block.net-firing { border-color: #000; background: rgba(0,0,0,0.03); }
+.net-block.net-alarm  { border-color: #cc0000; background: rgba(204,0,0,0.04); }
+
+.net-hdr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px;
+  border-bottom: 1px solid #ccc;
+  font-size: 8.5px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: #f8f8f8;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.net-block.net-firing .net-hdr { background: #000; color: #fff; border-bottom-color: #000; }
+.net-block.net-alarm  .net-hdr { background: #cc0000; color: #fff; border-bottom-color: #cc0000; }
+
+.net-badge {
+  font-size: 8px;
+  padding: 1px 5px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  transition: 0.15s;
+}
+.badge-idle    { color: #aaa; }
+.badge-firing  { color: #fff; }
+.badge-alarm   { color: #fff; }
+
+.net-rung {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  gap: 4px;
+}
+
+.contact-no, .contact-nc {
+  border: 1px solid #ccc;
+  padding: 3px 5px;
+  font-size: 9px;
+  font-weight: 700;
+  text-align: center;
+  min-width: 42px;
+  line-height: 1;
+  transition: 0.1s;
+  position: relative;
+}
+.contact-no small, .contact-nc small {
+  font-size: 7.5px;
+  font-weight: 400;
+  color: #999;
+  display: block;
+  margin-top: 2px;
+}
+/* NC contact: add diagonal line indicator */
+.contact-nc { border-style: solid; }
+.contact-nc::after {
+  content: '';
+  position: absolute;
+  top: 2px; right: 3px;
+  width: 6px; height: 1px;
+  background: #888;
+  transform: rotate(-45deg);
+  transform-origin: right center;
+}
+
+.contact-no.contact-passing { border-color: #000; background: #000; color: #fff; }
+.contact-no.contact-passing small { color: #aaa; }
+.contact-no.contact-passing::after { display: none; }
+.contact-nc.contact-passing { border-color: #000; background: #000; color: #fff; }
+.contact-nc.contact-passing small { color: #aaa; }
+.contact-nc.contact-passing::after { background: #fff; }
+
+.rung-and  { font-size: 9px; color: #bbb; padding: 0 1px; flex-shrink: 0; }
+.rung-line { flex: 1; height: 2px; background: #ddd; min-width: 8px; transition: background 0.15s; }
+.net-block.net-firing .rung-line { background: #000; }
+.net-block.net-alarm  .rung-line { background: #cc0000; }
+
+.output-coil, .reset-coil {
+  border: 1px solid #ccc;
+  padding: 3px 5px;
+  font-size: 8.5px;
+  font-weight: 700;
+  text-align: center;
+  min-width: 46px;
+  line-height: 1;
+  border-radius: 10px;
+  transition: 0.1s;
+}
+.output-coil small, .reset-coil small {
+  font-size: 7.5px;
+  font-weight: 400;
+  color: #999;
+  display: block;
+  margin-top: 2px;
+}
+.output-coil.coil-energized { border-color: #000; background: #000; color: #fff; }
+.output-coil.coil-energized small { color: #aaa; }
+.reset-coil.coil-energized  { border-color: #cc0000; background: #cc0000; color: #fff; }
+.reset-coil.coil-energized  small { color: #ffaaaa; }
+
+/* ================================================================
+   STEP 3: I/O CONFIGURATION TABLE
+================================================================ */
+.io-tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+}
+.io-tbl th {
+  padding: 5px 7px;
+  background: #000;
+  color: #fff;
+  font-size: 8.5px;
+  text-align: left;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.io-tbl td { padding: 4px 7px; border-bottom: 1px solid #eee; }
+.io-tbl tr.io-row-out td { border-top: 2px solid #000; }
+.io-addr  { font-weight: 900; color: #000; }
+.io-state { color: #bbb; font-weight: 700; transition: color 0.1s; }
+.io-state.io-active { color: #000; font-weight: 900; }
+
+/* ================================================================
+   ANALYSIS TASKS SECTION
+================================================================ */
+#analysis-tasks-header {
+  border-top: 2px solid #000;
+  padding-top: 20px;
+  margin-top: 4px;
+}
+
+.analysis-task-card {
+  margin: 0 24px 10px;
+  border: 2px solid #000;
+  overflow: hidden;
+  transition: box-shadow 0.15s;
+}
+.analysis-task-card:hover { box-shadow: 3px 3px 0 #000; }
+
+.task-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: #000;
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+.task-card-header:hover { background: #222; }
+
+.task-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.task-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #aaa;
+  border: 1px solid #555;
+  padding: 2px 6px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.task-name {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.task-chevron {
+  font-size: 10px;
+  color: #aaa;
+  transition: transform 0.2s;
+}
+.task-chevron.open { transform: rotate(180deg); }
+
+.task-body {
+  padding: 14px;
+  background: #fff;
+  border-top: 1px solid #000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.task-desc p {
+  font-size: 11px;
+  color: #444;
+  line-height: 1.6;
+}
+
+.task-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-left: 3px solid #000;
+  padding: 10px 12px;
+}
+.task-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #333;
+  line-height: 1.5;
+}
+.step-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: #000;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.task-run-btn {
+  font-size: 10px !important;
+  padding: 10px 14px !important;
+  letter-spacing: 1.5px;
+  background: #000 !important;
+  color: #fff !important;
+  border: 2px solid #000 !important;
+}
+.task-run-btn:hover { background: #333 !important; }
+
+/* Results panel */
+.task-results {
+  border: 2px solid #000;
+  background: #fafafa;
+  padding: 12px;
+}
+.task-results-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #000;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+
+/* Metric row inside results */
+.metric-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 10.5px;
+}
+.metric-row:last-child { border-bottom: none; }
+.metric-label { color: #555; font-weight: 700; }
+.metric-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 900;
+  color: #000;
+}
+
+/* Status badges */
+.badge-pass {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #000;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  border-radius: 2px;
+}
+.badge-fail {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #cc0000;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  border-radius: 2px;
+}
+.badge-warn {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #cc7700;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  border-radius: 2px;
+}
+.badge-info {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #eee;
+  color: #333;
+  border: 1px solid #ccc;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  border-radius: 2px;
+}
+
+/* Section dividers inside results */
+.result-section-hdr {
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #000;
+  background: #eee;
+  padding: 3px 6px;
+  margin: 8px 0 4px;
+  border-left: 3px solid #000;
+}
+
+/* Task 1 live status bar */
+.task1-status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  background: #f5f5f5;
+  border-left: 3px solid #bbb;
+  color: #555;
+  line-height: 1.4;
+  transition: background 0.3s, border-color 0.3s;
+}
+.task1-status-filling  { background: #e8f4ff; border-left-color: #2196f3; color: #0d47a1; }
+.task1-status-draining { background: #fff8e1; border-left-color: #ff9800; color: #7a4f00; }
+.task1-status-done     { background: #efffef; border-left-color: #4caf50; color: #1a5c1a; }
+
+.task1-status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #bbb;
+}
+.task1-dot-filling  { background: #2196f3; animation: task1-pulse 1s   infinite; }
+.task1-dot-draining { background: #ff9800; animation: task1-pulse 1.4s infinite; }
+.task1-dot-done     { background: #4caf50; animation: none; }
+
+@keyframes task1-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+.task-run-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* No-data notice */
+.task-no-data {
+  font-size: 11px;
+  color: #888;
+  font-style: italic;
+  text-align: center;
+  padding: 8px 0;
+}
+
+/* ================================================================
+   ANALYSIS TASKS — LAB FORMAT ELEMENTS
+================================================================ */
+
+/* Lab header block */
+.lab-header {
+  padding: 14px 24px 12px;
+  background: #000;
+  color: #fff;
+  border-bottom: 2px solid #000;
+}
+.lab-institution {
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #888;
+  margin-bottom: 5px;
+}
+.lab-title {
+  font-size: 11.5px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.35;
+  margin-bottom: 7px;
+}
+.lab-meta-row {
+  font-size: 9px;
+  font-family: 'JetBrains Mono', monospace;
+  color: #777;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* Instruction bar below header */
+.lab-instr-bar {
+  padding: 9px 24px;
+  background: #f5f5f5;
+  border-bottom: 2px solid #000;
+  font-size: 10px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.55;
+}
+
+/* Sub-section labels inside task bodies */
+.task-section-label {
+  font-size: 8.5px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #000;
+  border-left: 3px solid #000;
+  padding-left: 7px;
+  margin-top: 2px;
+}
+
+/* Objectives bullet list */
+.task-objectives {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+}
+.task-objectives li {
+  font-size: 10.5px;
+  color: #333;
+  line-height: 1.5;
+  padding-left: 14px;
+  position: relative;
+}
+.task-objectives li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: #000;
+  font-size: 10px;
+}
+
+/* Background theory paragraph */
+.task-theory {
+  font-size: 10.5px;
+  color: #444;
+  line-height: 1.65;
+  padding: 8px 10px;
+  background: #fafafa;
+  border: 1px solid #e5e5e5;
+  border-left: 3px solid #ccc;
+}
+
+/* Numbered procedure list */
+.task-procedure {
+  list-style: decimal;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-left: 3px solid #000;
+  padding: 10px 10px 10px 26px;
+}
+.task-procedure li {
+  font-size: 10.5px;
+  color: #333;
+  line-height: 1.5;
+}
+.task-procedure li strong { color: #000; }
+
+/* Scrollable table wrapper */
+.student-table-wrap {
+  overflow-x: auto;
+  border: 2px solid #000;
+}
+.student-table {
+  width: 100%;
+  min-width: 420px;
+  border-collapse: collapse;
+  font-size: 9.5px;
+}
+.student-table th {
+  background: #000;
+  color: #fff;
+  padding: 5px 6px;
+  text-align: left;
+  font-size: 8px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+.student-table td {
+  padding: 5px 6px;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #eee;
+  color: #222;
+  vertical-align: middle;
+}
+
+/* Editable data cells */
+.data-cell {
+  background: #fffef0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  min-width: 44px;
+  cursor: text;
+}
+.data-cell:focus {
+  outline: 2px solid #000;
+  background: #fff8cc;
+}
+.data-cell:empty::before {
+  content: '—';
+  color: #ccc;
+  pointer-events: none;
+}
+.tbl-center { text-align: center; font-weight: 700; }
+.tbl-summary-row td {
+  background: #f0f0f0;
+  font-weight: 700;
+  border-top: 2px solid #000;
+}
+
+/* Discussion questions list */
+.task-discussion {
+  list-style: decimal;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 10px 10px 24px;
+  background: #fff8ee;
+  border: 1px solid #ffe0a0;
+  border-left: 3px solid #cc7700;
+}
+.task-discussion li {
+  font-size: 10.5px;
+  color: #333;
+  line-height: 1.6;
+}
