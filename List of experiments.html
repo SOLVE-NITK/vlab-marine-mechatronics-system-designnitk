@@ -192,7 +192,20 @@
           <span class="lab-name"></span
           ><!--labname-->
           <!-- <h2 class="text-center labTitle"></h2> -->
-          <h2 class="page-name">List of experiments</h2>
+          <div class="d-flex justify-content-between align-items-center pb-2 mb-3">
+            <h2 class="page-name mb-0">List of experiments</h2>
+            
+            <!-- Hamburger button visible only on mobile/tablet (hidden on large screens) -->
+            <button 
+              class="btn btn-outline-dark d-lg-none" 
+              type="button" 
+              data-bs-toggle="modal" 
+              data-bs-target="#popupMenu"
+              aria-label="Toggle navigation"
+            >
+              <i class="fa fa-bars"></i>
+            </button>
+          </div>
           <br/>
           <div>
               <ol class="experimentList">

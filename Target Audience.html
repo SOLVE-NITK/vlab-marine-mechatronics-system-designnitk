@@ -203,7 +203,20 @@
           <span class="lab-name"></span
           ><!--labname-->
           <!-- <h2 class="text-center labTitle"></h2> -->
-          <h2 class="page-name">Target Audience</h2>
+          <div class="d-flex justify-content-between align-items-center pb-2 mb-3">
+            <h2 class="page-name mb-0">Target Audience</h2>
+            
+            <!-- Hamburger button visible only on mobile/tablet (hidden on large screens) -->
+            <button 
+              class="btn btn-outline-dark d-lg-none" 
+              type="button" 
+              data-bs-toggle="modal" 
+              data-bs-target="#popupMenu"
+              aria-label="Toggle navigation"
+            >
+              <i class="fa fa-bars"></i>
+            </button>
+          </div>
           <div>
             <p>This laboratory is designed for undergraduate and postgraduate students at institutions offering programmes in:</p><ul><li>Naval Architecture: Understanding automation requirements in ship design and classification rules.</li><li>Marine Engineering: Direct application to shipboard machinery control and condition monitoring.</li><li>Electrical Engineering (Marine Specialisation): Emphasis on power-system automation, sensor instrumentation, and motor drives.</li><li>Automation & Control Engineering: Core application domain for PLC, PID, and embedded-systems content.</li><li>Mechanical Engineering with Marine Focus: Exposure to actuator selection, valve dynamics, and mechatronic integration.</li></ul><p>Students from naval training academies and defence engineering institutions, pursuing training in marine engineering and naval systems, form a primary audience. Third- and fourth-year students who have completed foundational courses in automatic control theory, basic electronics, and embedded-systems programming are best positioned to benefit from these experiments. Engineering colleges offering marine or mechatronics programmes, and institutions with defence-oriented curricula, also form part of the intended user base.</p>
             <!-- <div class="targetAudience"></div> -->
