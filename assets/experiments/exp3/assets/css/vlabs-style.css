@@ -39,6 +39,12 @@
     font-family: 'Raleway', sans-serif;
 }
 
+@media screen and (max-width: 575px) {
+.vlabs-page-content {
+    border-left: none;
+}
+}
+
 .social-links > a {
     color: #fff;
     border-radius: 50%;

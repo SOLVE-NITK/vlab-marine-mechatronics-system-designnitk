@@ -3,39 +3,36 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta content="" name="description" />
     <meta content="" name="author" />
-
+    <!-- For iPhone -->
     <meta name="msapplication-TileColor" content="#4076e0" />
+    <!-- Chrome, Firefox OS and Opera -->
     <meta name="theme-color" content="#4076e0" />
+    <!-- Windows Phone -->
     <meta name="msapplication-navbutton-color" content="#4076e0" />
 
     <title>Virtual Labs</title>
-
     <link rel="shortcut icon" href="assets/images/favicon.ico" />
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
-
     <link
       href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Raleway&display=swap"
       rel="stylesheet"
     />
-
     <link
       rel="stylesheet"
       href="assets/fonts/font-awesome-4.7.0/css/font-awesome.min.css"
     />
-
     <link rel="stylesheet" href="assets/css/vlabs-style.css" />
+    <script src="assets/js/jquery-3.4.1.slim.min.js"></script>
+    
+    <!-- Bootstrap 5 JavaScript dependencies for handling the modal -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js"></script>
 
-    <script src="assets/js/jquery-1.10.2.js"></script>
-    <script src="assets/js/bootstrap.min.js"></script>
-
-    <script src="assets/js/webcomponents-loader.min.js"></script>
-
+    <!-- BEGIN INCLUDE MARKDOWN FILES USING ZERO MD JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs@2/webcomponents-loader.min.js"></script>
     <script>
       window.ZeroMd = {
         config: {
@@ -46,30 +43,103 @@
         },
       };
     </script>
-
     <script
-      type="module"
-      src="assets/js/zero-md.min.js"
+      defer
+      src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@2/dist/zero-md.legacy.min.js"
     ></script>
+    <!-- END INCLUDE MARKDOWN FILES USING ZERO MD JS -->
+    
+    <link rel="stylesheet" href="../generalStyles.css"/>
+
+    <!-- Custom Popup Menu CSS Styles -->
+    <style>
+      #popupMenu .modal-dialog {
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
+        height: 80%;
+      }
+
+      #popupMenu .modal-content {
+        height: 80%;
+        border: none;
+        border-radius: 0;
+        background-color: #ffffff;
+      }
+
+      #popupMenu .modal-header {
+        border-bottom: 1px solid #eaeaea;
+        padding: 1.2rem;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        position: relative;
+      }
+
+      #popupMenu .modal-header .vlabs-logo {
+        height: 50px;
+        width: auto;
+      }
+
+      #popupMenu .modal-header .btn-close {
+        position: absolute;
+        right: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: transparent;
+        border: none;
+        font-size: 1.5rem;
+        color: #373636;
+        cursor: pointer;
+        line-height: 0.5;
+        font-weight: 700;
+      }
+
+      #popupMenu .modal-body {
+        padding: 0.5rem 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+      }
+
+      #popupMenuItems .nav-menu-body {
+        width: 100%;
+        text-align: center;
+        display: block !important;
+      }
+
+      #popupMenuItems .nav-menu-body a {
+        display: inline-block;
+        padding: 0.5rem 0 !important;
+        color: #3f617d;
+        text-decoration: none;
+        font-family: 'Raleway', sans-serif;
+        font-size: 1.2rem;
+        font-weight: 500;
+        transition: color 0.2s ease;
+      }
+
+      #popupMenuItems .nav-menu-body a:hover,
+      #popupMenuItems .nav-menu-body a.current-item {
+        color: #2b4960;
+        font-weight: 600;
+      }
+    </style>
 
     <script>
-      window.onload = function () {
-        document.getElementById("simulation").className =
-          "active treeview";
-      };
-
       function resizeIframe(obj) {
-        obj.style.height =
-          obj.contentWindow.document.body.scrollHeight + "px";
+        obj.style.height = obj.contentWindow.document.body.scrollHeight + "px";
         obj.style.width = "100%";
       }
 
       function disableContextMenu() {
-        document.getElementById(
-          "fraDisabled"
-        ).contentWindow.document.oncontextmenu = function () {
-          return false;
-        };
+        const frame = document.getElementById("fraDisabled");
+        if (frame && frame.contentWindow) {
+          frame.contentWindow.document.oncontextmenu = function () {
+            return false;
+          };
+        }
       }
 
       $(document).keydown(function (e) {
@@ -100,70 +170,76 @@
         };
       }
     </script>
-    <link rel="stylesheet" href="../generalStyles.css"/>
   </head>
-
   <body
     class="p-0 container-fluid vlabs-page d-flex flex-column justify-content-between"
-    onload="displayTitle();"
-  >
-    <noscript class="gtm">
-      <iframe
-        src="https://www.googletagmanager.com/ns.html?id=GTM-W59SWTR"
-        height="0"
-        width="0"
-        style="display:none;visibility:hidden"
-      ></iframe>
-    </noscript>
-
+    onload="displayTitle()">
+    
     <header class="vlabs-header sticky-lg-top bg-white">
       <nav>
-          <div class="lab-header">
-            <a href="#">
-                <img
-                    src="../../../assets/images/NITK_Eblem.jpg"
-                    alt="NITK logo"
-                    class="lab-logo"
-                />
-            </a>
-            <h2 class="lab-title"><p class="domain-title">Defense Technology (Navy)</p><span style="font-size: 28px;">Marine Mechatronics System Design Lab</span></h2>
-            <a href="#">
-                <img
-                    src="../../../assets/images/ina.jpg"
-                    alt="INA logo"
-                    class="lab-logo"
-                />
-            </a>
+        <div class="lab-header">
+          <a href="#">
+            <img
+              src="../../../assets/images/NITK_Eblem.jpg"
+              alt="NITK logo"
+              class="lab-logo"
+            />
+          </a>
+          <h2 class="lab-title"><p class="domain-title">Defense Technology (Navy)</p><span style="font-size: 28px;">Marine Mechatronics System Design Lab</span></h2>
+          <a href="#">
+            <img
+              src="../../../assets/images/ina.jpg"
+              alt="INA logo"
+              class="lab-logo"
+            />
+          </a>
         </div>  
-        </nav>
+      </nav>
     </header>
-
-    <div
-      class="container-fluid flex-fill d-flex flex-column vlabs-page-main"
-    >
-      <!-- <div class="row py-4 px-4 breadcrumbs">
-        <span>
-          <a href="#" class="sidebar-a domainName">
-            Domain Name
-          </a>
-        </span>
-
-        &nbsp;/&nbsp;
-
-        <span>
-          <a
-            href="../../../List of experiments.html"
-            class="sidebar-a labName"
-          >
-            LabName
-          </a>
-        </span>
-      </div> -->
-    <br/>
-      <div class="row flex-grow-1 px-4">
+    
+    <div class="container-fluid flex-fill d-flex flex-column vlabs-page-main">
+      <br/>
+      <div class="row flex-grow-1 px-4 d-flex flex-nowrap">
+        
+        <!-- POPUP MODAL MENU FOR MOBILE VIEW -->
         <div
-          class="nav flex-column col col-sm-3 col-lg-2 sidebar"
+          class="modal fade popupmenu"
+          id="popupMenu"
+          tabindex="-1"
+          aria-hidden="true"
         >
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <a href="#" class="navbar-brand m-0 p-0">
+                  <img
+                    src="../../../assets/images/vlabs-color-small-moe.jpg" 
+                    alt="Virtual Labs logo"
+                    class="vlabs-logo"
+                  />
+                </a>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                >&times;</button>
+              </div>
+              <div class="modal-body nav-menu popupMenuItems" id="popupMenuItems">
+                <div class="d-flex nav-menu-body"><a href="index.html">Aim</a></div>
+                <div class="d-flex nav-menu-body"><a href="theory.html">Theory</a></div>
+                <div class="d-flex nav-menu-body"><a href="pretest.html">Pre Test</a></div>
+                <div class="d-flex nav-menu-body"><a href="procedure.html">Procedure</a></div>
+                <div class="d-flex nav-menu-body"><a href="simulation.html">Simulation</a></div>
+                <div class="d-flex nav-menu-body"><a href="posttest.html">Post Test</a></div>
+                <div class="d-flex nav-menu-body"><a href="references.html">References</a></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DESKTOP SIDEBAR MENU (Hidden on mobile/tablet screen sizes) -->
+        <div class="nav flex-column col col-sm-3 col-lg-2 sidebar d-none d-lg-flex" id="menu">
           <a href="index.html" class="py-2">Aim</a>
           <a href="theory.html" class="py-2">Theory</a>
           <a href="pretest.html" class="py-2">Pre Test</a>
@@ -173,18 +249,15 @@
           <a href="references.html" class="py-2">References</a>
         </div>
 
-        <div
-          class="vlabs-page-content col col-sm-9 col-lg-10 pb-4"
-        >
+        <!-- MAIN LAB CONTENT AREA -->
+        <div class="vlabs-page-content col col-sm-7 col-lg-10 pr-5 pb-4 flex-grow-1">
           <zero-md src="experiment/experiment-name.md">
             <template>
               <style>
                 div {
                   font-family: "Raleway", sans-serif;
                 }
-
-                h1,
-                h2 {
+                h1, h2 {
                   margin: 0.5em 0;
                   color: #2c99ce;
                   text-align: center;
@@ -192,26 +265,45 @@
               </style>
             </template>
           </zero-md>
+          
+          <!-- Layout header carrying page title and interactive tools -->
+          <div class="d-flex justify-content-between align-items-center pb-2 mb-3">
+            <h3 class="page-name mb-0" style="color: #2c99ce;">Simulation</h3>
+            
+            <div class="d-flex align-items-center gap-3">
+              <!-- Popout Procedure shortcut tool -->
+              <a
+                href="JavaScript:newPopup('procedure.html');"
+                style="color:green; font-size:16px; text-decoration: none;"
+                class="me-2"
+              >
+                <img
+                  src="assets/images/popout.png"
+                  style="width:20px; height:20px; vertical-align: middle;"
+                  alt="Pop out procedure icon"
+                />
+                Pop Up Procedure
+              </a>
 
-          <section
-            class="content-header text-right mb-3"
-          >
-            <a
-              href="JavaScript:newPopup('procedure.html');"
-              style="color:green;font-size:16px;"
-            >
-              <img
-                src="assets/images/popout.png"
-                style="width:20px;height:20px;"
-              />
-              Pop Up Procedure
-            </a>
-          </section>
+              <!-- Hamburger button visible ONLY on mobile/tablets -->
+              <button 
+                class="btn btn-outline-dark d-lg-none" 
+                type="button" 
+                data-bs-toggle="modal" 
+                data-bs-target="#popupMenu"
+                aria-label="Toggle navigation"
+              >
+                <i class="fa fa-bars"></i>
+              </button>
 
-          <h3 class="page-name">Simulation</h3>
-          <br />
+              <!-- Home Button placed inside the layout flow -->
+              <a href="../../../List of experiments.html" class="btn home-btn">
+                <i class="fa fa-home"></i>
+              </a>
+            </div>
+          </div>
 
-          <!-- <p style="font-size: 16px;"><a target="_blank" href="experiment/simulation/simulator.html"> Click here for simulation</a></p> -->
+        
           <iframe
             id="fraDisabled"
             src="experiment/simulation/index.html"
@@ -220,17 +312,11 @@
             onMyLoad="disableContextMenu();"
             style="height: 100vh; width: 1200px"
           >
-          </iframe>
-          <!-- Home Button -->
-        <div class="ml-auto d-flex align-items-center">
-          <a href="../../../List of experiments.html" class="btn home-btn">
-            <i class="fa fa-home"></i>Home
-          </a>
-        </div>
+
         </div>
       </div>
     </div>
-
+    
     <footer class="text-light pt-2 vlabs-footer d-flex flex-column">
       <div
         class="m-0 py-2 text-center"
@@ -239,16 +325,42 @@
         &copy; 2026. All rights reserved. Developed by NITK in collaboration with INA.
       </div>
     </footer>
-
-    <script src="assets/plugins/pace/pace.min.js"></script>
-    <script src="assets/plugins/jquery/jquery.min.js"></script>
-    <script src="assets/plugins/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
-    <script src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/plugins/nicescroll/nicescroll.min.js"></script>
-
-    <script src="assets/plugins/perfect-scrollbar/js/perfect-scrollbar.jquery.min.js"></script>
-    <script src="assets/js/app.js"></script>
-    <script src="assets/js/index.js"></script>
+    
     <script src="assets/js/contents.js"></script>
+
+    <!-- Active Menu Items Handler Script -->
+    <script>
+      window.addEventListener("DOMContentLoaded", (event) => {
+        const setActiveItem = (id) => {
+          const menu = document.getElementById(id);
+          if (!menu) return;
+          
+          let marked = false;
+          const links = menu.getElementsByTagName('a');
+          
+          for (let link of links) {
+            if (link.href === window.location.href) {
+              link.classList.add("current-item");
+              marked = true;
+            }
+          }
+          
+          // Default backup highlighting fallback if exact route matching fails
+          if (!marked && links.length > 0) {
+            // Highlights 'Simulation' option if matching explicitly by text/fallback search
+            for (let link of links) {
+              if(link.textContent.trim() === "Simulation") {
+                link.classList.add("current-item");
+                marked = true;
+                break;
+              }
+            }
+            if(!marked) links[4].classList.add("current-item"); // Backup fallback targeting fifth link
+          }
+        };
+        setActiveItem("popupMenuItems");
+        setActiveItem("menu");
+      });
+    </script>
   </body>
 </html>
