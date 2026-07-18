@@ -1,4 +1,4 @@
-      .home-btn {
+      /* .home-btn {
     position: fixed;
     top: 160px;
     right: 7.5px;
@@ -28,6 +28,44 @@
 
 .home-btn i {
     margin-right: 6px;
+} */
+
+.home-btn {
+  /* Remove the old position rules on mobile so it sits naturally next to the hamburger */
+  position: static; 
+  background-color: #4076e0;
+  color: #fff;
+  font-family: "Open Sans", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  padding: 8.5px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.3s ease;
+  margin-left: 4px;
+}
+
+/* .home-btn i {
+ margin-right: 4px;
+} */
+
+.home-btn:hover {
+  background-color: #2a5cb8;
+  color: #fff;
+}
+
+/* On Desktop viewports, optionally shift it to the side if required */
+@media (min-width: 992px) {
+  .home-btn {
+    position: fixed;
+    top: 160px;
+    right: 20px;
+    z-index: 9999;
+  }
 }
 
 /* LOGO STYLES */
