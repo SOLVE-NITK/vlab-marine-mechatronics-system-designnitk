@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marine Mechatronics System Design Lab</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* ================= TOKENS — all-blue palette ================= */
+:root{
+    --deep:#03253d;
+    --ocean:#0a4d78;
+    --sky-mid:#1583c2;
+    --sky:#3fb0e8;
+    --sky-light:#a9e2fb;
+    --sky-dim:rgba(143,211,244,0.35);
+    --foam:#f3fbff;
+    --accent:#5fd0ff;
+    --accent-bright:#b3ecff;
+    --accent-dark:#1f7fae;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,body{
+    height:100%;
+}
+
+body{
+    overflow:hidden;
+    background:var(--deep);
+    font-family:"Inter",Arial,sans-serif;
+    color:var(--foam);
+}
+
+@media (max-height:760px), (max-width:520px){
+    html,body{
+        overflow-y:auto;
+        overflow-x:hidden;
+    }
+}
+
+/* ================= PAGE / HERO ================= */
+
+.page{
+    position:relative;
+    height:100vh;
+    width:100%;
+}
+
+.hero{
+    min-height:100vh;
+    height:100vh;
+    width:100%;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+}
+
+/* ---- video background ---- */
+
+.bg-video{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    z-index:0;
+}
+
+.bg-fallback{
+    position:absolute;
+    inset:0;
+    z-index:0;
+    overflow:hidden;
+    background:
+        radial-gradient(ellipse at 78% 18%, rgba(179,236,255,.5) 0%, rgba(179,236,255,0) 38%),
+        linear-gradient(180deg, #0a5f92 0%, #0d78ab 38%, #0a4d78 68%, #03314f 100%);
+    transition:opacity .8s ease;
+}
+
+.bg-video.is-ready + .bg-fallback{
+    opacity:0;
+}
+
+.sun-glare{
+    position:absolute;
+    top:8%;
+    right:14%;
+    width:220px;
+    height:220px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(179,236,255,.75) 0%, rgba(179,236,255,0) 70%);
+    animation:glare-pulse 6s ease-in-out infinite;
+}
+
+@keyframes glare-pulse{
+    0%,100%{ transform:scale(1); opacity:.75; }
+    50%{ transform:scale(1.12); opacity:.95; }
+}
+
+.cloud{
+    position:absolute;
+    background:rgba(255,255,255,.5);
+    border-radius:50%;
+    filter:blur(10px);
+    opacity:.55;
+}
+
+.cloud-a{ width:180px; height:44px; top:14%; left:-20%; animation:drift-cloud 46s linear infinite; }
+.cloud-b{ width:120px; height:32px; top:24%; left:-30%; animation:drift-cloud 62s linear infinite; animation-delay:-14s; }
+.cloud-c{ width:150px; height:38px; top:9%; left:-25%; animation:drift-cloud 54s linear infinite; animation-delay:-30s; }
+
+@keyframes drift-cloud{
+    from{ transform:translateX(0); }
+    to{ transform:translateX(140vw); }
+}
+
+/* ================= FOREGROUND SHIP (LARGE) ================= */
+.ship-silhouette {
+    position: absolute;
+    bottom: 12%; 
+    left: -45%;
+    width: 740px; 
+    height: auto;
+    opacity: .95;
+    filter: drop-shadow(0 14px 32px rgba(226, 161, 161, 0.6));
+    animation: ship-sail-near 65s linear infinite, ship-float-near 8s ease-in-out infinite;
+    transform-origin: center bottom;
+    z-index: 3;
+}
+
+@keyframes ship-float-near {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-6px) rotate(0.8deg); }
+    50% { transform: translateY(-2px) rotate(-0.4deg); }
+    75% { transform: translateY(4px) rotate(-1.2deg); }
+}
+
+@keyframes ship-sail-near {
+    from { left: -45%; }
+    to { left: 105%; }
+}
+
+/* ================= BACKGROUND SHIP (FAR) ================= */
+.ship-far {
+    position: absolute;
+    bottom: 24%; 
+    left: -30%;
+    width: 320px; 
+    height: auto;
+    opacity: .45; 
+    filter: drop-shadow(0 6px 12px rgba(168, 112, 112, 0.4));
+    animation: ship-sail-far 95s linear infinite, ship-float-far 11s ease-in-out infinite;
+    animation-delay: -20s; 
+    transform-origin: center bottom;
+    z-index: 2;
+}
+
+@keyframes ship-float-far {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    30% { transform: translateY(-3px) rotate(0.5deg); }
+    70% { transform: translateY(2px) rotate(-0.6deg); }
+}
+
+@keyframes ship-sail-far {
+    from { left: -35%; }
+    to { left: 105%; }
+}
+
+/* Responsive Scaling */
+@media(max-width:820px){
+    .ship-silhouette { width: 460px; bottom: 12%; }
+    .ship-far { width: 200px; bottom: 22%; }
+}
+
+@media (prefers-reduced-motion: reduce){
+    .ship-silhouette, .ship-far { animation: none; }
+}
+
+/* faint technical blueprint grid, kept subtle over the video */
+.blueprint-grid{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    background-image:
+        linear-gradient(var(--sky-dim) 1px, transparent 1px),
+        linear-gradient(90deg, var(--sky-dim) 1px, transparent 1px);
+    background-size:56px 56px;
+    opacity:.08;
+}
+
+.hero-overlay{
+    position:absolute;
+    inset:0;
+    z-index:2;
+    background:linear-gradient(180deg, rgba(3,37,61,0.32) 0%, rgba(3,37,61,0.12) 38%, rgba(51, 90, 118, 0.68) 100%);
+}
+
+/* ================= CONTENT ================= */
+
+.content{
+    position:relative;
+    z-index:5;
+    width:88%;
+    max-width:900px;
+    text-align:center;
+}
+
+.crest-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:40px;
+    margin-bottom:28px;
+}
+
+.crest{
+    height:160px; /* Increased from 132px for larger view */
+    width:160px;  /* Increased from 132px for larger view */
+    object-fit:contain; /* Keeps original proportions, preventing cropping */
+    padding:12px;
+    border-radius:12px;
+    background:rgba(243,251,255,0.12);
+    border:1px solid rgba(179,236,255,.45);
+    box-shadow:0 0 28px rgba(0,0,0,.3);
+    flex-shrink:0;
+}
+
+.eyebrow{
+    display:block;
+    font-family:"Space Mono",monospace;
+    font-size:11px;
+    letter-spacing:5px;
+    text-transform:uppercase;
+    color:var(--accent-bright);
+    margin-bottom:14px;
+}
+
+h1{
+    font-family:"Oswald",sans-serif;
+    font-weight:700;
+    text-transform:uppercase;
+    font-size:clamp(28px,4.6vw,50px);
+    line-height:1.12;
+    letter-spacing:1px;
+    color:var(--foam);
+    text-shadow:0 6px 24px rgba(0,0,0,.5);
+}
+
+h1 .accent{
+    color:var(--accent-bright);
+}
+
+.subtitle{
+    margin-top:14px;
+    font-family:"Space Mono",monospace;
+    font-size:12px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:var(--sky-light);
+}
+
+/* ================= DESCRIPTION ================= */
+
+.description{
+    margin-top:32px;
+    font-size:15.5px;
+    line-height:1.8;
+    text-align:justify;
+    color:rgba(243,251,255,.92);
+
+    background:rgba(10,77,120,0.45);
+    border-left:3px solid var(--accent);
+    border-radius:6px;
+
+    padding:26px 30px;
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    box-shadow:0 18px 40px rgba(0,0,0,.28);
+}
+
+.description b{
+    color:var(--accent-bright);
+    font-weight:600;
+}
+
+/* ================= CTA ================= */
+
+.enter-btn{
+    margin-top:34px;
+    display:inline-flex;
+    align-items:center;
+    gap:12px;
+
+    padding:16px 40px;
+    font-family:"Space Mono",monospace;
+    font-size:13px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+
+    color:var(--accent-bright);
+    background:transparent;
+    border:1px solid var(--accent);
+    clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px);
+
+    cursor:pointer;
+    transition:.35s ease;
+}
+
+.enter-btn svg{
+    width:16px;
+    height:16px;
+    transition:transform .35s ease;
+}
+
+.enter-btn:hover{
+    background:var(--accent);
+    color:var(--deep);
+    box-shadow:0 0 30px rgba(95,208,255,.45);
+}
+
+.enter-btn:hover svg{
+    transform:translateX(5px);
+}
+
+.enter-btn:focus-visible{
+    outline:2px solid var(--accent-bright);
+    outline-offset:4px;
+}
+
+@media (max-height:760px), (max-width:520px){
+
+    .hero{
+        height:auto;
+        min-height:100vh;
+        padding:50px 0 36px;
+        justify-content:flex-start;
+    }
+
+    .crest{ height:110px; width:110px; padding:8px; }
+    .crest-row{ gap:20px; margin-bottom:18px; }
+
+    .description{
+        padding:20px 20px;
+        font-size:14px;
+        line-height:1.7;
+    }
+
+    .enter-btn{
+        margin-top:26px;
+        padding:14px 32px;
+    }
+}
+
+/* ================= SPLIT-SCREEN TRANSITION ================= */
+
+.left-panel,
+.right-panel{
+    position:fixed;
+    top:0;
+    width:50%;
+    height:100%;
+    background:linear-gradient(180deg, var(--sky-mid) 0%, var(--deep) 100%);
+    z-index:10;
+    transition:1.4s cubic-bezier(.77,0,.18,1);
+}
+
+.left-panel{ left:-50%; border-right:1px solid transparent; }
+.right-panel{ right:-50%; border-left:1px solid transparent; }
+
+.open .left-panel{ left:0; border-right:1px solid rgba(95,208,255,.5); }
+.open .right-panel{ right:0; border-left:1px solid rgba(95,208,255,.5); }
+
+.center-mark{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%) scale(.6);
+    z-index:15;
+    opacity:0;
+    transition:opacity .6s ease .55s, transform .6s ease .55s;
+    pointer-events:none;
+}
+
+.open .center-mark{
+    opacity:1;
+    transform:translate(-50%,-50%) scale(1);
+}
+
+.center-mark svg{
+    width:46px;
+    height:46px;
+    stroke:var(--accent-bright);
+}
+
+/* ================= REDUCED MOTION ================= */
+
+@media (prefers-reduced-motion: reduce){
+    .cloud-a, .cloud-b, .cloud-c, .ship-silhouette, .sun-glare{ animation:none; }
+    .left-panel, .right-panel, .center-mark, .enter-btn, .enter-btn svg{ transition:none; }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="page" id="page">
+
+    <div class="hero">
+
+        <video class="bg-video" id="bgVideo" autoplay muted loop playsinline disablePictureInPicture poster="assets/images/ship1.jpeg">
+            <source src="assets/videos/navy-ocean.webm" type="video/webm">
+            <source src="assets/videos/navy-ocean.mp4" type="video/mp4">
+        </video>
+
+        <div class="bg-fallback" id="bgFallback">
+            <div class="sun-glare"></div>
+            <div class="cloud cloud-a"></div>
+            <div class="cloud cloud-b"></div>
+            <div class="cloud cloud-c"></div>
+            
+            <!-- BACKGROUND DISTANT DESTROYER -->
+            <svg class="ship-far" viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <ellipse cx="400" cy="285" rx="370" ry="8" fill="#03253d"></ellipse>
+                <path fill="#041a29" d="M35 252 L755 252 L715 278 L75 278 Z"></path>
+                <path fill="#092940" d="M15 216 L785 216 L752 252 L30 252 Z"></path>
+                <path fill="#0c3754" d="M650 216 L785 216 L752 252 Z"></path>
+                <path d="M45 168 L210 168 L215 210 L40 210 Z" fill="#092940"></path>
+                <path d="M210 150 L430 150 L435 210 L210 210 Z" fill="#092940"></path>
+                <path d="M282 104 L298 104 L302 150 L278 150 Z" fill="#051f30"></path>
+                <path d="M430 124 L600 124 L625 210 L425 210 Z" fill="#092940"></path>
+                <path d="M480 72 L530 72 L550 124 L462 124 Z" fill="#051f30"></path>
+                <path d="M488 46 L522 46 L530 72 L480 72 Z" fill="#092940"></path>
+                <path d="M484 46 C484 16, 526 16, 526 46 Z" fill="#124a6d"></path>
+                <line x1="505" y1="4" x2="505" y2="20" stroke="#051f30" stroke-width="3.5"></line>
+                <polygon points="670,192 705,192 715,198 708,210 660,210" fill="#051f30"></polygon>
+            </svg>
+
+            <!-- FOREGROUND LARGE DESTROYER -->
+            <svg class="ship-silhouette" viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="400" cy="285" rx="370" ry="8" fill="#03253d" opacity=".5"></ellipse>
+                <path fill="#041a29" d="M35 252 L755 252 L715 278 L75 278 Z"></path>
+                <path fill="#092940" d="M15 216 L785 216 L752 252 L30 252 Z"></path>
+                <path fill="#0c3754" d="M650 216 L785 216 L752 252 Z"></path>
+                <rect x="22" y="210" width="742" height="6" fill="#103e5c"></rect>
+                <path d="M45 168 L210 168 L215 210 L40 210 Z" fill="#092940"></path>
+                <rect x="55" y="176" width="125" height="6" fill="#124a6d"></rect>
+                <path d="M210 150 L430 150 L435 210 L210 210 Z" fill="#092940"></path>
+                <rect x="230" y="158" width="165" height="6" fill="#124a6d"></rect>
+                <path d="M282 104 L298 104 L302 150 L278 150 Z" fill="#051f30"></path>
+                <path d="M265 88 C265 88, 290 76, 315 88 L306 104 L274 104 Z" fill="#103e5c"></path>
+                <ellipse cx="290" cy="86" rx="15" ry="4" fill="#041a29" opacity="0.75"></ellipse>
+                <path d="M430 124 L600 124 L625 210 L425 210 Z" fill="#092940"></path>
+                <path d="M465 132 L580 132 L592 162 L452 162 Z" fill="#124a6d"></path>
+                <rect x="545" y="140" width="8" height="6" fill="#b3ecff" opacity=".75"></rect>
+                <rect x="556" y="140" width="8" height="6" fill="#b3ecff" opacity=".75"></rect>
+                <rect x="567" y="140" width="8" height="6" fill="#b3ecff" opacity=".75"></rect>
+                <rect x="578" y="140" width="6" height="6" fill="#b3ecff" opacity=".75"></rect>
+                <path d="M480 72 L530 72 L550 124 L462 124 Z" fill="#051f30"></path>
+                <path d="M488 46 L522 46 L530 72 L480 72 Z" fill="#092940"></path>
+                <path d="M484 46 C484 16, 526 16, 526 46 Z" fill="#124a6d"></path>
+                <line x1="505" y1="4" x2="505" y2="20" stroke="#051f30" stroke-width="3.5"></line>
+                <polygon points="670,192 705,192 715,198 708,210 660,210" fill="#051f30"></polygon>
+                <rect x="708" y="195" width="36" height="3.5" fill="#051f30" transform="rotate(-5 708 195)"></rect>
+            </svg>
+        </div>
+
+        <div class="blueprint-grid"></div>
+        <div class="hero-overlay"></div>
+
+        <div class="content">
+
+            <div class="crest-row">
+                <img class="crest" src="ina.jpg" alt="Indian Naval Academy, Ezhimala">
+                <img class="crest" src="assets/images/NITK_Eblem.jpg" alt="NITK Surathkal">
+            </div>
+
+            <span class="eyebrow">Virtual Lab Initiative</span>
+            <h1>Marine Mechatronics<br><span class="accent">System Design Lab</span></h1>
+            <span class="subtitle">Indian Naval Academy &middot; National Institute of Technology Karnataka (NITK)</span>
+
+            <div class="description">
+                The <b>Indian Naval Academy (INA), Ezhimala</b> and the
+                <b>National Institute of Technology Karnataka (NITK), Surathkal</b>
+                have jointly established the
+                <b>Marine Mechatronics System Design Lab</b>,
+                a Virtual Lab initiative in the
+                <b>Defence Technology (Navy)</b> domain.
+                <br><br>
+                The lab combines INA&rsquo;s naval expertise and NITK&rsquo;s technological
+                excellence to provide an immersive learning environment in marine
+                mechatronics, system design and naval engineering through
+                interactive simulations and virtual experiments.
+                <br><br>
+                Guided by <b>Dr. Dadi Ravikanth</b>,
+                Indian Naval Academy, Ezhimala, and
+                <b>Prof. K. V. Gangadharan</b>,
+                National Institute of Technology Karnataka,
+                Surathkal, the lab promotes innovation and
+                advanced learning in marine systems and
+                defence technologies.
+            </div>
+
+            <button class="enter-btn" onclick="openLab()">
+                Enter Virtual Lab
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="left-panel"></div>
+    <div class="right-panel"></div>
+
+    <div class="center-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="5" r="2"></circle>
+            <line x1="12" y1="7" x2="12" y2="21"></line>
+            <path d="M5 12 C5 17 8 21 12 21 C16 21 19 17 19 12"></path>
+            <line x1="4" y1="12" x2="8" y2="12"></line>
+            <line x1="16" y1="12" x2="20" y2="12"></line>
+        </svg>
+    </div>
+
+</div>
+
+<script>
+(function(){
+    var video = document.getElementById("bgVideo");
+    if(!video) return;
+    video.addEventListener("loadeddata", function(){
+        video.classList.add("is-ready");
+    });
+    video.addEventListener("error", function(){
+        video.style.display = "none";
+    });
+    setTimeout(function(){
+        if(video.readyState < 2){
+            video.style.display = "none";
+        }
+    }, 4000);
+})();
+
+function openLab(){
+    document.getElementById("page").classList.add("open");
+    setTimeout(function(){
+        window.location.href = "introduction.html";
+    },1400);
+}
+</script>
+
+</body>
+</html>

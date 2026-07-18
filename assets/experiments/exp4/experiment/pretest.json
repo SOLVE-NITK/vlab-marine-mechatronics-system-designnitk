@@ -1,0 +1,227 @@
+{
+  "version": 2.0,
+  "questions": [
+    {
+      "question": "What is the resistance of a Pt100 RTD at 50°C?",
+      "answers": {
+        "a": "100 Ω. Incorrect. 100 Ω corresponds to 0°C.",
+        "b": "119.4 Ω. Correct.",
+        "c": "150 Ω. Incorrect. 150 Ω would correspond to approximately 130°C.",
+        "d": "50 Ω. Incorrect. Resistance increases with temperature for platinum RTDs."
+      },
+      "explanations": {
+        "a": "Incorrect. 100 Ω corresponds to 0°C.",
+        "b": "Correct.",
+        "c": "Incorrect. 150 Ω would correspond to approximately 130°C.",
+        "d": "Incorrect. Resistance increases with temperature for platinum RTDs."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "What current level in a 4, 20 mA loop indicates an open-circuit (broken wire) fault?",
+      "answers": {
+        "a": "4 mA. Incorrect. 4 mA is the live zero representing 0% of range, normal operation.",
+        "b": "Less than 3.5 mA. Correct. Below 3.5 mA is outside the normal operating range and indicates an open circuit (wire break or transmitter failure).",
+        "c": "20 mA. Incorrect. 20 mA represents 100% of range, full-scale, normal operation.",
+        "d": "0 mA. Incorrect. While 0 mA is a symptom of open-circuit, the diagnostic threshold is < 3.5 mA, not exactly 0 mA."
+      },
+      "explanations": {
+        "a": "Incorrect. 4 mA is the live zero representing 0% of range, normal operation.",
+        "b": "Correct. Below 3.5 mA is outside the normal operating range and indicates an open circuit (wire break or transmitter failure).",
+        "c": "Incorrect. 20 mA represents 100% of range, full-scale, normal operation.",
+        "d": "Incorrect. While 0 mA is a symptom of open-circuit, the diagnostic threshold is < 3.5 mA, not exactly 0 mA."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "The moving-average filter reduces noise by a factor of √N. What noise reduction factor does a 10-sample window achieve?",
+      "answers": {
+        "a": "2×. Incorrect. 2× would correspond to N = 4.",
+        "b": "~3.16×. Correct.",
+        "c": "10×. Incorrect. A 10× reduction would require N = 100 samples.",
+        "d": "0.1×. Incorrect. The filter reduces noise, not amplifies it."
+      },
+      "explanations": {
+        "a": "Incorrect. 2× would correspond to N = 4.",
+        "b": "Correct.",
+        "c": "Incorrect. A 10× reduction would require N = 100 samples.",
+        "d": "Incorrect. The filter reduces noise, not amplifies it."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "An accelerometer output of 3.5 V corresponds to what acceleration value, given sensitivity 100 mV/g and 2.5 V at 0 g?",
+      "answers": {
+        "a": "3.5 g. Incorrect. The calculation must subtract the 2.5 V offset first.",
+        "b": "+10 g. Correct.",
+        "c": "−10 g. Incorrect. −10 g would correspond to (2.5 − 1.0) = 1.5 V.",
+        "d": "0 g. Incorrect. 0 g corresponds to 2.5 V; 3.5 V is above zero."
+      },
+      "explanations": {
+        "a": "Incorrect. The calculation must subtract the 2.5 V offset first.",
+        "b": "Correct.",
+        "c": "Incorrect. −10 g would correspond to (2.5 − 1.0) = 1.5 V.",
+        "d": "Incorrect. 0 g corresponds to 2.5 V; 3.5 V is above zero."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "What is the quantisation error (LSB voltage) of the Arduino's 10-bit ADC with a 5 V reference?",
+      "answers": {
+        "a": "5 mV. Incorrect. Close but not exact.",
+        "b": "4.88 mV. Correct.",
+        "c": "1 mV. Incorrect. 1 mV would require a 12-bit ADC at 4 V reference.",
+        "d": "0.5 V. Incorrect. This is far too large; it would imply only 1-bit resolution."
+      },
+      "explanations": {
+        "a": "Incorrect. Close but not exact.",
+        "b": "Correct.",
+        "c": "Incorrect. 1 mV would require a 12-bit ADC at 4 V reference.",
+        "d": "Incorrect. This is far too large; it would imply only 1-bit resolution."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+  
+    {
+      "question": "A low-pass filter with fc = 1 Hz is implemented to reject 50 Hz mains interference. By what factor does it attenuate the 50 Hz component?",
+      "answers": {
+        "a": "50×. Incorrect. This does not account for the filter's roll-off slope.",
+        "b": "~50× (approximately −34 dB at 50 Hz for a first-order filter with fc=1 Hz). Correct. For a first-order RC filter: attenuation ≈ f/fc at frequencies well above fc.",
+        "c": "2×. Incorrect. This corresponds to attenuation at approximately 25 Hz for this filter, not the actual 50 Hz mains frequency.",
+        "d": "The filter has no effect at 50 Hz if designed for 1 Hz. Incorrect. A 1 Hz cutoff filter still attenuates higher frequencies; it just provides more aggressive filtering above cutoff."
+      },
+      "explanations": {
+        "a": "Incorrect. This does not account for the filter's roll-off slope.",
+        "b": "Correct. For a first-order RC filter: attenuation ≈ f/fc at frequencies well above fc.",
+        "c": "Incorrect. This corresponds to attenuation at approximately 25 Hz for this filter, not the actual 50 Hz mains frequency.",
+        "d": "Incorrect. A 1 Hz cutoff filter still attenuates higher frequencies; it just provides more aggressive filtering above cutoff."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "In the pressure sensor code, why is the result clamped with max(0.0, min(pressure, PRESSURE_MAX))?",
+      "answers": {
+        "a": "To prevent negative numbers from appearing in the PLC data log. Incorrect. While negative pressure prevention is a side effect, the primary reason is physical: the sensor has a defined operating range.",
+        "b": "To constrain the output within the physically valid range [0, 10 bar], preventing ADC noise near the endpoints from producing out-of-range engineering values that could cause incorrect control responses. Correct. Clamping is a standard defensive programming technique for sensor readings.",
+        "c": "To convert gauge pressure to absolute pressure. Incorrect. The conversion from gauge to absolute requires adding atmospheric pressure (1.013 bar), not clamping.",
+        "d": "To handle integer overflow in the ADC. Incorrect. analogRead() returns an int (0, 1023), which cannot overflow for these values."
+      },
+      "explanations": {
+        "a": "Incorrect. While negative pressure prevention is a side effect, the primary reason is physical: the sensor has a defined operating range.",
+        "b": "Correct. Clamping is a standard defensive programming technique for sensor readings.",
+        "c": "Incorrect. The conversion from gauge to absolute requires adding atmospheric pressure (1.013 bar), not clamping.",
+        "d": "Incorrect. analogRead() returns an int (0, 1023), which cannot overflow for these values."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "The calibration table for the RTD shows an error of −0.5°C at 0°C and −0.2°C at 100°C. What type of calibration correction is most appropriate?",
+      "answers": {
+        "a": "Zero offset correction only (fixed constant subtraction). Incorrect. If the error changes across the range (−0.5 at 0°C, −0.2 at 100°C), a constant offset does not fully correct it.",
+        "b": "Two-point linear correction: adjust both the zero offset and the gain (slope) to correct the varying error across the full temperature range. Correct. Different errors at two calibration points require correction of both offset and gain parameters.",
+        "c": "No correction is needed; ±0.5°C is within the stated specification. Incorrect. While true, the question asks for the most appropriate correction, a two-point correction still improves accuracy.",
+        "d": "Replace the sensor, as the errors indicate sensor damage. Incorrect. These errors are within normal calibration tolerance for an un-adjusted sensor."
+      },
+      "explanations": {
+        "a": "Incorrect. If the error changes across the range (−0.5 at 0°C, −0.2 at 100°C), a constant offset does not fully correct it.",
+        "b": "Correct. Different errors at two calibration points require correction of both offset and gain parameters.",
+        "c": "Incorrect. While true, the question asks for the most appropriate correction, a two-point correction still improves accuracy.",
+        "d": "Incorrect. These errors are within normal calibration tolerance for an un-adjusted sensor."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "Why does increasing the moving-average filter window from 10 to 20 samples cause a trade-off between noise reduction and temperature alarm response time?",
+      "answers": {
+        "a": "Larger windows require more RAM, slowing down the ADC. Incorrect. RAM availability is not the bottleneck in typical temperature-measurement loops.",
+        "b": "A 20-sample window introduces a 20 × sampling_interval delay before the filter output reflects a true temperature change, meaning a rapid temperature rise (e.g., coolant loss) takes twice as long to exceed the alarm threshold. Correct. Filter lag = window size × sampling interval; safety-critical applications must balance noise rejection against detection latency.",
+        "c": "Larger windows cause the filter to average in future samples. Incorrect. Moving averages only use current and past samples.",
+        "d": "The trade-off only applies to vibration sensors, not temperature. Incorrect. Filtering lag is universal across all sensor types."
+      },
+      "explanations": {
+        "a": "Incorrect. RAM availability is not the bottleneck in typical temperature-measurement loops.",
+        "b": "Correct. Filter lag = window size × sampling interval; safety-critical applications must balance noise rejection against detection latency.",
+        "c": "Incorrect. Moving averages only use current and past samples.",
+        "d": "Incorrect. Filtering lag is universal across all sensor types."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "At what RMS vibration level does the code flag a 'High Vibration Level' warning, and what practical maintenance action does this trigger in a real marine context?",
+      "answers": {
+        "a": "At 2 g RMS; maintenance action is bearing replacement. Incorrect. 2 g RMS is described as normal noise floor.",
+        "b": "At 5 g RMS; practical action is increasing inspection frequency, scheduling an endoscopic bearing inspection, and reducing machinery load until confirmed safe. Correct. The code threshold is rms > 5.0; the practical response is enhanced monitoring before scheduling bearing service.",
+        "c": "At 8 g RMS; no action is taken. Incorrect. 8 g corresponds to the impulsive alarm threshold, which triggers a ALARM response, not just a warning.",
+        "d": "At 0.5 g RMS; this is the normal vibration level. Incorrect. Normal noise floor is < 2 g; 0.5 g would be below normal."
+      },
+      "explanations": {
+        "a": "Incorrect. 2 g RMS is described as normal noise floor.",
+        "b": "Correct. The code threshold is rms > 5.0; the practical response is enhanced monitoring before scheduling bearing service.",
+        "c": "Incorrect. 8 g corresponds to the impulsive alarm threshold, which triggers a ALARM response, not just a warning.",
+        "d": "Incorrect. Normal noise floor is < 2 g; 0.5 g would be below normal."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "The MEMS accelerometer is sampled through an anti-aliasing filter with a cutoff frequency of 1 kHz before the ADC. If the microcontroller's ADC samples the accelerometer channel at 2 kHz, what is the primary justification for setting the anti-aliasing cutoff at 1 kHz rather than, say, 1.8 kHz?",
+      "answers": {
+        "a": "1 kHz is exactly the Nyquist frequency (half the 2 kHz sampling rate), so setting the cutoff there ensures frequency components above Nyquist are attenuated before sampling, preventing them from folding back (aliasing) into the observable spectrum. Correct. Nyquist criterion requires fs ≥ 2×fmax; setting the anti-alias filter at fs/2 = 1 kHz gives the theoretical boundary, and practical filters are usually set at or slightly below this point since real filters do not cut off infinitely sharply.",
+        "b": "1 kHz matches the bearing defect frequency exactly, so it is chosen for resonance amplification. Incorrect. Anti-aliasing filters are chosen from the sampling theorem, not to resonate with any particular mechanical fault frequency.",
+        "c": "1.8 kHz would exceed the accelerometer's ±10g range and damage the sensor. Incorrect. Filter cutoff frequency (Hz) and acceleration range (g) are unrelated physical quantities; one cannot 'exceed' the g-range through a frequency setting.",
+        "d": "Lower cutoff frequencies always improve amplitude accuracy regardless of sampling rate. Incorrect. Amplitude accuracy is governed by sensor sensitivity and ADC resolution; the cutoff frequency choice here is specifically about preventing aliasing relative to the 2 kHz sample rate."
+      },
+      "explanations": {
+        "a": "Correct. Nyquist criterion requires fs ≥ 2×fmax; setting the anti-alias filter at fs/2 = 1 kHz gives the theoretical boundary, and practical filters are usually set at or slightly below this point since real filters do not cut off infinitely sharply.",
+        "b": "Incorrect. Anti-aliasing filters are chosen from the sampling theorem, not to resonate with any particular mechanical fault frequency.",
+        "c": "Incorrect. Filter cutoff frequency (Hz) and acceleration range (g) are unrelated physical quantities; one cannot 'exceed' the g-range through a frequency setting.",
+        "d": "Incorrect. Amplitude accuracy is governed by sensor sensitivity and ADC resolution; the cutoff frequency choice here is specifically about preventing aliasing relative to the 2 kHz sample rate."
+      },
+      "correctAnswer": "a",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "In Task 2 of the RTD experiment, a 20-sample moving-average filter reduces raw ADC noise of approximately 1.5°C (RMS) down to about 0.1°C (RMS). Using the relation that noise reduction factor ≈ √N, calculate the approximate SNR improvement in decibels (dB) contributed by the filter.",
+      "answers": {
+        "a": "20 log10(√20) ≈ 6.5 dB. Incorrect. This uses N=20 in the noise-reduction formula, but the filter's actual averaging window and the observed 1.5°C → 0.1°C reduction correspond to a factor of 15, not √20 ≈ 4.47.",
+        "b": "20 log10(15) ≈ 23.5 dB. Correct. The observed noise reduction factor is 1.5/0.1 = 15; SNR improvement in dB = 20 log10(15) ≈ 23.5 dB, consistent with the simulation's measured noise levels (this factor is close to √N for N=20, since √20 ≈ 4.5 is a theoretical lower-noise estimate, while the simulated 15× reduction reflects the combined effect of averaging plus removal of the correlated 50 Hz mains component).",
+        "c": "10 log10(15) ≈ 11.8 dB. Incorrect. Power-ratio dB formula (10 log10) is used for power quantities; since noise here is expressed as an RMS voltage/temperature amplitude ratio, the amplitude-ratio formula 20 log10(ratio) applies.",
+        "d": "20 log10(0.1/1.5) ≈ -23.5 dB. Incorrect. This inverts the ratio (final/initial instead of initial/final), giving a negative sign that would incorrectly suggest the filter degraded the SNR rather than improved it."
+      },
+      "explanations": {
+        "a": "Incorrect. This uses N=20 in the noise-reduction formula, but the filter's actual averaging window and the observed 1.5°C → 0.1°C reduction correspond to a factor of 15, not √20 ≈ 4.47.",
+        "b": "Correct. The observed noise reduction factor is 1.5/0.1 = 15; SNR improvement in dB = 20 log10(15) ≈ 23.5 dB.",
+        "c": "Incorrect. Power-ratio dB formula (10 log10) is used for power quantities; since noise here is expressed as an RMS voltage/temperature amplitude ratio, the amplitude-ratio formula 20 log10(ratio) applies.",
+        "d": "Incorrect. This inverts the ratio (final/initial instead of initial/final), giving a negative sign that would incorrectly suggest the filter degraded the SNR rather than improved it."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "During bearing-fault simulation (Task 3, accelerometer), the vibration log shows instantaneous acceleration spikes exceeding 8.0g occurring at regular intervals of 0.5 s, consistent with early-stage spalling. What is the equivalent impulsive (defect) frequency in Hz, and what does this value represent physically?",
+      "answers": {
+        "a": "0.5 Hz, the number of spalls per second. Incorrect. The value 0.5 is the time interval in seconds, not the frequency; frequency is the reciprocal of the period, not the period itself.",
+        "b": "2 Hz, this is the reciprocal of the 0.5 s period (f = 1/T = 1/0.5 = 2 Hz), representing the rate at which the damaged rolling element or race contacts the fault location and generates an impact. Correct. f = 1/T = 1/0.5 s = 2 Hz; in bearing diagnostics this repetitive impact rate corresponds to a characteristic defect frequency (e.g., ball-pass frequency) that would appear as a spectral peak in vibration analysis, distinguishing mechanical bearing faults from generic broadband noise.",
+        "c": "8 Hz, taken directly from the 8.0g alarm threshold. Incorrect. The 8.0g figure is an acceleration magnitude (units of g), not a time interval, so it cannot be used to compute a frequency in Hz.",
+        "d": "5 Hz, an arbitrary industry default for all bearing faults. Incorrect. Defect frequency is derived from the actual observed impulse spacing in the specific simulation log (0.5 s), not a fixed industry constant; different bearings and shaft speeds produce different defect frequencies."
+      },
+      "explanations": {
+        "a": "Incorrect. The value 0.5 is the time interval in seconds, not the frequency; frequency is the reciprocal of the period, not the period itself.",
+        "b": "Correct. f = 1/T = 1/0.5 s = 2 Hz; in bearing diagnostics this repetitive impact rate corresponds to a characteristic defect frequency.",
+        "c": "Incorrect. The 8.0g figure is an acceleration magnitude (units of g), not a time interval, so it cannot be used to compute a frequency in Hz.",
+        "d": "Incorrect. Defect frequency is derived from the actual observed impulse spacing in the specific simulation log (0.5 s), not a fixed industry constant."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
+    }
+  ]
+}

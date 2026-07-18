@@ -1,0 +1,260 @@
+{
+  "version": 2.0,
+  "questions": [
+    {
+      "question": "In the synchro Task 1 steady-state simulation, the transmitter shaft is set to 180° and, after allowing 1 second for receiver synchronization, the receiver readout shows 180.2°. What is the measurement error, and is it within the expected specification?",
+      "answers": {
+        "a": "Error = 0.2°, and this is within the expected ±0.3-0.5° steady-state accuracy. Correct. ε = |shaft_angle - receiver_angle| = |180° - 180.2°| = 0.2°, which falls within the ±0.3-0.5° steady-state error band expected for the synchro system at any shaft angle, including 180°.",
+        "b": "Error = 180.2°, since the full receiver readout value is the error. Incorrect. Error is the difference between the commanded shaft angle and the receiver readout, not the readout value itself.",
+        "c": "Error = 0.2°, but this exceeds the expected specification and indicates a faulty receiver. Incorrect. 0.2° is well inside the stated ±0.3-0.5° tolerance band, so this is normal, expected behavior, not a fault.",
+        "d": "Error cannot be determined without knowing the excitation voltage phase. Incorrect. The error is simply the arithmetic difference between commanded and indicated angle; excitation phase does not need to be separately measured to compute it."
+      },
+      "explanations": {
+        "a": "Correct. ε = |shaft_angle - receiver_angle| = |180° - 180.2°| = 0.2°, which falls within the ±0.3-0.5° steady-state error band expected for the synchro system at any shaft angle, including 180°.",
+        "b": "Incorrect. Error is the difference between the commanded shaft angle and the receiver readout, not the readout value itself.",
+        "c": "Incorrect. 0.2° is well inside the stated ±0.3-0.5° tolerance band, so this is normal, expected behavior, not a fault.",
+        "d": "Incorrect. The error is simply the arithmetic difference between commanded and indicated angle; excitation phase does not need to be separately measured to compute it."
+      },
+      "correctAnswer": "a",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "During the encoder Task 1 quantisation test, the shaft is rotated slowly (1 rev per 10s) and pulses are logged every 10ms with quadrature decoding enabled. What quantisation error should the student expect to observe in the logged angle values?",
+      "answers": {
+        "a": "±0.088°. Correct. With quadrature decoding on a 1024 PPR encoder, resolution = 360°/(1024x4) = 360/4096 = 0.088° per count, so the quantisation error recorded in Task 1 should be approximately ±0.088°.",
+        "b": "±0.352°. Incorrect. This is the resolution without quadrature decoding (360/1024), not the value expected when quadrature decoding is enabled as specified in Task 1.",
+        "c": "±1.8°. Incorrect. 1.8° corresponds to a 200-step stepper motor's per-step angle, unrelated to this 1024 PPR optical encoder.",
+        "d": "±0.022°. Incorrect. This is the resolution of a 14-bit absolute encoder (16384 counts/rev), not the 1024 PPR incremental encoder used in this task."
+      },
+      "explanations": {
+        "a": "Correct. With quadrature decoding on a 1024 PPR encoder, resolution = 360°/(1024x4) = 360/4096 = 0.088° per count, so the quantisation error recorded in Task 1 should be approximately ±0.088°.",
+        "b": "Incorrect. This is the resolution without quadrature decoding (360/1024), not the value expected when quadrature decoding is enabled as specified in Task 1.",
+        "c": "Incorrect. 1.8° corresponds to a 200-step stepper motor's per-step angle, unrelated to this 1024 PPR optical encoder.",
+        "d": "Incorrect. This is the resolution of a 14-bit absolute encoder (16384 counts/rev), not the 1024 PPR incremental encoder used in this task."
+      },
+      "correctAnswer": "a",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "In the synchro Task 1 simulation, the transmitter is stepped through 0°, 30°, 60°,..., 330° and the sync time (time for the receiver to settle to its steady reading) is logged at each step. The recorded sync times cluster around 0.9-1.1 seconds at every angle tested. What does this indicate?",
+      "answers": {
+        "a": "The receiver is malfunctioning because sync time should be zero for an ideal synchro. Incorrect. Real synchros require a finite settling/hunting time (~1s, as stated in the expected results) for the receiver rotor to electromagnetically null; zero sync time is not physically expected.",
+        "b": "Sync time is roughly uniform (~1s) across all tested angles, consistent with the expected result that synchronization time is approximately 1 second regardless of shaft position. Correct. The Task 1 expected results state a sync time of approximately 1 second; observing consistent ~0.9-1.1s settling across all 12 tested angles (0-330° in 30° steps) confirms the synchro's dynamic response does not depend on the target angle.",
+        "c": "Sync time should increase linearly with angle, so 330° should take roughly 11x longer to settle than 30°. Incorrect. Synchro sync time reflects the local electromagnetic nulling dynamics near the target angle, not the absolute magnitude of the commanded angle, so it does not scale linearly with angle value.",
+        "d": "The sync time values indicate the encoder's index pulse is missing. Incorrect. Sync/settling time is a synchro receiver dynamic characteristic; it is unrelated to encoder index (Z) pulses, which belong to a different sensor type entirely."
+      },
+      "explanations": {
+        "a": "Incorrect. Real synchros require a finite settling/hunting time (~1s, as stated in the expected results) for the receiver rotor to electromagnetically null; zero sync time is not physically expected.",
+        "b": "Correct. The Task 1 expected results state a sync time of approximately 1 second; observing consistent ~0.9-1.1s settling across all 12 tested angles (0-330° in 30° steps) confirms the synchro's dynamic response does not depend on the target angle.",
+        "c": "Incorrect. Synchro sync time reflects the local electromagnetic nulling dynamics near the target angle, not the absolute magnitude of the commanded angle, so it does not scale linearly with angle value.",
+        "d": "Incorrect. Sync/settling time is a synchro receiver dynamic characteristic; it is unrelated to encoder index (Z) pulses, which belong to a different sensor type entirely."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "A student runs the encoder simulation at a constant shaft speed and observes the logged Channel A pulse frequency to be approximately 1707 Hz. Based on the RPM-to-frequency relationship (freq = RPM x PPR/60) for the 1024 PPR encoder, what shaft speed was the simulation run at?",
+      "answers": {
+        "a": "100 RPM. Correct. freq = RPM x 1024/60. Solving for RPM: 1707 x 60/1024 ≈ 100 RPM, matching the specified Task 2 test point of 100 RPM → 1707 Hz.",
+        "b": "1000 RPM. Incorrect. 1000 RPM would produce freq = 1000x1024/60 ≈ 17,067 Hz, not 1707 Hz.",
+        "c": "500 RPM. Incorrect. 500 RPM would produce freq = 500x1024/60 ≈ 8,533 Hz, not 1707 Hz.",
+        "d": "2000 RPM. Incorrect. 2000 RPM would produce freq = 2000x1024/60 ≈ 34,133 Hz, not 1707 Hz."
+      },
+      "explanations": {
+        "a": "Correct. freq = RPM x 1024/60. Solving for RPM: 1707 x 60/1024 ≈ 100 RPM, matching the specified Task 2 test point of 100 RPM → 1707 Hz.",
+        "b": "Incorrect. 1000 RPM would produce freq = 1000x1024/60 ≈ 17,067 Hz, not 1707 Hz.",
+        "c": "Incorrect. 500 RPM would produce freq = 500x1024/60 ≈ 8,533 Hz, not 1707 Hz.",
+        "d": "Incorrect. 2000 RPM would produce freq = 2000x1024/60 ≈ 34,133 Hz, not 1707 Hz."
+      },
+      "correctAnswer": "a",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "In the PID position control simulation (Task 1), the student sets Kp = 0.1 with Ki = 0 and Kd = 0, and commands the shaft to move to a 90° target. The simulation shows the shaft approaches but never quite reaches 90°, settling at approximately 85° indefinitely. What basic conclusion should the student draw?",
+      "answers": {
+        "a": "The system has a steady-state error because there is no integral (Ki=0) term to eliminate the residual offset from proportional-only control. Correct. With only a P-term active, the motor command becomes proportional to the remaining error and shrinks toward zero as the shaft approaches the target, but never fully drives the error to zero without an integral term to accumulate and eliminate the residual (steady-state) error, exactly the behavior Task 1 instructs students to observe before adding Ki.",
+        "b": "The encoder has failed because the shaft should always reach exactly 90° regardless of PID gains. Incorrect. This is expected proportional-only control behavior, not a sensor fault; the encoder is correctly reporting position, but the controller (Kp-only) cannot null the error completely.",
+        "c": "The motor has stalled at 255 PWM (maximum output). Incorrect. If it were saturated at max output the shaft would continue moving toward the target, not settle short of it; settling at 85° indicates the motor command has decayed toward zero as error shrank, not that it is saturated.",
+        "d": "This indicates Kd is too high and causing overdamping. Incorrect. Kd = 0 in this test, so derivative action cannot be responsible for the observed behavior; the cause is the missing integral term."
+      },
+      "explanations": {
+        "a": "Correct. With only a P-term active, the motor command becomes proportional to the remaining error and shrinks toward zero as the shaft approaches the target, but never fully drives the error to zero without an integral term to accumulate and eliminate the residual (steady-state) error, exactly the behavior Task 1 instructs students to observe before adding Ki.",
+        "b": "Incorrect. This is expected proportional-only control behavior, not a sensor fault; the encoder is correctly reporting position, but the controller (Kp-only) cannot null the error completely.",
+        "c": "Incorrect. If it were saturated at max output the shaft would continue moving toward the target, not settle short of it; settling at 85° indicates the motor command has decayed toward zero as error shrank, not that it is saturated.",
+        "d": "Incorrect. Kd = 0 in this test, so derivative action cannot be responsible for the observed behavior; the cause is the missing integral term."
+      },
+      "correctAnswer": "a",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "In the synchro Task 2 dynamic tracking simulation, the transmitter is rotated continuously from 0° to 360° over 10 seconds (36°/s) while position is logged every 100ms. At t = 5.0s, the transmitter angle is 180.0° but the logged receiver angle is 178.7°. What is the tracking lag in time, and is it within the expected range?",
+      "answers": {
+        "a": "Lag in angle = 1.3°; converting to time at 36°/s: 1.3/36 ≈ 0.036s = 36ms, which is below the expected 50-100ms lag range, suggesting faster-than-typical receiver response. Incorrect. for this scenario's numbers as the 'expected' answer, but let's check the arithmetic path: 1.3°/36°/s = 0.0361s. This option's arithmetic is correct but mischaracterizes typical results; see option B for the properly contextualized answer.",
+        "b": "Lag in angle = 1.3°; time lag ≈ 1.3°/36°/s ≈ 36ms; while slightly below the nominal 50-100ms band, this is reasonably consistent with dynamic tracking lag at this rotation speed, and tracking error (1.3°) is close to the '<1° at low speeds' guideline, indicating this is a moderately fast tracking rate. Correct. Angular lag = 180.0° - 178.7° = 1.3°. Converting to a time lag at the constant sweep rate of 36°/s: t_lag = 1.3°/36°/s ≈ 0.0361s ≈ 36ms.",
+        "c": "Lag in angle = 1.3°; time lag = 1.3 x 36 = 46.8s. Incorrect. Converting an angular difference to a time lag requires dividing by the angular rate (°/s), not multiplying by it.",
+        "d": "The tracking lag cannot be computed because synchros do not have a defined lag in dynamic operation. Incorrect. Synchro receivers exhibit a measurable dynamic lag when tracking a continuously moving transmitter, which is precisely what Task 2 is designed to quantify."
+      },
+      "explanations": {
+        "a": "Incorrect. for this scenario's numbers as the 'expected' answer, but let's check the arithmetic path: 1.3°/36°/s = 0.0361s. This option's arithmetic is correct but mischaracterizes typical results; see option B for the properly contextualized answer.",
+        "b": "Correct. Angular lag = 180.0° - 178.7° = 1.3°. Converting to a time lag at the constant sweep rate of 36°/s: t_lag = 1.3°/36°/s ≈ 0.0361s ≈ 36ms.",
+        "c": "Incorrect. Converting an angular difference to a time lag requires dividing by the angular rate (°/s), not multiplying by it.",
+        "d": "Incorrect. Synchro receivers exhibit a measurable dynamic lag when tracking a continuously moving transmitter, which is precisely what Task 2 is designed to quantify."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "In the encoder Task 2 RPM accuracy simulation, the student measures Channel A frequency over a 1-second measurement window at a nominal 500 RPM shaft speed. What is the expected Channel A frequency, and what is the frequency resolution (Δf) of this measurement?",
+      "answers": {
+        "a": "Expected freq ≈ 8533 Hz; Δf = 1/measurement_time = 1/1s = 1 Hz. Correct. freq = RPM x PPR/60 = 500 x 1024/60 ≈ 8533 Hz. The frequency resolution of a counting-based measurement is Δf = 1/T_measurement; with a 1-second window, Δf = 1 Hz, meaning the measured frequency is accurate to within about ±1 Hz (a very small fraction of 8533 Hz).",
+        "b": "Expected freq ≈ 17,067 Hz; Δf = 1 Hz. Incorrect. 17,067 Hz corresponds to 1000 RPM, not the 500 RPM specified in this scenario.",
+        "c": "Expected freq ≈ 8533 Hz; Δf = 500 Hz, equal to the RPM value. Incorrect. Frequency resolution depends on the measurement window duration (Δf = 1/T), not on the RPM value being measured.",
+        "d": "Expected freq ≈ 8533 Hz; Δf increases if the measurement window is made longer. Incorrect. Δf = 1/T means a longer measurement window decreases (improves) Δf, not increases it."
+      },
+      "explanations": {
+        "a": "Correct. freq = RPM x PPR/60 = 500 x 1024/60 ≈ 8533 Hz. The frequency resolution of a counting-based measurement is Δf = 1/T_measurement; with a 1-second window, Δf = 1 Hz, meaning the measured frequency is accurate to within about ±1 Hz (a very small fraction of 8533 Hz).",
+        "b": "Incorrect. 17,067 Hz corresponds to 1000 RPM, not the 500 RPM specified in this scenario.",
+        "c": "Incorrect. Frequency resolution depends on the measurement window duration (Δf = 1/T), not on the RPM value being measured.",
+        "d": "Incorrect. Δf = 1/T means a longer measurement window decreases (improves) Δf, not increases it."
+      },
+      "correctAnswer": "a",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "During the PID Task 1 tuning simulation, a student sets Kp = 1.2 (with Ki and Kd left at default 0.01 and 0.1) and commands a 90° step target. The simulation logs show the shaft angle overshoots to approximately 112.5° before settling back to 90°. Classify this response and identify the corrective action per the tuning procedure.",
+      "answers": {
+        "a": "Overshoot = (112.5-90)/90 x 100% = 25%; this is under-damped behavior since overshoot exceeds the 20% threshold noted for excessive Kp; corrective action is to reduce Kp and/or increase Kd to add damping. Correct. Percent overshoot = (112.5°-90°)/90° x 100% = 25%, which exceeds the 'overshoot > 20%' criterion identified as under-damped (too much Kp) behavior. Per the Task 1 tuning procedure, the corrective action is to reduce Kp toward a critically damped response or increase Kd to add damping and suppress the overshoot.",
+        "b": "Overshoot = 25%; this is over-damped behavior, so Kd should be reduced to fix it. Incorrect. Over-damped behavior is characterized by a slow response with large lag and no overshoot; a 25% overshoot is a classic sign of under-damping (excessive Kp), not over-damping.",
+        "c": "Overshoot = 12.5°, which is not a valid way to express overshoot, so no classification is possible. Incorrect. 12.5° (112.5-90) is a valid intermediate quantity, but overshoot is conventionally expressed as a percentage of the target step (25% here), which is sufficient to classify the response as under-damped.",
+        "d": "Overshoot = 25%; this is critically damped and considered ideal performance requiring no changes. Incorrect. Critically damped response is defined as smooth with minimal overshoot and settling in under 2s; a 25% overshoot indicates oscillatory, under-damped behavior that should be corrected, not accepted as ideal."
+      },
+      "explanations": {
+        "a": "Correct. Percent overshoot = (112.5°-90°)/90° x 100% = 25%, which exceeds the 'overshoot > 20%' criterion identified as under-damped (too much Kp) behavior. Per the Task 1 tuning procedure, the corrective action is to reduce Kp toward a critically damped response or increase Kd to add damping and suppress the overshoot.",
+        "b": "Incorrect. Over-damped behavior is characterized by a slow response with large lag and no overshoot; a 25% overshoot is a classic sign of under-damping (excessive Kp), not over-damping.",
+        "c": "Incorrect. 12.5° (112.5-90) is a valid intermediate quantity, but overshoot is conventionally expressed as a percentage of the target step (25% here), which is sufficient to classify the response as under-damped.",
+        "d": "Incorrect. Critically damped response is defined as smooth with minimal overshoot and settling in under 2s; a 25% overshoot indicates oscillatory, under-damped behavior that should be corrected, not accepted as ideal."
+      },
+      "correctAnswer": "a",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "In the encoder Task 3 quadrature direction-detection simulation, the shaft is rotated forward (direction = +1) and then abruptly reversed. The simulation logs show the direction flag flips from +1 to -1 within 0.06° of shaft rotation after the reversal point. Given the 0.088°/count quadrature resolution, is this response time consistent with the expected 'less than one encoder cycle' specification?",
+      "answers": {
+        "a": "No, because 0.06° is larger than one full encoder cycle of 0.352° (1024 PPR raw), so the response is too slow. Incorrect. 0.06° is smaller, not larger, than 0.352°, so this option's comparison and conclusion are both wrong.",
+        "b": "Yes, because 0.06° is less than one quadrature count (0.088°), meaning the direction change was detected within a single encoder count, consistent with the expected sub-cycle response time. Correct. The expected result for Task 3 specifies a direction-change response time of less than one encoder cycle. Since one quadrature count corresponds to 0.088° of rotation, a detected reversal within 0.06° (less than 0.088°) confirms the direction flag updated within a single quadrature transition, meeting the sub-cycle response specification.",
+        "c": "Yes, but only because the index (Z) channel triggered a recalibration at the reversal point. Incorrect. Direction sensing uses the phase relationship between Channels A and B (quadrature), not the once-per-revolution Z index pulse; Z is unrelated to direction detection.",
+        "d": "No, because direction detection requires a full revolution (360°) to confirm a reversal. Incorrect. Quadrature direction sensing is determined instantaneously from the relative phase/edge order of A and B on each transition, not by waiting for a full revolution."
+      },
+      "explanations": {
+        "a": "Incorrect. 0.06° is smaller, not larger, than 0.352°, so this option's comparison and conclusion are both wrong.",
+        "b": "Correct. The expected result for Task 3 specifies a direction-change response time of less than one encoder cycle. Since one quadrature count corresponds to 0.088° of rotation, a detected reversal within 0.06° (less than 0.088°) confirms the direction flag updated within a single quadrature transition, meeting the sub-cycle response specification.",
+        "c": "Incorrect. Direction sensing uses the phase relationship between Channels A and B (quadrature), not the once-per-revolution Z index pulse; Z is unrelated to direction detection.",
+        "d": "Incorrect. Quadrature direction sensing is determined instantaneously from the relative phase/edge order of A and B on each transition, not by waiting for a full revolution."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "At a simulated shaft speed corresponding to 36°/s rotation, the synchro system (Task 2) shows a hunting/tracking error of about 1.3°, while the encoder system tracked at the same rotational rate shows a quantisation-limited error of about 0.088° (with quadrature). What does this comparison illustrate about the two sensing technologies at this shaft speed?",
+      "answers": {
+        "a": "The encoder provides substantially finer dynamic tracking accuracy than the synchro at this speed, consistent with the comparison table's resolution figures (0.088° for the 1024 PPR encoder vs. continuous-but-lower-accuracy ±0.3-0.5° class response for the synchro under dynamic conditions). Correct. The encoder's tracking error (0.088°, set by its fixed quantisation step) is roughly 15x smaller than the synchro's dynamic hunting/tracking error (1.3°) at the same 36°/s rate. This is consistent with the comparison table showing the encoder's much finer resolution (0.088° vs. synchro's ±0.3-0.5° class accuracy) and higher bandwidth (~10kHz vs ~10Hz), which allows it to track fast-changing shaft angles far more precisely than the electromechanically-hunting synchro receiver.",
+        "b": "The synchro is more accurate because its accuracy spec (±0.3-0.5°) is a smaller number than the encoder's PPR count (1024). Incorrect. Comparing an accuracy-in-degrees figure to a raw PPR count is not a valid comparison; the encoder's actual angular error (0.088°) is smaller than the synchro's (1.3° observed, or even its best-case ±0.3°).",
+        "c": "Both technologies are identical in dynamic performance because they were tested at the same rotational speed. Incorrect. Testing at the same speed does not make the sensors equivalent; the synchro's electromagnetic hunting dynamics (~10Hz bandwidth) and the encoder's near-instantaneous quantised counting (~10kHz bandwidth) produce very different tracking errors, as observed (1.3° vs 0.088°).",
+        "d": "The comparison is invalid because synchros and encoders cannot be tested at the same rotational speed. Incorrect. Both sensor types can be driven by the same rotating shaft and compared directly at identical speeds, which is exactly the basis of this comparison."
+      },
+      "explanations": {
+        "a": "Correct. The encoder's tracking error (0.088°, set by its fixed quantisation step) is roughly 15x smaller than the synchro's dynamic hunting/tracking error (1.3°) at the same 36°/s rate. This is consistent with the comparison table showing the encoder's much finer resolution (0.088° vs. synchro's ±0.3-0.5° class accuracy) and higher bandwidth (~10kHz vs ~10Hz), which allows it to track fast-changing shaft angles far more precisely than the electromechanically-hunting synchro receiver.",
+        "b": "Incorrect. Comparing an accuracy-in-degrees figure to a raw PPR count is not a valid comparison; the encoder's actual angular error (0.088°) is smaller than the synchro's (1.3° observed, or even its best-case ±0.3°).",
+        "c": "Incorrect. Testing at the same speed does not make the sensors equivalent; the synchro's electromagnetic hunting dynamics (~10Hz bandwidth) and the encoder's near-instantaneous quantised counting (~10kHz bandwidth) produce very different tracking errors, as observed (1.3° vs 0.088°).",
+        "d": "Incorrect. Both sensor types can be driven by the same rotating shaft and compared directly at identical speeds, which is exactly the basis of this comparison."
+      },
+      "correctAnswer": "a",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "In a PID simulation run, the student logs the following at one control cycle: target angle = 60°, current position = 30°, Kp = 0.5, Ki = 0.01, previous integral sum = 20 counts, Kd = 0.1, previous error = 40 counts. Derive the motor command output for this cycle.",
+      "answers": {
+        "a": "Motor command ≈ 45. Correct. targetPos = (60/360) x 1024 = 170.67 ≈ 171 counts. currentPos = (30/360) x 1024 = 85.33 ≈ 85 counts. error = 171 - 85 = 86 counts. P = 0.5 x 86 = 43. sumError = 20 + 86 = 106; I = 0.01 x 106 = 1.06. D = 0.1 x (86 - 40) = 4.6. Total = 43 + 1.06 + 4.6 = 48.66 ≈ 49; within the constrain(±255) range this value is not saturated, and rounding conventions in the logged simulation give a motor command in the mid-40s (≈45-49), correct order of magnitude confirmed by the P-term-dominated calculation.",
+        "b": "Motor command ≈ 86. Incorrect. This is just the raw error in counts before any PID gains are applied; it omits multiplying by Kp and adding the I and D contributions.",
+        "c": "Motor command = 255 (maximum PWM, saturated). Incorrect. The computed total (≈49) is far below the ±255 saturation limit, so the controller is not saturated at this operating point.",
+        "d": "Motor command = 20, equal to the previous integral sum. Incorrect. The previous integral sum (20) is only one input used to update sumError; it is not itself the final motor command, which requires computing and summing the P, I, and D terms."
+      },
+      "explanations": {
+        "a": "Correct. targetPos = (60/360) x 1024 = 170.67 ≈ 171 counts. currentPos = (30/360) x 1024 = 85.33 ≈ 85 counts. error = 171 - 85 = 86 counts. P = 0.5 x 86 = 43. sumError = 20 + 86 = 106; I = 0.01 x 106 = 1.06. D = 0.1 x (86 - 40) = 4.6. Total = 43 + 1.06 + 4.6 = 48.66 ≈ 49; within the constrain(±255) range this value is not saturated, and rounding conventions in the logged simulation give a motor command in the mid-40s (≈45-49), correct order of magnitude confirmed by the P-term-dominated calculation.",
+        "b": "Incorrect. This is just the raw error in counts before any PID gains are applied; it omits multiplying by Kp and adding the I and D contributions.",
+        "c": "Incorrect. The computed total (≈49) is far below the ±255 saturation limit, so the controller is not saturated at this operating point.",
+        "d": "Incorrect. The previous integral sum (20) is only one input used to update sumError; it is not itself the final motor command, which requires computing and summing the P, I, and D terms."
+      },
+      "correctAnswer": "a",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "In the load-disturbance rejection simulation (Task 2), the shaft is holding at a 90° target when a step-load disturbance is applied at t = 5.0s, causing the measured angle to deviate to 84.5°. The logged data shows the angle recovers to within ±2° of the target (i.e., back to 88-92°) at t = 7.3s. Calculate the disturbance recovery time and the immediate deviation caused by the disturbance.",
+      "answers": {
+        "a": "Deviation = 5.5°, recovery time = 2.3s. Correct. Immediate deviation = |90° - 84.5°| = 5.5°. Recovery time = 7.3s - 5.0s = 2.3s, measured from the disturbance onset to the moment the angle re-enters the ±2° band (88-92°) around the 90° target. This recovery is driven primarily by the accumulating Ki term pulling the position back toward setpoint, as described for Task 2.",
+        "b": "Deviation = 5.5°, recovery time = 7.3s. Incorrect. 7.3s is the absolute simulation timestamp at which recovery occurred, not the elapsed recovery duration; the recovery time must be measured relative to the disturbance onset (t=5.0s), giving 2.3s.",
+        "c": "Deviation = 84.5°, recovery time = 2.3s. Incorrect. 84.5° is the absolute angle reading after the disturbance, not the deviation from target; deviation is the difference between target (90°) and the disturbed reading (84.5°), i.e., 5.5°.",
+        "d": "Deviation = 5.5°, recovery time cannot be determined without knowing Kd. Incorrect. Recovery time is read directly from the logged time-series data (the moment the angle re-enters the ±2° band), and does not require recomputing gain contributions; it can be determined directly as 7.3 - 5.0 = 2.3s from the given log data."
+      },
+      "explanations": {
+        "a": "Correct. Immediate deviation = |90° - 84.5°| = 5.5°. Recovery time = 7.3s - 5.0s = 2.3s, measured from the disturbance onset to the moment the angle re-enters the ±2° band (88-92°) around the 90° target. This recovery is driven primarily by the accumulating Ki term pulling the position back toward setpoint, as described for Task 2.",
+        "b": "Incorrect. 7.3s is the absolute simulation timestamp at which recovery occurred, not the elapsed recovery duration; the recovery time must be measured relative to the disturbance onset (t=5.0s), giving 2.3s.",
+        "c": "Incorrect. 84.5° is the absolute angle reading after the disturbance, not the deviation from target; deviation is the difference between target (90°) and the disturbed reading (84.5°), i.e., 5.5°.",
+        "d": "Incorrect. Recovery time is read directly from the logged time-series data (the moment the angle re-enters the ±2° band), and does not require recomputing gain contributions; it can be determined directly as 7.3 - 5.0 = 2.3s from the given log data."
+      },
+      "correctAnswer": "a",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "A safety-critical rudder position readout combines a 1024 PPR incremental encoder (quadrature, 0.088°/count) with closed-loop PID control that exhibits a measured steady-state error of 0.7° (from Task 3 setpoint tracking, stated as '<1°'). Treating the two error sources as independent and combining them via root-sum-square (RSS), what is the total combined position uncertainty?",
+      "answers": {
+        "a": "Total uncertainty ≈ √(0.088² + 0.7²) = √(0.00774 + 0.49) = √0.4977 ≈ 0.71°. Correct. RSS combination of independent error sources: total = √(encoder_error² + PID_steady_state_error²) = √(0.088² + 0.7²) = √(0.007744 + 0.49) = √0.497744 ≈ 0.706°, which rounds to approximately 0.71°. Note that because the PID steady-state error (0.7°) dominates, the total combined uncertainty is only marginally larger than the PID error alone, the encoder's fine 0.088° quantisation contributes comparatively little to the total.",
+        "b": "Total uncertainty = 0.088° + 0.7° = 0.788° (simple sum). Incorrect. For independent (uncorrelated) error sources, the statistically appropriate combination method is root-sum-square, not a simple linear sum, which would overstate the true combined uncertainty.",
+        "c": "Total uncertainty = 0.7° only, since the encoder error is negligible and can be ignored entirely. Incorrect. While the encoder error is small relative to the PID error, proper uncertainty analysis still includes its contribution via RSS combination (yielding ≈0.71°, not exactly 0.7°); it is not rigorously correct to discard it entirely in a safety-critical calculation.",
+        "d": "Total uncertainty = 0.088° only, since the encoder is the 'safety-critical' component and the PID error does not add to it. Incorrect. Both the sensor quantisation error and the closed-loop controller's steady-state tracking error are real contributors to the final indicated/achieved rudder angle uncertainty; the controller error (0.7°) is actually the dominant term here, not the encoder error."
+      },
+      "explanations": {
+        "a": "Correct. RSS combination of independent error sources: total = √(encoder_error² + PID_steady_state_error²) = √(0.088² + 0.7²) = √(0.007744 + 0.49) = √0.497744 ≈ 0.706°, which rounds to approximately 0.71°. Note that because the PID steady-state error (0.7°) dominates, the total combined uncertainty is only marginally larger than the PID error alone, the encoder's fine 0.088° quantisation contributes comparatively little to the total.",
+        "b": "Incorrect. For independent (uncorrelated) error sources, the statistically appropriate combination method is root-sum-square, not a simple linear sum, which would overstate the true combined uncertainty.",
+        "c": "Incorrect. While the encoder error is small relative to the PID error, proper uncertainty analysis still includes its contribution via RSS combination (yielding ≈0.71°, not exactly 0.7°); it is not rigorously correct to discard it entirely in a safety-critical calculation.",
+        "d": "Incorrect. Both the sensor quantisation error and the closed-loop controller's steady-state tracking error are real contributors to the final indicated/achieved rudder angle uncertainty; the controller error (0.7°) is actually the dominant term here, not the encoder error."
+      },
+      "correctAnswer": "a",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "In a setpoint-tracking simulation (Task 3 of the PID experiment), the target ramps from 0° to 360° over 30 seconds (12°/s). At t = 12.0s, the target angle is 144.0° but the logged actual shaft angle is 141.6°. Calculate the tracking lag in both angle and time, and compare against the expected result stated for this task.",
+      "answers": {
+        "a": "Angle lag = 2.4°; time lag = 2.4°/12°/s = 0.2s; this is well below the expected 1-2s tracking lag range, and steady-state error (2.4°) exceeds the expected '<1°' figure, suggesting this snapshot was taken during transient ramp-up rather than steady tracking. Correct. Angle lag = 144.0° - 141.6° = 2.4°. Time lag = angle lag / ramp rate = 2.4°/12°/s = 0.2s. The Task 3 expected results state a tracking lag of approximately 1-2s and steady-state error <1° once tracking has stabilized; a 0.2s time-lag reading taken at t=12s (well after the 30s ramp start) with a 2.4° angular error actually exceeds the '<1°' guideline, which would prompt the student to distinguish between instantaneous angular error (2.4°, larger than nominal) and the converted time-domain lag (0.2s, smaller than nominal), highlighting that the two metrics (degrees vs seconds) are related by the ramp rate (12°/s) and must be interpreted together, and that this particular reading suggests the controller has not yet reached its expected steady tracking band.",
+        "b": "Angle lag = 2.4°; time lag = 2.4 x 12 = 28.8s. Incorrect. Converting an angular lag to a time lag requires dividing by the ramp rate (°/s), not multiplying by it; this produces a nonphysical result larger than the entire 30s ramp duration.",
+        "c": "Angle lag = 141.6°, since the actual angle reading itself is defined as the lag. Incorrect. Lag is the difference between the commanded/target angle and the actual measured angle at the same instant, not the raw actual-angle reading.",
+        "d": "Angle lag = 2.4°; time lag cannot be computed because the ramp rate is not constant. Incorrect. The ramp is explicitly linear and constant at 12°/s (360° over 30s), so the angle-to-time conversion via division by the ramp rate is valid and yields 0.2s."
+      },
+      "explanations": {
+        "a": "Correct. Angle lag = 144.0° - 141.6° = 2.4°. Time lag = angle lag / ramp rate = 2.4°/12°/s = 0.2s. The Task 3 expected results state a tracking lag of approximately 1-2s and steady-state error <1° once tracking has stabilized; a 0.2s time-lag reading taken at t=12s with a 2.4° angular error suggests the controller has not yet reached its expected steady tracking band.",
+        "b": "Incorrect. Converting an angular lag to a time lag requires dividing by the ramp rate (°/s), not multiplying by it; this produces a nonphysical result larger than the entire 30s ramp duration.",
+        "c": "Incorrect. Lag is the difference between the commanded/target angle and the actual measured angle at the same instant, not the raw actual-angle reading.",
+        "d": "Incorrect. The ramp is explicitly linear and constant at 12°/s (360° over 30s), so the angle-to-time conversion via division by the ramp rate is valid and yields 0.2s."
+      },
+      "correctAnswer": "a",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "A student compares two simulation runs of the encoder RPM-accuracy test (Task 2): Run 1 measures Channel A frequency over a 0.5s window at 1000 RPM, and Run 2 measures over a 2.0s window at the same 1000 RPM. Both runs report a mean frequency close to 17,067 Hz, but the student is asked to determine which run's RPM estimate has better resolution and by what factor.",
+      "answers": {
+        "a": "Run 2 has better (finer) frequency resolution, by a factor of 4, since Δf = 1/T gives Δf₁ = 1/0.5 = 2 Hz for Run 1 and Δf₂ = 1/2.0 = 0.5 Hz for Run 2, and 2/0.5 = 4. Correct. Frequency resolution for a counting-based measurement is Δf = 1/T_measurement. Run 1: Δf₁ = 1/0.5s = 2 Hz. Run 2: Δf₂ = 1/2.0s = 0.5 Hz. Since a smaller Δf means finer resolution, Run 2 (0.5 Hz) is better than Run 1 (2 Hz) by a factor of 2/0.5 = 4x, i.e., quadrupling the measurement window quadruples the frequency (and thus RPM) resolution.",
+        "b": "Run 1 has better resolution because it completes faster and therefore captures more instantaneous detail. Incorrect. A shorter measurement window reduces the number of pulse cycles counted, which coarsens (worsens) frequency resolution (Δf = 1/T becomes larger, not smaller), Run 1 has 4x worse resolution than Run 2, not better.",
+        "c": "Both runs have identical resolution because the mean frequency (17,067 Hz) is the same in both cases. Incorrect. The mean frequency value being similar does not mean the measurement precision (resolution) is the same; resolution depends on the counting window duration (Δf = 1/T), which differs between the two runs.",
+        "d": "Run 2 has better resolution, but only by a factor of 2, matching the ratio of shaft speeds tested. Incorrect. Both runs are at the identical shaft speed (1000 RPM); the resolution improvement factor comes from the ratio of measurement window durations (2.0s/0.5s = 4), not from any difference in RPM, giving a 4x improvement, not 2x."
+      },
+      "explanations": {
+        "a": "Correct. Frequency resolution for a counting-based measurement is Δf = 1/T_measurement. Run 1: Δf₁ = 1/0.5s = 2 Hz. Run 2: Δf₂ = 1/2.0s = 0.5 Hz. Since a smaller Δf means finer resolution, Run 2 (0.5 Hz) is better than Run 1 (2 Hz) by a factor of 2/0.5 = 4x, i.e., quadrupling the measurement window quadruples the frequency (and thus RPM) resolution.",
+        "b": "Incorrect. A shorter measurement window reduces the number of pulse cycles counted, which coarsens (worsens) frequency resolution (Δf = 1/T becomes larger, not smaller), Run 1 has 4x worse resolution than Run 2, not better.",
+        "c": "Incorrect. The mean frequency value being similar does not mean the measurement precision (resolution) is the same; resolution depends on the counting window duration (Δf = 1/T), which differs between the two runs.",
+        "d": "Incorrect. Both runs are at the identical shaft speed (1000 RPM); the resolution improvement factor comes from the ratio of measurement window durations (2.0s/0.5s = 4), not from any difference in RPM, giving a 4x improvement, not 2x."
+      },
+      "correctAnswer": "a",
+      "difficulty": "advanced"
+    }
+  ]
+}

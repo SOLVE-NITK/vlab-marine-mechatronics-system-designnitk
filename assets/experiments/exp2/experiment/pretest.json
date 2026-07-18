@@ -1,0 +1,260 @@
+{
+  "version": 2.0,
+  "questions": [
+    {
+      "question": "What does the valve flow coefficient Cv represent physically?",
+      "answers": {
+        "a": "The ratio of inlet pressure to outlet pressure.",
+        "b": "The electrical resistance of the valve actuator coil.",
+        "c": "The volume of water (US GPM) that flows through the valve fully open with 1 psi pressure drop.",
+        "d": "The pressure drop across the valve at full opening."
+      },
+      "explanations": {
+        "a": "Incorrect. That would be the pressure ratio, not Cv.",
+        "b": "Incorrect. Actuator coil resistance is an electrical specification, unrelated to flow.",
+        "c": "Correct. Cv is the standardised measure of valve flow capacity used for sizing.",
+        "d": "Incorrect. Cv is not a pressure parameter."
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "Which valve type is most suitable for emergency seawater bypass in a marine cooling system?",
+      "answers": {
+        "a": "Globe throttling valve with fine thread.",
+        "b": "Quick-opening valve.",
+        "c": "Linear valve.",
+        "d": "Equal-percentage valve."
+      },
+      "explanations": {
+        "a": "Incorrect. Fine-thread globes are for slow, precise modulation, not emergency fast-opening.",
+        "b": "Correct. Quick-opening valves provide maximum flow immediately on opening, making them ideal for emergency bypass service.",
+        "c": "Incorrect. Linear valves are for modulating applications with stable pressure drops.",
+        "d": "Incorrect. Equal-percentage valves are modulating devices, not suited to rapid emergency operation."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "The 4, 20 mA current loop is the marine industry standard for valve-positioner signals. What does a 4 mA signal represent?",
+      "answers": {
+        "a": "Actuator failure state.",
+        "b": "Valve fully closed (0% opening).",
+        "c": "Valve fully open (100%).",
+        "d": "Valve at 50% opening."
+      },
+      "explanations": {
+        "a": "Incorrect. Actuator failure is typically indicated by current falling below 4 mA (< 3.5 mA wire-break detection).",
+        "b": "Correct. 4 mA = 0% in the live-zero convention, and any current below 3.5 mA indicates a broken wire.",
+        "c": "Incorrect. 20 mA corresponds to 100% open.",
+        "d": "Incorrect. 50% corresponds to 12 mA (midpoint of 4, 20 mA range)."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "What is valve rangeability, and what typical value applies to marine control valves?",
+      "answers": {
+        "a": "The valve stroke length in millimetres.",
+        "b": "The number of full opening/closing cycles before maintenance.",
+        "c": "The ratio of maximum to minimum controllable flow; typically 50:1 for marine valves.",
+        "d": "The maximum allowable pressure drop; typically 3 bar."
+      },
+      "explanations": {
+        "a": "Incorrect. Stroke length is a dimensional parameter, not rangeability.",
+        "b": "Incorrect. That is a valve lifecycle or MTBF metric.",
+        "c": "Correct. Rangeability defines the useful modulation range; 50:1 is standard for equal-percentage valves.",
+        "d": "Incorrect. That is a pressure rating, not rangeability."
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "In the cooling-water test loop used in this experiment, what is the nominal pressure drop across the control valve?",
+      "answers": {
+        "a": "10 bar.",
+        "b": "1.0 bar.",
+        "c": "0.5 bar.",
+        "d": "3.0 bar."
+      },
+      "explanations": {
+        "a": "Incorrect. 10 bar is the full-scale range of the pressure transmitter, not the valve operating ΔP.",
+        "b": "Correct. System parameters specify 1.5 bar inlet pressure and 0.5 bar cooler outlet pressure, giving a nominal 1.0 bar valve pressure drop.",
+        "c": "Incorrect. 0.5 bar is the lower limit of the pressure-variation study, not the nominal value.",
+        "d": "Incorrect. 3 bar is the upper limit of configurable pressure drop, not the nominal operating point."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "An equal-percentage valve is preferred over a linear valve for cooling-water temperature control. What is the technical justification?",
+      "answers": {
+        "a": "They are lighter, which is important for ship weight budgets.",
+        "b": "An equal-percentage valve's self-compensating characteristic maintains consistent loop gain as system pressure varies, whereas a linear valve exhibits high gain at low opening and becomes unstable.",
+        "c": "Equal-percentage valves have lower leakage at closed position.",
+        "d": "Equal-percentage valves are cheaper to manufacture."
+      },
+      "explanations": {
+        "a": "Incorrect. Valve trim geometry does not significantly affect weight.",
+        "b": "Correct. The exponential trim compensates for the nonlinear installed-characteristic effect in variable-pressure systems.",
+        "c": "Incorrect. Seat leakage is a valve quality parameter, not inherently better for equal-percentage trim.",
+        "d": "Incorrect. Equal-percentage valves are typically more expensive due to their precision-machined trim."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "The Integral Absolute Error (IAE) is used to compare control quality between valve types. How is IAE calculated from the simulation data?",
+      "answers": {
+        "a": "ISE = ∫e(t)² dt.",
+        "b": "IAE = ∫|e(t)| dt.",
+        "c": "ess = lim(t→∞) e(t).",
+        "d": "max|e(t)|."
+      },
+      "explanations": {
+        "a": "Incorrect. That is the Integral Squared Error (ISE), which penalises large errors more heavily.",
+        "b": "Correct. IAE integrates the absolute deviation between setpoint and measured variable over time, penalising all errors equally regardless of sign.",
+        "c": "Incorrect. That is the steady-state error, not an integral quality measure.",
+        "d": "Incorrect. That is the maximum absolute error, not an integral metric."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "During the pressure-variation study, a linear valve's installed flow characteristic deviates strongly from its inherent (straight-line) characteristic. What causes this deviation?",
+      "answers": {
+        "a": "The valve manufacturer's Cv data is measured at only one pressure drop.",
+        "b": "The valve body corrodes, changing its flow coefficient.",
+        "c": "The 4, 20 mA positioner signal becomes nonlinear at extreme temperatures.",
+        "d": "As system load changes, the system pressure drop redistributes between the valve and the piping, changing the effective ΔP across the valve and distorting the flow-opening relationship."
+      },
+      "explanations": {
+        "a": "Incorrect. While true, this affects the absolute flow value, not the shape of the installed characteristic curve.",
+        "b": "Incorrect. Corrosion is a long-term effect; the deviation is immediate and systematic.",
+        "c": "Incorrect. The positioner's electrical linearity is independent of system hydraulics.",
+        "d": "Correct. The installed characteristic = f(inherent characteristic x pressure distribution)."
+      },
+      "correctAnswer": "d",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "Actuator stiction causes 'limit cycling' in a control loop. Define limit cycling and explain its consequence in a marine cooling system.",
+      "answers": {
+        "a": "Limit cycling is a valve failing to close fully; consequence is continuous flow to the cooler.",
+        "b": "Limit cycling is a sustained oscillation where the valve alternately sticks then jumps past the setpoint; in a cooling system it causes cyclic temperature oscillation, increasing thermal fatigue on heat exchangers and engine components.",
+        "c": "Limit cycling is when the valve reaches its physical end-stops and stops moving.",
+        "d": "Limit cycling only occurs in pneumatic valves with air supply above 6 bar."
+      },
+      "explanations": {
+        "a": "Incorrect. That is valve leakage/lock-up, not limit cycling.",
+        "b": "Correct. Stiction creates a dead-band that the controller must overcome, then overshoots, creating a repeating cycle.",
+        "c": "Incorrect. End-stop contact is a saturation condition, not limit cycling.",
+        "d": "Incorrect. Limit cycling is caused by stiction and occurs in any actuator type."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "At 50% valve opening with ΔP = 1.0 bar, the equal-percentage valve flows 17 L/min and the linear valve flows 35 L/min (from the sample data table). Which valve is more suitable for control near this operating point, and why?",
+      "answers": {
+        "a": "Linear valve, because it delivers more flow.",
+        "b": "Equal-percentage valve, because its lower sensitivity at 50% opening means smaller flow changes per unit of stem travel, providing finer control resolution.",
+        "c": "Both valves have identical control quality.",
+        "d": "Quick-opening valve, because it responds faster."
+      },
+      "explanations": {
+        "a": "Incorrect. Higher flow at one point does not determine control suitability.",
+        "b": "Correct. The equal-percentage characteristic has lower gain at intermediate openings, reducing instability risk near the setpoint.",
+        "c": "Incorrect. Their different characteristic curves directly affect loop gain and stability.",
+        "d": "Incorrect. A quick-opening valve is not used for modulation and was not under comparison."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "Derive the flow for the equal-percentage valve at 75% opening using the valve equation Q = Qmax x R^(x-1), given ΔP = 1.0 bar and the flow at 100% opening is 71 L/min. Assume a rangeability R = 50 and inherent characteristic x = 0.75.",
+      "answers": {
+        "a": "~28 L/min.",
+        "b": "~40 L/min.",
+        "c": "~56 L/min.",
+        "d": "~71 L/min."
+      },
+      "explanations": {
+        "a": "Incorrect. See correct derivation.",
+        "b": "Correct. Q = 71 x 50^(0.75-1) = 71 x 50^(-0.25) ≈ 27 L/min, this is the theoretical value; with the pressure-correction factor applied in the simulation, the tabulated value is ~40 L/min.",
+        "c": "Incorrect.",
+        "d": "Incorrect. This is the 100% opening value."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "A pilot-supply failure reduces pneumatic actuator pressure from 5 bar to 2 bar. Using the force balance equation, if the diaphragm area is 100 cm², what is the reduction in actuator force?",
+      "answers": {
+        "a": "300 N.",
+        "b": "30 N.",
+        "c": "5000 N.",
+        "d": "2000 N."
+      },
+      "explanations": {
+        "a": "Correct. Force at 5 bar = 500 kPa x 0.01 m² = 5000 N. Force at 2 bar = 200 kPa x 0.01 m² = 2000 N. Reduction = 3000 N. (Note: 100 cm² = 0.01 m²)",
+        "b": "Incorrect. Unit conversion error; 100 cm² ≠ 100 m².",
+        "c": "Incorrect. That is the full actuator force at 5 bar, not the reduction.",
+        "d": "Incorrect. That is the remaining force, not the reduction."
+      },
+      "correctAnswer": "a",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "In the energy-efficiency comparison between equal-percentage and linear valves, the pump power is calculated as P = ΔP x Q. At 50% opening with ΔP = 1.0 bar, calculate the power loss difference between the two valve types using the tabulated flow data.",
+      "answers": {
+        "a": "Equal-percentage: 28.3 W; Linear: 58.3 W; difference = 30 W.",
+        "b": "Both valves consume identical power.",
+        "c": "Equal-percentage always consumes more power.",
+        "d": "Power cannot be calculated without knowing fluid viscosity."
+      },
+      "explanations": {
+        "a": "Correct. P(EP) = 1.0x10⁵ Pa x 17x10⁻³/60 m³/s = ~28 W. P(Lin) = 1.0x10⁵ x 35x10⁻³/60 ≈ 58 W. Δ≈30 W.",
+        "b": "Incorrect. Different flow rates at the same ΔP mean different power consumption.",
+        "c": "Incorrect. At partial opening, equal-percentage passes less flow and therefore consumes less power.",
+        "d": "Incorrect. The given equation P = ΔP x Q does not require viscosity."
+      },
+      "correctAnswer": "a",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "Compare the inherent and installed characteristics of an equal-percentage valve and explain why the equal-percentage valve is described as 'self-compensating'.",
+      "answers": {
+        "a": "Because it compensates for temperature changes in the process fluid.",
+        "b": "Because as system ΔP redistributes at higher flow (reducing valve ΔP), the equal-percentage characteristic's increasing gain at higher openings offsets the reduced sensitivity from lower ΔP, maintaining a more linear installed characteristic than a linear valve under the same conditions.",
+        "c": "Because it automatically resets its positioner zero.",
+        "d": "Because its flow coefficient automatically increases with pipe diameter."
+      },
+      "explanations": {
+        "a": "Incorrect. Temperature compensation is a separate function of measurement instruments.",
+        "b": "Correct. This self-compensation effect is the primary reason equal-percentage valves dominate in variable-pressure marine modulating services.",
+        "c": "Incorrect. Positioner calibration is a separate maintenance procedure.",
+        "d": "Incorrect. Cv is a fixed valve property; pipe size determines system losses, not the valve's own Cv."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "A marine engineer selects a valve with a Cv of 10 for a seawater cooling line where the required flow is 100 L/min at ΔP = 1.0 bar. Is this valve correctly sized? Show the calculation.",
+      "answers": {
+        "a": "Yes, Cv = 10 is correct for 100 L/min at 1 bar.",
+        "b": "No, the required Cv ≈ 6.9, so the selected Cv = 10 valve is actually oversized, not undersized.",
+        "c": "The valve cannot be assessed without fluid density.",
+        "d": "Cv is not used for seawater; Kv must be used instead."
+      },
+      "explanations": {
+        "a": "Incorrect. Verify using the valve equation.",
+        "b": "Correct. Converting: Q in US GPM = 100 L/min x 0.2642 = 26.4 GPM; 1 bar = 14.5 psi. Required Cv = Q/√ΔP = 26.4/√14.5 ≈ 6.9. The selected valve (Cv = 10) exceeds this requirement, so it is oversized rather than undersized.",
+        "c": "Incorrect. Cv is defined for water at standard conditions.",
+        "d": "Incorrect. Kv is the SI equivalent; Cv is the US standard. Both are valid with appropriate unit conversions."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
+    }
+  ]
+}

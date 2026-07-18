@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<title>Experiment 5: Synchro &amp; Encoder Position Measurement — Marine Instrumentation</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header>
+  <img src="img/inalogo.png" class="header-logo" alt="INA" style="transform: scale(1.4);">
+  <div class="header-titles">
+    <div class="brand">
+      <h1>Synchro &amp; Encoder Position Measurement</h1>
+    </div>
+  </div>
+  <img src="img/nitklogo-removebg.png" class="header-logo" alt="NITK">
+</header>
+
+<section id="stage">
+  <div id="canvas-host"><canvas id="canvas3d"></canvas></div>
+  <div class="blueprint-grid"></div>
+  <div class="vignette"></div>
+  <i class="cross tl"></i><i class="cross tr"></i><i class="cross bl"></i><i class="cross br"></i>
+
+  <div class="overlay tl">
+    <div class="readout"><span class="k">Module</span><span class="v" id="hudSub">Synchro shaft-angle transmission — 115 V · 50 Hz</span></div>
+  </div>
+  <div class="overlay bl">
+    <div class="readout"><i class="lamp-dot on" id="excLamp"></i><span class="v" id="lampTxt">EXCITATION 115V 50Hz</span></div>
+  </div>
+
+</section>
+
+<aside id="panel">
+  <div class="panel-head">
+    <h2>Instrument Rack</h2>
+    <p>Synchro / Encoder Position Measurement — Marine Instrumentation</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-pane="synchro">Synchro</button>
+    <button class="tab" data-pane="encoder">Encoder</button>
+    <button class="tab" data-pane="pid">PID Loop</button>
+  </div>
+
+  <!-- ============ SYNCHRO ============ -->
+  <div class="pane active" id="pane-synchro">
+    <div class="section">
+      <h2>Live Readouts</h2>
+      <div class="readouts">
+        <div class="ro"><div class="lbl">TX shaft &theta;</div><div class="val" id="roTx">0.0<span class="unit">&deg;</span></div></div>
+        <div class="ro"><div class="lbl">RX rotor &theta;</div><div class="val cyan" id="roRx">0.0<span class="unit">&deg;</span></div></div>
+        <div class="ro"><div class="lbl">Error &epsilon;</div><div class="val amber" id="roErr">0.00<span class="unit">&deg;</span></div></div>
+        <div class="ro"><div class="lbl">Status</div><div class="val" id="roSync" style="font-size:13px">SYNCED</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Manual Control</h2>
+      <div class="ctl">
+        <div class="row"><label>Shaft angle (propeller side)</label><output id="oAngle">0&deg;</output></div>
+        <input type="range" id="sAngle" min="0" max="360" step="1" value="0">
+      </div>
+      <div class="ctl">
+        <div class="row"><label>Friction torque on RX rotor</label><output id="oLoad">0 %</output></div>
+        <input type="range" id="sLoad" min="0" max="100" step="1" value="0">
+      </div>
+      <div class="preset-row">
+        <button class="preset" id="bStep30">Step +30&deg;</button>
+        <button class="preset" id="bSweep">&#9654; Sweep 0&rarr;360&deg; / 10 s</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Task 1 — Steady-State Angle Measurement</h2>
+      <p style="font-size:12px;line-height:1.5;color:rgba(11,31,42,.75)">Steps the transmitter through 0&deg;, 30&deg;, 60&deg; &hellip; 330&deg;, waits for the receiver to synchronise (&le; 3 s), and records the settled angle and error &epsilon; = |shaft &minus; receiver| at each point.</p>
+      <div class="note">Expected: steady-state error &le; <b>&plusmn;0.3&deg;</b>; sync time &asymp; <b>1 s</b>; uniform accuracy across all quadrants.</div>
+      <div class="preset-row">
+        <button class="preset primary" id="bTask1">&#9654; Run Task 1 (12 points)</button>
+        <button class="preset" id="bTask1Csv">Export CSV</button>
+        <button class="preset danger" id="bTask1Clear">Clear</button>
+      </div>
+      <div class="note" id="task1Status"></div>
+      <div class="table-host" style="height:180px">
+        <table class="data-table" id="task1Table">
+          <thead><tr><th>Shaft (&deg;)</th><th>Receiver (&deg;)</th><th>Error &epsilon; (&deg;)</th><th>Sync time (s)</th></tr></thead>
+          <tbody id="task1Body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Task 2 — Dynamic Tracking</h2>
+      <p style="font-size:12px;line-height:1.5;color:rgba(11,31,42,.75)">Rotates the shaft 0&deg; &rarr; 360&deg; over 10 s (36&deg;/s) and samples the receiver every 100 ms, then reports the measured lag and peak tracking error.</p>
+      <div class="note">Expected: lag <b>50&ndash;100 ms</b>; tracking error &lt; <b>1&deg;</b> at low speed; the receiver may hunt (oscillate) due to damping.</div>
+      <div class="preset-row">
+        <button class="preset primary" id="bTask2">&#9654; Run Task 2 (10 s sweep)</button>
+      </div>
+      <div class="note" id="task2Status"></div>
+      <div class="readouts" style="margin-top:8px">
+        <div class="ro"><div class="lbl">Measured lag</div><div class="val" id="task2Lag">&mdash;</div></div>
+        <div class="ro"><div class="lbl">Max tracking error</div><div class="val amber" id="task2MaxErr">&mdash;</div></div>
+      </div>
+      <canvas class="scope" id="scopeSyn" style="margin-top:10px"></canvas>
+      <div class="legend"><b class="lgSP">&mdash; TX angle</b><b class="lgPV">&mdash; RX angle</b></div>
+    </div>
+
+    <div class="section">
+      <h2>Task 3 — Receiver Load Effect</h2>
+      <p style="font-size:12px;line-height:1.5;color:rgba(11,31,42,.75)">Applies increasing friction-load levels to the receiver rotor and repeats a steady-state step (0&deg; &rarr; 180&deg;) at each level to find the maximum load the receiver can hold sync against.</p>
+      <div class="preset-row">
+        <button class="preset primary" id="bTask3">&#9654; Run Task 3 (load sweep)</button>
+        <button class="preset" id="bTask3Csv">Export CSV</button>
+      </div>
+      <div class="note" id="task3Status"></div>
+      <div class="table-host" style="height:160px">
+        <table class="data-table" id="task3Table">
+          <thead><tr><th>Load (%)</th><th>Sync time (s)</th><th>Residual &epsilon; (&deg;)</th><th>Status</th></tr></thead>
+          <tbody id="task3Body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ENCODER ============ -->
+  <div class="pane" id="pane-encoder">
+    <div class="section">
+      <h2>Readouts — 1024 PPR</h2>
+      <div class="readouts">
+        <div class="ro"><div class="lbl">Shaft speed</div><div class="val" id="roRpm">0<span class="unit"> rpm</span></div></div>
+        <div class="ro"><div class="lbl">Ch A freq</div><div class="val cyan" id="roFreq">0<span class="unit"> Hz</span></div></div>
+        <div class="ro"><div class="lbl">Pulse count</div><div class="val amber" id="roPulse">0</div></div>
+        <div class="ro"><div class="lbl">Revolutions</div><div class="val amber" id="roRev">0</div></div>
+        <div class="ro"><div class="lbl">Angle &theta;</div><div class="val" id="roAng">0.000<span class="unit">&deg;</span></div></div>
+        <div class="ro"><div class="lbl">Direction</div><div class="val cyan" id="roDir">+1 FWD</div></div>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Motor Drive</h2>
+      <div class="ctl">
+        <div class="row"><label>Shaft speed</label><output id="oRpm">0 rpm</output></div>
+        <input type="range" id="sRpm" min="0" max="2000" step="10" value="0">
+      </div>
+      <div class="preset-row" style="margin-bottom:10px">
+        <button id="dirF" class="preset active">Forward +1</button>
+        <button id="dirR" class="preset">Reverse &minus;1</button>
+      </div>
+      <div class="preset-row">
+        <button class="preset" data-rpm="100">100</button>
+        <button class="preset" data-rpm="500">500</button>
+        <button class="preset" data-rpm="1000">1000</button>
+        <button class="preset" data-rpm="2000">2000</button>
+        <button class="preset danger" id="bZero">Reset counters</button>
+      </div>
+      <div class="note">Expected: f = RPM &times; 1024 / 60 &rarr; 1000 rpm = <b>17 067 Hz</b>. Quantisation with 4&times; quadrature: <b>&plusmn;0.088&deg;</b>.</div>
+    </div>
+    <div class="section">
+      <h2>Quadrature Channels A &middot; B &middot; Z</h2>
+      <canvas class="scope" id="scopeEnc"></canvas>
+      <div class="legend"><b class="lgA">&mdash; CH A</b><b class="lgB">&mdash; CH B (90&deg;)</b><b class="lgZ">&mdash; INDEX Z</b></div>
+    </div>
+  </div>
+
+  <!-- ============ PID ============ -->
+  <div class="pane" id="pane-pid">
+    <div class="section">
+      <h2>Closed-Loop Readouts</h2>
+      <div class="readouts">
+        <div class="ro"><div class="lbl">Setpoint</div><div class="val amber" id="roSp">90.0<span class="unit">&deg;</span></div></div>
+        <div class="ro"><div class="lbl">Position</div><div class="val" id="roPv">0.0<span class="unit">&deg;</span></div></div>
+        <div class="ro"><div class="lbl">Error</div><div class="val cyan" id="roPerr">90.0<span class="unit">&deg;</span></div></div>
+        <div class="ro"><div class="lbl">Motor PWM</div><div class="val" id="roPwm">0<span class="unit"> /255</span></div></div>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Setpoint &amp; Gains</h2>
+      <div class="ctl">
+        <div class="row"><label>Target angle</label><output id="oSp">90&deg;</output></div>
+        <input type="range" id="sSp" min="0" max="360" step="1" value="90">
+      </div>
+      <div class="ctl">
+        <div class="row"><label>Kp — proportional</label><output id="oKp">0.50</output></div>
+        <input type="range" id="sKp" min="0" max="3" step="0.05" value="0.5">
+      </div>
+      <div class="ctl">
+        <div class="row"><label>Ki — integral</label><output id="oKi">0.010</output></div>
+        <input type="range" id="sKi" min="0" max="0.2" step="0.005" value="0.01">
+      </div>
+      <div class="ctl">
+        <div class="row"><label>Kd — derivative</label><output id="oKd">0.10</output></div>
+        <input type="range" id="sKd" min="0" max="2" step="0.05" value="0.1">
+      </div>
+      <div class="preset-row">
+        <button class="preset primary" id="bRun">&#9654; Run loop</button>
+        <button class="preset" id="bDisturb">&#9889; Step load @ now</button>
+        <button class="preset" id="bTrack">Track 0&rarr;360&deg;/30 s</button>
+      </div>
+      <div class="note">Tune: raise <b>Kp</b> until fast, add <b>Ki</b> to kill steady-state error, add <b>Kd</b> to damp overshoot. Target: settle &lt; <b>2 s</b>, overshoot &lt; <b>20 %</b>.</div>
+    </div>
+    <div class="section">
+      <h2>Response Plot</h2>
+      <canvas class="scope" id="scopePid"></canvas>
+      <div class="legend"><b class="lgSP">&mdash; setpoint</b><b class="lgPV">&mdash; encoder position</b></div>
+    </div>
+  </div>
+</aside>
+
+<footer>
+  <span>Synchro / Encoder Position Measurement</span>
+</footer>
+
+<script src="js/script.js"></script>
+</body>
+</html>

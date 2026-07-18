@@ -1,0 +1,260 @@
+{
+  "version": 2.0,
+  "questions": [
+    {
+      "question": "What is the primary purpose of a Programmable Logic Controller (PLC) in a marine ballast system?",
+      "answers": {
+        "a": "To store large volumes of data for offline analysis.",
+        "b": "To execute real-time sequence-control logic for automatic tank filling and emptying.",
+        "c": "To generate graphical reports of tank levels.",
+        "d": "To replace the ship's propulsion engine."
+      },
+      "explanations": {
+        "a": "Incorrect. PLCs are not designed as data historians; they execute real-time control logic.",
+        "b": "Correct. PLCs perform deterministic, cyclic scan-based control of discrete and continuous processes.",
+        "c": "Incorrect. Reporting is typically handled by SCADA or HMI systems, not the PLC itself.",
+        "d": "Incorrect. PLCs control auxiliary machinery; propulsion is managed by dedicated drive systems."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "In PLC ladder logic, what does a 'normally closed (NC) contact' represent?",
+      "answers": {
+        "a": "A contact that passes current only when its coil is energised.",
+        "b": "A contact that passes current when its associated bit is FALSE (coil de-energised).",
+        "c": "A physical switch that cannot be opened.",
+        "d": "A contact always in series with a timer."
+      },
+      "explanations": {
+        "a": "Incorrect. That describes a normally open contact.",
+        "b": "Correct. NC contacts conduct in the default state and open when the bit is TRUE.",
+        "c": "Incorrect. NC refers to its logical default state, not a mechanical lock.",
+        "d": "Incorrect. NC contacts can appear anywhere in a rung."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "What does a PLC 'scan cycle' refer to?",
+      "answers": {
+        "a": "A maintenance interval for replacing PLC batteries.",
+        "b": "The sequential process of reading inputs, executing the control program, and updating outputs repeatedly.",
+        "c": "A network communication protocol between PLCs.",
+        "d": "The time taken to download a new program to the PLC."
+      },
+      "explanations": {
+        "a": "Incorrect. That is a physical maintenance task.",
+        "b": "Correct. This deterministic cycle governs all PLC operation.",
+        "c": "Incorrect. That refers to PROFIBUS, Modbus, or similar industrial protocols.",
+        "d": "Incorrect. Program download is a one-time configuration step."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "In the ballast tank experiment, what sensor position triggers the pump to STOP filling?",
+      "answers": {
+        "a": "Low-level sensor (10%).",
+        "b": "Mid-level sensor (50%).",
+        "c": "High-level sensor (90%).",
+        "d": "The pressure sensor on the outlet valve."
+      },
+      "explanations": {
+        "a": "Incorrect. The low-level sensor triggers the pump to START.",
+        "b": "Incorrect. The mid-level sensor is used for intermediate indication only.",
+        "c": "Correct. When the high-level sensor activates, the PLC de-energises the pump to prevent overfill.",
+        "d": "Incorrect. An outlet pressure sensor is not part of the level-control interlock in this configuration."
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "What is meant by 'fail-safe' design in the context of the outlet solenoid valve?",
+      "answers": {
+        "a": "The valve opens automatically when electrical power is lost.",
+        "b": "The valve is made of corrosion-resistant material.",
+        "c": "The valve can only be operated manually.",
+        "d": "The valve requires a backup battery to function."
+      },
+      "explanations": {
+        "a": "Correct. A normally-open, fail-safe solenoid prevents tank overfill during a power failure by draining the tank.",
+        "b": "Incorrect. Material selection addresses durability, not fail-safe logic.",
+        "c": "Incorrect. Fail-safe refers to the default de-energised state, not the operating mode.",
+        "d": "Incorrect. Fail-safe means the valve's default state is safe without any power."
+      },
+      "correctAnswer": "a",
+      "difficulty": "beginner"
+    },
+     {
+      "question": "A ballast pump runs continuously but the tank level never rises above 30%. Which fault best explains this?",
+      "answers": {
+        "a": "Low-level sensor open-circuit.",
+        "b": "High-level sensor stuck ON.",
+        "c": "Outlet valve stuck open.",
+        "d": "PLC scan-cycle time too long."
+      },
+      "explanations": {
+        "a": "Incorrect. An open-circuit low sensor would prevent the pump from starting at all.",
+        "b": "Incorrect. A stuck-ON high sensor would prevent the pump from running at all.",
+        "c": "Correct. If the outlet valve remains open, the pump discharge equals or is exceeded by the outlet flow, preventing level rise.",
+        "d": "Incorrect. A long scan cycle would cause slow response, not a continuous level deficit."
+      },
+      "correctAnswer": "c",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "In Ladder Diagram programming, what is the functional role of a 'timer' instruction (e.g., TON, Timer On Delay)?",
+      "answers": {
+        "a": "It counts the number of times a coil is energised.",
+        "b": "It energises its output coil only after a preset time delay following input activation.",
+        "c": "It resets the PLC to factory defaults after a set time.",
+        "d": "It pauses the entire scan cycle."
+      },
+      "explanations": {
+        "a": "Incorrect. Counting is performed by counter instructions (CTU/CTD).",
+        "b": "Correct. TON is used to implement watchdog logic, delays, and debounce functions.",
+        "c": "Incorrect. Timers have no effect on PLC configuration.",
+        "d": "Incorrect. Timers operate within the scan cycle without pausing it."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "A watchdog timer is implemented to detect a 'high-level sensor stuck ON' fault. What is the correct detection logic?",
+      "answers": {
+        "a": "If the high sensor is ON for more than the expected fill time without a corresponding level rise, flag a fault.",
+        "b": "If the pump runs for more than 10 seconds, shut down.",
+        "c": "If the outlet valve opens, reset the high sensor.",
+        "d": "Monitor the mid-level sensor for 5 seconds."
+      },
+      "explanations": {
+        "a": "Correct. The watchdog compares sensor state duration against physical process expectations.",
+        "b": "Incorrect. This would prevent normal operation during slow fills.",
+        "c": "Incorrect. These are independent signals; resetting one based on the other is logically incorrect.",
+        "d": "Incorrect. The watchdog must specifically target the high sensor's anomalous behaviour."
+      },
+      "correctAnswer": "a",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "Why is pump cavitation dangerous in a marine ballast context, and how is it represented in the virtual experiment?",
+      "answers": {
+        "a": "It causes electrical short circuits in the motor; simulated by reducing voltage.",
+        "b": "It causes impeller erosion and reduces pump displacement, represented by halving the flow rate (5m³/h) in the simulation.",
+        "c": "It increases pump speed beyond safe limits; simulated by over-voltage.",
+        "d": "It opens the outlet solenoid spontaneously."
+      },
+      "explanations": {
+        "a": "Incorrect. Cavitation is a hydraulic phenomenon, not an electrical one.",
+        "b": "Correct. Cavitation creates vapour bubbles that collapse and erode impeller surfaces, degrading pump performance.",
+        "c": "Incorrect. Cavitation typically reduces effective output, not increases speed.",
+        "d": "Incorrect. Cavitation does not affect solenoid-valve logic directly."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "The hysteresis band of the ballast-tank level controller is measured at 88-92%. How is hysteresis defined in this context?",
+      "answers": {
+        "a": "The time lag between sensor trigger and pump response.",
+        "b": "The difference between the level at which the pump switches ON (rising) and the level at which it switches OFF (falling) during cycling.",
+        "c": "The difference in readings between two sensors at the same height.",
+        "d": "The pressure drop across the inlet valve during steady-state filling."
+      },
+      "explanations": {
+        "a": "Incorrect. That is response time, not hysteresis.",
+        "b": "Correct. Hysteresis prevents rapid cycling (hunting) around the setpoint.",
+        "c": "Incorrect. That is a sensor-offset error, not control hysteresis.",
+        "d": "Incorrect. Pressure drop is a hydraulic parameter, not a level-control hysteresis value."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "In IMO SOLAS Chapter II-1, what structural consideration makes ballast-tank level control critical beyond simple process control?",
+      "answers": {
+        "a": "Ballast tanks are used to store drinking water, requiring sanitary control.",
+        "b": "Excessive ballast can cause hull structural overstress, and insufficient ballast can cause metacentric height (GM) to fall below the minimum stability requirement.",
+        "c": "The IMO mandates PLC-only control; manual valves are prohibited.",
+        "d": "Ballast level sensors must be certified to ATEX Zone 0."
+      },
+      "explanations": {
+        "a": "Incorrect. Ballast and potable water tanks are separate systems.",
+        "b": "Correct. Both overfill and underfill have direct seakeeping and structural safety implications mandated by SOLAS.",
+        "c": "Incorrect. SOLAS specifies performance standards, not specific control technology.",
+        "d": "Incorrect. ATEX Zone 0 applies to explosive atmospheres; ballast tanks are typically not classified Zone 0."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "In PLC IEC 61131-3 terminology, what distinguishes a 'Function Block' from a standard 'Ladder Rung'?",
+      "answers": {
+        "a": "Function Blocks cannot handle timers.",
+        "b": "A Function Block encapsulates a reusable algorithm with defined inputs, outputs, and persistent internal state, whereas a rung performs simple combinational logic.",
+        "c": "Ladder Rungs run on separate hardware processors.",
+        "d": "Function Blocks are exclusively used for communication, not control."
+      },
+      "explanations": {
+        "a": "Incorrect. Function Block Diagram (FBD) natively supports standard function blocks including timers.",
+        "b": "Correct. FBs are object-like entities; rungs execute sequential Boolean relay logic.",
+        "c": "Incorrect. All IEC 61131-3 languages execute on the same CPU scan cycle.",
+        "d": "Incorrect. Function Blocks cover all types of control, from PID to motion and communication."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "Derive the minimum pump duty cycle required to maintain a steady-state tank level against a constant outlet leak of 2m³/h, given a pump flow of 10m³/h.",
+      "answers": {
+        "a": "10%",
+        "b": "20%",
+        "c": "50%",
+        "d": "80%"
+      },
+      "explanations": {
+        "a": "Incorrect. At 10% duty, average pump flow = 1m³/h, less than the 2m³/h leak.",
+        "b": "Correct. Duty cycle = leak flow / pump flow = 2/10 = 20%. On average, 2m³/h in = 2m³/h out maintains level.",
+        "c": "Incorrect. 50% duty would overfill the tank at 5m³/h net inflow.",
+        "d": "Incorrect. 80% duty corresponds to 8m³/h average inflow, far exceeding the 2m³/h leak."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "Explain why redundant level sensors are mandatory in high-capacity ballast systems under IMO Res. MSC.145(77).",
+      "answers": {
+        "a": "To reduce sensor procurement costs through bulk purchasing.",
+        "b": "To ensure the system can detect a 'sensor failed' condition by cross-comparing readings, and maintain safe operation with one sensor out of service.",
+        "c": "Because international regulations require sensors from two different manufacturers.",
+        "d": "To double the measurement resolution."
+      },
+      "explanations": {
+        "a": "Incorrect. Redundancy is a safety requirement, not a procurement strategy.",
+        "b": "Correct. Single-sensor failure should not compromise safety-critical level control; redundancy provides fault detection and operational continuity.",
+        "c": "Incorrect. IMO does not mandate manufacturer diversity; it mandates functional redundancy.",
+        "d": "Incorrect. Multiple identical sensors at the same point do not improve resolution; they provide redundancy."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "A ballast system PLC logs the following sequence: pump ON at t=0s; low sensor deactivates at t=25s; mid sensor activates at t=60s; high sensor activates at t=180s. Calculate the average fill rate and the pump shutdown response time if the pump stops within one scan cycle of 50ms.",
+      "answers": {
+        "a": "Fill rate = 0.04m/min; response time = 50ms.",
+        "b": "Fill rate ≈ 0.027m/min (90% height/180s); pump response time = 50ms (one PLC scan cycle).",
+        "c": "Fill rate = 10m³/h regardless of time; response time = 2s.",
+        "d": "Fill rate = 3m/min; response time = 1s."
+      },
+      "explanations": {
+        "a": "Incorrect. Calculation of fill rate is incorrect.",
+        "b": "Correct. The PLC electrical response time is one scan cycle (50ms). The level change from 0% to 90% occurs over 180s, giving the average fill rate based on the provided level data.",
+        "c": "Incorrect. 2s is the solenoid mechanical lag, not the PLC scan response time.",
+        "d": "Incorrect. The level data given does not support a 3m/min fill rate."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
+    }
+  ]
+}

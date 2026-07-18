@@ -1,0 +1,1 @@
+To design and implement a Programmable Logic Controller (PLC) sequence-control program for automatic level management of a marine ballast/freshwater tank, including appropriate interlocks and fault-detection logic, and to analyse system behaviour under normal operation and simulated fault conditions.

@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Actuator Control Lab — Embedded Cyber-Physical Systems</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="css/style.css">
+<script type="importmap">
+{
+  "imports":{
+    "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+
+<header>
+  <img src="img/inalogo.png" class="header-logo" alt="INA" style="transform: scale(1.4);">
+  <div class="header-titles">
+    <div class="brand">
+      <h1>Marine Actuator Control Systems</h1>
+    </div>
+  </div>
+  <img src="img/nitklogo-removebg.png" class="header-logo" alt="NITK">
+</header>
+
+<section id="stage">
+  <!-- 2D Illustration Grid Layout -->
+  <div id="illustration-grid" style="
+    position: absolute; inset: 0;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 6px;
+    padding: 12px;
+    background: #06141f;
+  ">
+    <!-- Left: 3D Mechatronics Lab (Microcontroller & Servo) (Three.js live) -->
+    <div id="canvas-host" style="
+      grid-row: 1 / 3;
+      border: 1px solid rgba(95,214,239,0.25);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+      background: #060a14;
+    ">
+      <!-- Camera controls overlay -->
+      <div id="camera-controls-container" style="position: absolute; top: 12px; right: 12px; z-index: 10; display: flex; gap: 6px; pointer-events: auto;">
+        <button id="btnSpin" class="preset" style="font-size: 10px; padding: 4px 8px; margin: 0; background: rgba(11,31,42,0.85); border: 1px solid rgba(95,214,239,0.3); color: #5fd6ef; border-radius: 3px; cursor: pointer; text-transform: uppercase; font-family: inherit;">Auto-Rotate</button>
+        <button id="btnReset" class="preset" style="font-size: 10px; padding: 4px 8px; margin: 0; background: rgba(11,31,42,0.85); border: 1px solid rgba(95,214,239,0.3); color: #5fd6ef; border-radius: 3px; cursor: pointer; text-transform: uppercase; font-family: inherit;">Reset View</button>
+      </div>
+      <div style="
+        position:absolute; bottom:10px; left:12px; z-index: 2;
+        background: rgba(11,31,42,0.75);
+        color: #5fd6ef; padding: 5px 12px;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        font-size: 10px; letter-spacing: 0.18em;
+        text-transform: uppercase; border: 1px solid rgba(95,214,239,0.3);
+        border-radius: 3px;
+        pointer-events: none;
+      ">Mechatronics Lab · Live 3D</div>
+    </div>
+
+    <!-- Top-right: 3D Propeller & Rudder Assembly (Three.js live) -->
+    <div id="propeller-rudder-3d-host" style="
+      border: 1px solid rgba(95,214,239,0.25);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+      background: #0a1e2d;
+    ">
+      <div style="
+        position:absolute; bottom:8px; left:10px; z-index:2;
+        background: rgba(11,31,42,0.75);
+        color: #5fd6ef; padding: 4px 10px;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        font-size: 9px; letter-spacing: 0.16em;
+        text-transform: uppercase; border: 1px solid rgba(95,214,239,0.3);
+        border-radius: 3px;
+        pointer-events: none;
+      ">Propeller &amp; Rudder Assembly · Live 3D</div>
+    </div>
+
+    <!-- Bottom-right: 3D Rudder angle indicator (Three.js live) -->
+    <div id="rudder-indicator-host" style="
+      border: 1px solid rgba(95,214,239,0.25);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+      background: #0a1e2d;
+    ">
+      <div style="
+        position:absolute; bottom:8px; left:10px; z-index:2;
+        background: rgba(11,31,42,0.75);
+        color: #5fd6ef; padding: 4px 10px;
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        font-size: 9px; letter-spacing: 0.16em;
+        text-transform: uppercase; border: 1px solid rgba(95,214,239,0.3);
+        border-radius: 3px;
+      ">Rudder Angle Indicator · Live 3D</div>
+    </div>
+  </div>
+
+  <!-- Control Law HUD overlay -->
+  <div class="overlay tr" style="z-index:5;">
+    <div class="readout" id="hud-formula-block">
+      <span class="k">Control Law</span><span class="v" id="hud-formula">u(t) = K<sub>p</sub> · e(t)</span>
+    </div>
+  </div>
+</section>
+
+<aside id="panel">
+
+  <div class="tabs" style="display:flex; flex-wrap:wrap; gap:2px; border-bottom: 2px solid var(--line); margin-bottom: 16px;">
+    <button id="tab-1" style="flex:1 1 45%; padding:10px; font-size:11px; background:var(--ink); color:var(--paper); border:none; font-weight:bold; cursor:pointer; text-transform:uppercase; letter-spacing:1px;">Servo Motor Control</button>
+    <button id="tab-2" style="flex:1 1 45%; padding:10px; font-size:11px; background:var(--paper); color:var(--text); border:none; font-weight:bold; cursor:pointer; text-transform:uppercase; letter-spacing:1px;">Stepper Motor Control</button>
+  </div>
+
+  <div id="content-tab-1">
+    <div class="section">
+      <h2>Rudder Positioning System</h2>
+      <p style="margin-bottom:12px;">
+        Simulating a closed-loop marine steering helm gear system driven by PWM pulse-width inputs[cite: 1445, 1566, 1910].
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px;">
+        <button class="preset" id="btn-srv-run" style="background:var(--rust); color:#fff; border-color:var(--rust); font-weight:bold; font-size:10px; padding:6px 0; justify-content:center; margin:0;">Run System Simulation</button>
+        <button class="preset" id="btn-srv-csv" style="font-size:10px; padding:6px 0; justify-content:center; margin:0;">Export Live CSV Data</button>
+      </div>
+
+      <!-- Sub-tab Selector for Servo Tasks -->
+      <div class="tabs" style="display:flex; flex-wrap:wrap; gap:2px; border-bottom: 2px solid var(--line); margin-bottom: 16px;">
+        <button id="srv-tab-1" style="flex:1; padding:8px; font-size:10px; background:var(--ink); color:var(--paper); border:none; font-weight:bold; cursor:pointer; text-transform:uppercase; letter-spacing:0.5px;">Task 1: Accuracy</button>
+        <button id="srv-tab-2" style="flex:1; padding:8px; font-size:10px; background:var(--paper); color:var(--text); border:none; font-weight:bold; cursor:pointer; text-transform:uppercase; letter-spacing:0.5px;">Task 2: Dynamic</button>
+        <button id="srv-tab-3" style="flex:1; padding:8px; font-size:10px; background:var(--paper); color:var(--text); border:none; font-weight:bold; cursor:pointer; text-transform:uppercase; letter-spacing:0.5px;">Task 3: Load Effect</button>
+      </div>
+
+      <!-- Servo Task 1 Content -->
+      <div id="srv-content-tab-1">
+        <h3 style="font-size:12px; font-weight:bold; margin-bottom:8px; color:var(--ink);">Task 1: Static Positioning Accuracy</h3>
+        <p style="margin-bottom:12px; font-size:11px;">
+          Command discrete index angles to measure steady-state positioning accuracy and error margins under feedback loop control.
+        </p>
+
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; background: #0b1f2a; color: #5fd6ef; padding: 10px; border-radius: 4px; margin-bottom: 14px; box-shadow: inset 0 0 8px rgba(0,0,0,0.5);">
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>TARGET RUDDER:</span><strong id="srv1-tgt-read">90.0°</strong></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>ACTUAL ANGLE:</span><strong id="srv1-act-read" style="color:#ff8a2a;">90.0°</strong></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>RUDDER DEFLECTION:</span><strong id="srv1-rud-read" style="color:#ffb703;">0.0°</strong></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>PWM SIGNAL:</span><strong id="srv1-pwm-read">1.50 ms</strong></div>
+          <div style="display:flex; justify-content:space-between; color:#e63946;"><span>DYNAMIC ERROR:</span><strong id="srv1-err-read">0.0°</strong></div>
+        </div>
+
+        <div style="margin-bottom: 14px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;">
+          <button class="preset" id="btn-srv-t1-0" style="font-size:11px; padding:6px 0; justify-content:center; margin:0;">0°</button>
+          <button class="preset" id="btn-srv-t1-45" style="font-size:11px; padding:6px 0; justify-content:center; margin:0;">45°</button>
+          <button class="preset" id="btn-srv-t1-90" style="font-size:11px; padding:6px 0; justify-content:center; margin:0;">90°</button>
+          <button class="preset" id="btn-srv-t1-135" style="font-size:11px; padding:6px 0; justify-content:center; margin:0;">135°</button>
+          <button class="preset" id="btn-srv-t1-180" style="font-size:11px; padding:6px 0; justify-content:center; margin:0;">180°</button>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 11px; font-weight: bold; display: flex; justify-content: space-between;">
+            Target Angle (θ) <span id="lbl-srv-angle">90°</span>
+          </label>
+          <input type="range" id="ctrl-srv-angle" min="0" max="180" value="90" step="5" style="width:100%; margin-top:4px;">
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 11px; font-weight: bold; display: flex; justify-content: space-between;">
+            Proportional Loop Gain (Kp) <span id="lbl-srv-kp1">8</span>
+          </label>
+          <input type="range" id="ctrl-srv-kp1" min="1" max="20" value="8" step="1" style="width:100%; margin-top:4px;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr; gap: 6px; margin-bottom: 10px;">
+          <button class="preset" id="btn-task-1" style="background:var(--rust); color:#fff; border-color:var(--rust); font-weight:bold; justify-content:center; padding:10px; margin:0;">Start Task 1 Protocol</button>
+        </div>
+
+        <div id="srv-t1-status-log" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #ffcc00; margin-bottom: 14px; padding: 6px; background: rgba(0,0,0,0.5); border-radius: 3px; min-height: 40px; max-height: 60px; overflow-y: auto; line-height: 1.3;">
+          Status: Ready to run static accuracy tests.
+        </div>
+
+        <!-- Task 1 Observation Table -->
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 11px; font-weight: bold; color: var(--rust-2); text-transform: uppercase; display: block; margin-bottom: 6px;">Task 1 Observations</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; margin-bottom: 8px;">
+            <button class="preset" id="btn-srv-t1-record" style="justify-content:center; padding:5px 2px; font-size:10px; font-weight:bold; margin:0;">Manual Record</button>
+            <button class="preset" id="btn-srv-t1-reset" style="justify-content:center; padding:5px 2px; font-size:10px; font-weight:bold; margin:0;">Reset Table</button>
+            <button class="preset" id="btn-srv-t1-export" style="justify-content:center; padding:5px 2px; font-size:10px; font-weight:bold; margin:0; background:var(--ink); color:var(--paper);">Export CSV</button>
+          </div>
+          <div style="background:#fff; border:1px solid var(--line); border-radius:4px; height: 160px; overflow-y: auto; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);">
+            <table class="data-table" id="srv-t1-data-table">
+              <thead id="srv-t1-table-head"></thead>
+              <tbody id="srv-t1-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Servo Task 2 Content -->
+      <div id="srv-content-tab-2" style="display:none;">
+        <h3 style="font-size:12px; font-weight:bold; margin-bottom:8px; color:var(--ink);">Task 2: Dynamic Response Characterization</h3>
+        <p style="margin-bottom:12px; font-size:11px;">
+          Analyze step response curves and closed-loop lag tracking errors as rudder target changes from 0° to 180° dynamically.
+        </p>
+
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; background: #0b1f2a; color: #5fd6ef; padding: 10px; border-radius: 4px; margin-bottom: 14px; box-shadow: inset 0 0 8px rgba(0,0,0,0.5);">
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>TARGET RUDDER:</span><strong id="srv2-tgt-read">90.0°</strong></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>ACTUAL ANGLE:</span><strong id="srv2-act-read" style="color:#ff8a2a;">90.0°</strong></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>RUDDER DEFLECTION:</span><strong id="srv2-rud-read" style="color:#ffb703;">0.0°</strong></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>PWM SIGNAL:</span><strong id="srv2-pwm-read">1.50 ms</strong></div>
+          <div style="display:flex; justify-content:space-between; color:#e63946;"><span>DYNAMIC ERROR:</span><strong id="srv2-err-read">0.0°</strong></div>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 11px; font-weight: bold; display: flex; justify-content: space-between;">
+            Proportional Loop Gain (Kp) <span id="lbl-srv-kp2">8</span>
+          </label>
+          <input type="range" id="ctrl-srv-kp2" min="1" max="20" value="8" step="1" style="width:100%; margin-top:4px;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr; gap: 6px; margin-bottom: 10px;">
+          <button class="preset" id="btn-task-2" style="background:var(--rust); color:#fff; border-color:var(--rust); font-weight:bold; justify-content:center; padding:10px; margin:0;">Start Task 2 Protocol</button>
+        </div>
+
+        <div id="srv-t2-status-log" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #ffcc00; margin-bottom: 14px; padding: 6px; background: rgba(0,0,0,0.5); border-radius: 3px; min-height: 40px; max-height: 60px; overflow-y: auto; line-height: 1.3;">
+          Status: Ready to run dynamic step tests.
+        </div>
+
+        <!-- Task 2 Observation Table -->
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 11px; font-weight: bold; color: var(--rust-2); text-transform: uppercase; display: block; margin-bottom: 6px;">Task 2 Observations</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; margin-bottom: 8px;">
+            <button class="preset" id="btn-srv-t2-record" style="justify-content:center; padding:5px 2px; font-size:10px; font-weight:bold; margin:0;">Manual Record</button>
+            <button class="preset" id="btn-srv-t2-reset" style="justify-content:center; padding:5px 2px; font-size:10px; font-weight:bold; margin:0;">Reset Table</button>
+            <button class="preset" id="btn-srv-t2-export" style="justify-content:center; padding:5px 2px; font-size:10px; font-weight:bold; margin:0; background:var(--ink); color:var(--paper);">Export CSV</button>
+          </div>
+          <div style="background:#fff; border:1px solid var(--line); border-radius:4px; height: 160px; overflow-y: auto; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);">
+            <table class="data-table" id="srv-t2-data-table">
+              <thead id="srv-t2-table-head"></thead>
+              <tbody id="srv-t2-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="margin-top: 16px;">
+          <strong style="font-size:11px; color:var(--text); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:4px;">Transient Tracking Performance</strong>
+          <div style="position:relative; height:180px; width:100%; background:#fff; border:1px solid var(--line); border-radius:4px; padding:4px;">
+            <canvas id="chart-srv-tracking"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Servo Task 3 Content -->
+      <div id="srv-content-tab-3" style="display:none;">
+        <h3 style="font-size:12px; font-weight:bold; margin-bottom:8px; color:var(--ink);">Task 3: Load Effect Analysis</h3>
+        <p style="margin-bottom:12px; font-size:11px;">
+          Evaluate steady-state deflection errors and settling profiles under hydrodynamic external loading.
+        </p>
+
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; background: #0b1f2a; color: #5fd6ef; padding: 10px; border-radius: 4px; margin-bottom: 14px; box-shadow: inset 0 0 8px rgba(0,0,0,0.5);">
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>TARGET RUDDER:</span><strong id="srv3-tgt-read">90.0°</strong></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>ACTUAL ANGLE:</span><strong id="srv3-act-read" style="color:#ff8a2a;">90.0°</strong></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>PWM SIGNAL:</span><strong id="srv3-pwm-read">1.50 ms</strong></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px; color:#ffb703;"><span>FLUID LOAD:</span><strong id="srv3-load-read">0 N·cm</strong></div>
+          <div style="display:flex; justify-content:space-between; color:#e63946;"><span>DYNAMIC ERROR:</span><strong id="srv3-err-read">0.0°</strong></div>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 11px; font-weight: bold; display: flex; justify-content: space-between;">
+            Proportional Loop Gain (Kp) <span id="lbl-srv-kp3">8</span>
+          </label>
+          <input type="range" id="ctrl-srv-kp3" min="1" max="20" value="8" step="1" style="width:100%; margin-top:4px;">
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 11px; font-weight: bold; display: flex; justify-content: space-between;">
+            External Hydrodynamic Fluid Torque <span id="lbl-srv-load">0 N·cm</span>
+          </label>
+          <input type="range" id="ctrl-srv-load" min="0" max="48" value="0" step="2" style="width:100%; margin-top:4px;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr; gap: 6px; margin-bottom: 10px;">
+          <button class="preset" id="btn-task-3" style="background:var(--rust); color:#fff; border-color:var(--rust); font-weight:bold; justify-content:center; padding:10px; margin:0;">Start Task 3 Protocol</button>
+        </div>
+
+        <div id="srv-t3-status-log" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #ffcc00; margin-bottom: 14px; padding: 6px; background: rgba(0,0,0,0.5); border-radius: 3px; min-height: 40px; max-height: 60px; overflow-y: auto; line-height: 1.3;">
+          Status: Ready to run load torque tests.
+        </div>
+
+        <!-- Task 3 Observation Table -->
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 11px; font-weight: bold; color: var(--rust-2); text-transform: uppercase; display: block; margin-bottom: 6px;">Task 3 Observations</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; margin-bottom: 8px;">
+            <button class="preset" id="btn-srv-t3-record" style="justify-content:center; padding:5px 2px; font-size:10px; font-weight:bold; margin:0;">Manual Record</button>
+            <button class="preset" id="btn-srv-t3-reset" style="justify-content:center; padding:5px 2px; font-size:10px; font-weight:bold; margin:0;">Reset Table</button>
+            <button class="preset" id="btn-srv-t3-export" style="justify-content:center; padding:5px 2px; font-size:10px; font-weight:bold; margin:0; background:var(--ink); color:var(--paper);">Export CSV</button>
+          </div>
+          <div style="background:#fff; border:1px solid var(--line); border-radius:4px; height: 160px; overflow-y: auto; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);">
+            <table class="data-table" id="srv-t3-data-table">
+              <thead id="srv-t3-table-head"></thead>
+              <tbody id="srv-t3-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="border-top:1px dashed var(--line); padding-top:16px;">
+          <h3 style="font-size:11px; font-weight:bold; color:var(--rust-2); text-transform:uppercase; margin-bottom:8px;">Steering Fault Injection Library</h3>
+          
+          <div style="background: rgba(255, 90, 0, 0.1); border: 1px solid rgba(255, 90, 0, 0.5); padding: 8px; border-radius: 4px; margin-bottom: 8px;">
+            <label style="font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 6px; cursor:pointer; color: #ff8a2a;">
+              <input type="checkbox" id="chk-srv-stiction"> Actuator Mechanical Stiction [cite: 1544]
+            </label>
+            <div style="font-size: 10px; margin-top: 4px; color:var(--ink); opacity:0.8;">
+              Simulates oxidized horn linkages. Creates a dead-band step threshold delay.
+            </div>
+          </div>
+
+          <div style="background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.5); padding: 8px; border-radius: 4px; margin-bottom: 8px;">
+            <label style="font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 6px; cursor:pointer; color: #ff4d4d;">
+              <input type="checkbox" id="chk-srv-noise"> Command Line PWM Signal Interference
+            </label>
+            <div style="font-size: 10px; margin-top: 4px; color:var(--ink); opacity:0.8;">
+              Injects high-frequency EMI noise causing rapid tracking deviations and excessive hunting.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-tab-2" style="display:none;">
+    <div class="section" style="margin-bottom: 16px;">
+      <h2>Deck Winch Positioning System</h2>
+      <p style="margin-bottom:12px; font-size:11px;">
+        Simulating an open-loop marine deck winch driven by step pulse and direction inputs.
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr; gap: 6px; margin-bottom: 12px;">
+        <button class="preset" id="btn-stp-run" style="background:var(--rust); color:#fff; border-color:var(--rust); font-weight:bold; font-size:10px; padding:6px 0; justify-content:center; margin:0;">Run System Simulation</button>
+      </div>
+    </div>
+
+    <!-- Sub-tab Selector for Stepper Tasks -->
+    <div class="tabs" style="display:flex; flex-wrap:wrap; gap:2px; border-bottom: 2px solid var(--line); margin-bottom: 16px;">
+      <button id="stp-tab-1" style="flex:1; padding:8px; font-size:10px; background:var(--ink); color:var(--paper); border:none; font-weight:bold; cursor:pointer; text-transform:uppercase; letter-spacing:0.5px;">Task 1: Accuracy</button>
+      <button id="stp-tab-2" style="flex:1; padding:8px; font-size:10px; background:var(--paper); color:var(--text); border:none; font-weight:bold; cursor:pointer; text-transform:uppercase; letter-spacing:0.5px;">Task 2: Torque-Speed</button>
+      <button id="stp-tab-3" style="flex:1; padding:8px; font-size:10px; background:var(--paper); color:var(--text); border:none; font-weight:bold; cursor:pointer; text-transform:uppercase; letter-spacing:0.5px;">Task 3: Acceleration</button>
+    </div>
+
+    <!-- Stepper Task 1 Content -->
+    <div id="stp-content-tab-1">
+      <div class="section">
+        <h2>Task 1: Step Accuracy &amp; Resolution</h2>
+        <p style="margin-bottom:12px;">
+          Command discrete index angles to measure stepper microstepping resolution and mechanical positional accuracy using encoder feedback.
+        </p>
+
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; background: #0b1f2a; color: #5fd6ef; padding: 10px; border-radius: 4px; margin-bottom: 14px; box-shadow: inset 0 0 8px rgba(0,0,0,0.5);">
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>COMMAND STEP INDEX:</span><strong id="stp1-tgt-read">0.0°</strong></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>ENCODER ROTATION:</span><strong id="stp1-act-read" style="color:#ff8a2a;">0.0°</strong></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>TOTAL PULSES:</span><strong id="stp1-pulses-read">0</strong></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px; color:#aaffaa;"><span>RESOLUTION / STEP:</span><strong id="stp1-res-read">1.80°</strong></div>
+          <div style="display:flex; justify-content:space-between; color:#e63946;"><span>POSITION ERROR:</span><strong id="stp1-err-read">0.00°</strong></div>
+        </div>
+
+        <div style="margin-bottom: 14px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;">
+          <button class="preset" id="btn-stp-t1-0" style="font-size:11px; padding:6px 0; justify-content:center;">0°</button>
+          <button class="preset" id="btn-stp-t1-90" style="font-size:11px; padding:6px 0; justify-content:center;">90°</button>
+          <button class="preset" id="btn-stp-t1-180" style="font-size:11px; padding:6px 0; justify-content:center;">180°</button>
+          <button class="preset" id="btn-stp-t1-270" style="font-size:11px; padding:6px 0; justify-content:center;">270°</button>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 11px; font-weight: bold; display: flex; justify-content: space-between;">
+            Target Index Angle (θ) <span id="lbl-stp1-angle">0°</span>
+          </label>
+          <input type="range" id="ctrl-stp1-angle" min="0" max="360" value="0" step="1.8" style="width:100%; margin-top:4px;">
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 11px; font-weight: bold; display: flex; justify-content: space-between;">
+            Microstepping Resolution Driver
+          </label>
+          <select id="ctrl-stp1-micro" style="width:100%; margin-top:4px; padding: 6px; font-family:inherit;">
+            <option value="1">Full Step Axis — 1.8° / step</option>
+            <option value="2">Half Step Axis — 0.9° / step</option>
+            <option value="4">Quarter Step Axis — 0.45° / step</option>
+            <option value="8">Eighth Step Axis — 0.225° / step</option>
+          </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr; gap: 6px; margin-bottom: 10px;">
+          <button class="preset" id="btn-stp1-run-task" style="background:var(--rust); color:#fff; border-color:var(--rust); font-weight:bold; justify-content:center; padding:10px;">Start Task 1 Protocol</button>
+        </div>
+
+        <div id="stp1-status-log" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #ffcc00; margin-bottom: 14px; padding: 6px; background: rgba(0,0,0,0.5); border-radius: 3px; min-height: 40px; max-height: 60px; overflow-y: auto; line-height: 1.3;">
+          Status: Ready to run accuracy tests.
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 11px; font-weight: bold; color: var(--rust-2); text-transform: uppercase; display: block; margin-bottom: 6px;">Task 1 Accuracy Records</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; margin-bottom: 8px;">
+            <button class="preset" id="btn-stp1-record" style="justify-content:center; padding:5px 2px; font-size:10px; font-weight:bold; margin:0;">Manual Record</button>
+            <button class="preset" id="btn-stp1-reset" style="justify-content:center; padding:5px 2px; font-size:10px; font-weight:bold; margin:0;">Reset Table</button>
+            <button class="preset" id="btn-stp1-export" style="justify-content:center; padding:5px 2px; font-size:10px; font-weight:bold; margin:0; background:var(--ink); color:var(--paper);">Export CSV</button>
+          </div>
+
+          <div style="background:#fff; border:1px solid var(--line); border-radius:4px; height: 160px; overflow-y: auto;">
+            <table class="data-table" id="stp1-data-table">
+              <thead>
+                <tr>
+                  <th>Target (°)</th>
+                  <th>Actual (°)</th>
+                  <th>Pulses</th>
+                  <th>Res (°)</th>
+                  <th>Error (°)</th>
+                </tr>
+              </thead>
+              <tbody id="stp1-table-body">
+                <!-- Rows added dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stepper Task 2 Content -->
+    <div id="stp-content-tab-2" style="display:none;">
+      <div class="section">
+        <h2>Task 2: Speed vs. Torque Trade-off</h2>
+        <p style="margin-bottom:12px;">
+          Vary clock pulse frequencies ($100-1000\text{ Hz}$) and loads ($0-15\text{ Nm}$) to test open-loop torque margins and map dynamic stalling points.
+        </p>
+
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; background: #0b1f2a; color: #5fd6ef; padding: 10px; border-radius: 4px; margin-bottom: 14px; box-shadow: inset 0 0 8px rgba(0,0,0,0.5);">
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>STEP FREQUENCY:</span><strong id="stp2-freq-read">200 Hz</strong></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>APPLIED LOAD:</span><strong id="stp2-load-read" style="color:#ff8a2a;">0.0 N·m</strong></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>AVAIL PULL TORQUE:</span><strong id="stp2-maxtq-read">16.4 N·m</strong></div>
+          <div style="display:flex; justify-content:space-between; color:#e63946;"><span>WINCH RIG STATUS:</span><strong id="stp2-status-read">OPERATIONAL</strong></div>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 11px; font-weight: bold; display: flex; justify-content: space-between;">
+            Step Clock Frequency <span id="lbl-stp2-freq">200 Hz</span>
+          </label>
+          <input type="range" id="ctrl-stp2-freq" min="50" max="1000" value="200" step="50" style="width:100%; margin-top:4px;">
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 11px; font-weight: bold; display: flex; justify-content: space-between;">
+            Load Resistance Brake Torque <span id="lbl-stp2-load">0 N·m</span>
+          </label>
+          <input type="range" id="ctrl-stp2-load" min="0" max="20" value="0" step="1" style="width:100%; margin-top:4px;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr; gap: 6px; margin-bottom: 10px;">
+          <button class="preset" id="btn-stp2-run-task" style="background:var(--rust); color:#fff; border-color:var(--rust); font-weight:bold; justify-content:center; padding:10px;">Start Task 2 Protocol</button>
+        </div>
+
+        <div id="stp2-status-log" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #ffcc00; margin-bottom: 14px; padding: 6px; background: rgba(0,0,0,0.5); border-radius: 3px; min-height: 40px; max-height: 60px; overflow-y: auto; line-height: 1.3;">
+          Status: Ready to run dynamic speed-torque tests.
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 11px; font-weight: bold; color: var(--rust-2); text-transform: uppercase; display: block; margin-bottom: 6px;">Task 2 Performance Records</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; margin-bottom: 8px;">
+            <button class="preset" id="btn-stp2-record" style="justify-content:center; padding:5px 2px; font-size:10px; font-weight:bold; margin:0;">Manual Record</button>
+            <button class="preset" id="btn-stp2-reset" style="justify-content:center; padding:5px 2px; font-size:10px; font-weight:bold; margin:0;">Reset Table</button>
+            <button class="preset" id="btn-stp2-export" style="justify-content:center; padding:5px 2px; font-size:10px; font-weight:bold; margin:0; background:var(--ink); color:var(--paper);">Export CSV</button>
+          </div>
+
+          <div style="background:#fff; border:1px solid var(--line); border-radius:4px; height: 160px; overflow-y: auto;">
+            <table class="data-table" id="stp2-data-table">
+              <thead>
+                <tr>
+                  <th>Freq (Hz)</th>
+                  <th>Load (N·m)</th>
+                  <th>Reached?</th>
+                  <th>Time (s)</th>
+                  <th>Error (°)</th>
+                </tr>
+              </thead>
+              <tbody id="stp2-table-body">
+                <!-- Rows added dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="margin-top: 16px;">
+          <strong style="font-size:11px; color:var(--text); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:4px;">Dynamic Torque-Speed Envelope</strong>
+          <div style="position:relative; height:170px; width:100%; background:#fff; border:1px solid var(--line); border-radius:4px; padding:4px;">
+            <canvas id="chart-stp-torque"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stepper Task 3 Content -->
+    <div id="stp-content-tab-3" style="display:none;">
+      <div class="section">
+        <h2>Task 3: Acceleration Profiling</h2>
+        <p style="margin-bottom:12px;">
+          Command step frequency ramps from $0 \to 2000\text{ Hz}$ over 5s. Compare instantaneous step vs. linear vs. sigmoidal S-curve profiling to prevent magnetic sync loss.
+        </p>
+
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; background: #0b1f2a; color: #5fd6ef; padding: 10px; border-radius: 4px; margin-bottom: 14px; box-shadow: inset 0 0 8px rgba(0,0,0,0.5);">
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>COMMAND FREQ:</span><strong id="stp3-cmd-freq">0 Hz</strong></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>ACTUAL FREQ:</span><strong id="stp3-act-freq" style="color:#ff8a2a;">0 Hz</strong></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span>TRACKING ERROR:</span><strong id="stp3-err-read" style="color:#e63946;">0 pulses</strong></div>
+          <div style="display:flex; justify-content:space-between; color:#ffcc00;"><span>STALL FREQUENCY:</span><strong id="stp3-stall-read">-- Hz</strong></div>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 11px; font-weight: bold; display: flex; justify-content: space-between;">
+            Acceleration Ramp Profile
+          </label>
+          <select id="ctrl-stp3-profile" style="width:100%; margin-top:4px; padding: 6px; font-family:inherit;">
+            <option value="none">Instantaneous Step (No Ramp)</option>
+            <option value="linear">Linear / Trapezoidal Ramp</option>
+            <option value="scurve">S-Curve Sigmoidal Ramp</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 11px; font-weight: bold; display: flex; justify-content: space-between;">
+            Peak Ramping Frequency <span id="lbl-stp3-peak">2000 Hz</span>
+          </label>
+          <input type="range" id="ctrl-stp3-peak" min="500" max="2500" value="2000" step="100" style="width:100%; margin-top:4px;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr; gap: 6px; margin-bottom: 10px;">
+          <button class="preset" id="btn-stp3-run-task" style="background:var(--rust); color:#fff; border-color:var(--rust); font-weight:bold; justify-content:center; padding:10px;">Start Task 3 Protocol</button>
+        </div>
+
+        <div id="stp3-status-log" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #ffcc00; margin-bottom: 14px; padding: 6px; background: rgba(0,0,0,0.5); border-radius: 3px; min-height: 40px; max-height: 60px; overflow-y: auto; line-height: 1.3;">
+          Status: Ready to run acceleration profiling.
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 11px; font-weight: bold; color: var(--rust-2); text-transform: uppercase; display: block; margin-bottom: 6px;">Task 3 Acceleration Records</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; margin-bottom: 8px;">
+            <button class="preset" id="btn-stp3-record" style="justify-content:center; padding:5px 2px; font-size:10px; font-weight:bold; margin:0;">Manual Record</button>
+            <button class="preset" id="btn-stp3-reset" style="justify-content:center; padding:5px 2px; font-size:10px; font-weight:bold; margin:0;">Reset Table</button>
+            <button class="preset" id="btn-stp3-export" style="justify-content:center; padding:5px 2px; font-size:10px; font-weight:bold; margin:0; background:var(--ink); color:var(--paper);">Export CSV</button>
+          </div>
+
+          <div style="background:#fff; border:1px solid var(--line); border-radius:4px; height: 130px; overflow-y: auto;">
+            <table class="data-table" id="stp3-data-table">
+              <thead>
+                <tr>
+                  <th>Profile</th>
+                  <th>Peak Freq (Hz)</th>
+                  <th>Safe?</th>
+                  <th>Stall Freq (Hz)</th>
+                  <th>Max Error</th>
+                </tr>
+              </thead>
+              <tbody id="stp3-table-body">
+                <!-- Rows added dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="margin-top: 16px;">
+          <strong style="font-size:11px; color:var(--text); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:4px;">Transient Acceleration Profile</strong>
+          <div style="position:relative; height:170px; width:100%; background:#fff; border:1px solid var(--line); border-radius:4px; padding:4px;">
+            <canvas id="chart-stp-accel"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stepper Fault Injection Section (always at bottom of tab) -->
+    <div class="section" style="border-top:1px dashed var(--line); padding-top:16px;">
+      <h2>Deck Winch Fault Injection Library</h2>
+      
+      <div style="background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.5); padding: 8px; border-radius: 4px; margin-bottom: 8px;">
+        <label style="font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 6px; cursor:pointer; color: #ff4d4d;">
+          <input type="checkbox" id="chk-stp-loss"> Synchronous Magnetic Step Slippage
+        </label>
+        <div style="font-size: 10px; margin-top: 4px; color:var(--ink); opacity:0.8;">
+          Artificially skews magnetic pole tracking, leading to dynamic sync failure slips during deceleration curves.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</aside>
+
+<footer>
+  <span>Interactive Cyber-Physical Deck Platform</span>
+</footer>
+
+<div class="fallback" id="fallback">
+  <div>
+    <h1 style="font-weight:700; font-family: sans-serif;">WebGL Engine Intercepted</h1>
+    <p>This laboratory module requires a device with active hardware acceleration.</p>
+  </div>
+</div>
+
+<script type="module" src="js/exp3.js"></script>
+</body>
+</html>

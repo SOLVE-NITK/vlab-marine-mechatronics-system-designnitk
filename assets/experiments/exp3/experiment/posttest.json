@@ -1,0 +1,226 @@
+{
+  "version": 2.0,
+  "questions": [
+    {
+      "question": "In Task 1 (static servo positioning accuracy), at what target angle did the simulation show the largest positioning error, and what does this indicate?",
+      "answers": {
+        "a": "At 0°, indicates the servo cannot return to its home position.",
+        "b": "At 90° (centre), because this is where the potentiometer exhibits maximum sensitivity and any ADC quantisation error causes the largest angular deviation.",
+        "c": "All target angles show identical error.",
+        "d": "At 180° only, because the servo reaches its mechanical end-stop."
+      },
+      "explanations": {
+        "a": "Incorrect. Errors are typically related to potentiometer nonlinearity and dead-band in the mid-range.",
+        "b": "Correct. The centre of travel is where potentiometer sensitivity peaks and ADC resolution limitations create the greatest uncertainty.",
+        "c": "Incorrect. Servo errors typically vary with position due to potentiometer nonlinearity and gear lash.",
+        "d": "Incorrect. End-stop contact would create a hard limit, not the largest positioning error."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "From the stepper Task 2 data, at what step frequency did the motor begin to exhibit stalling behaviour under 10 N·m load?",
+      "answers": {
+        "a": "At 100 Hz.",
+        "b": "Typically at 500, 1000 Hz under 10 N·m load, as the torque-speed curve drops below the load torque at these frequencies.",
+        "c": "The motor never stalls regardless of frequency.",
+        "d": "At 50 Hz, which is the same as the mains supply frequency."
+      },
+      "explanations": {
+        "a": "Incorrect. 100 Hz is typically within safe operating range for most NEMA 23 motors.",
+        "b": "Correct. The stall frequency depends on the motor's pull-out torque curve and applied load.",
+        "c": "Incorrect. All stepper motors have a stall frequency that decreases with increasing load.",
+        "d": "Incorrect. Mains frequency is irrelevant to stepper stall frequency."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "In the servo dynamic test (ramp input 0°→180° over 10 s), what was the measured tracking lag?",
+      "answers": {
+        "a": "0 ms, the servo tracks perfectly with no lag.",
+        "b": "Approximately 50, 100 ms, consistent with the servo's bandwidth limitation.",
+        "c": "10 s, the servo is always one full ramp period behind.",
+        "d": "The servo does not track ramp inputs at all."
+      },
+      "explanations": {
+        "a": "Incorrect. Physical servo mechanisms always exhibit some lag due to motor inertia and closed-loop bandwidth.",
+        "b": "Correct. A 50, 100 ms tracking lag is expected for standard servo motors under this ramp rate.",
+        "c": "Incorrect. A 10 s lag would mean the servo barely moves.",
+        "d": "Incorrect. Servos are designed to track continuously changing position references."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "From the PID tuning Task 1 results, what symptom appeared when Kd was set too high?",
+      "answers": {
+        "a": "The servo oscillated rapidly.",
+        "b": "The response became very slow (over-damped) with a large lag but minimal overshoot, classic over-damping from excessive derivative gain.",
+        "c": "The motor ran in reverse.",
+        "d": "The integral term dominated and caused windup."
+      },
+      "explanations": {
+        "a": "Incorrect. Excessive Kd creates an over-damped, sluggish response, not oscillation.",
+        "b": "Correct. Kd penalises rapid changes; too much Kd resists fast movement even when needed.",
+        "c": "Incorrect. Kd affects damping; it cannot reverse motor direction under a positive setpoint.",
+        "d": "Incorrect. Windup is caused by excessive Ki, not Kd."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "In the load-disturbance rejection test (Task 2), which PID term most effectively pulled the servo position back to 90° after the step load disturbance?",
+      "answers": {
+        "a": "Proportional term only.",
+        "b": "Integral term, it accumulated the positional offset caused by the load and drove additional motor current until the error was eliminated.",
+        "c": "Derivative term, it sensed the sudden position change and corrected it.",
+        "d": "All three terms contribute equally to disturbance rejection."
+      },
+      "explanations": {
+        "a": "Incorrect. Proportional control alone cannot eliminate steady-state error under constant load.",
+        "b": "Correct. The Ki (integral) term is specifically designed to eliminate persistent steady-state errors.",
+        "c": "Incorrect. The derivative term responds to rate-of-change; it damps transients but cannot eliminate steady-state offset.",
+        "d": "Incorrect. While all three contribute to the transient response, only the integral term can drive steady-state error to zero."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "In Task 1 (static servo positioning accuracy), the simulation logs three repeated trials at a commanded angle of 90°: 90.3°, 89.8°, and 90.1°. Based on the expected repeatability specification, how should this spread be interpreted?",
+      "answers": {
+        "a": "The spread (0.5° range) is within the expected repeatability of ±0.5°, so the servo is performing acceptably.",
+        "b": "The spread indicates a faulty potentiometer that must be replaced immediately.",
+        "c": "Repeatability cannot be assessed from only three trials, so the data is meaningless.",
+        "d": "The spread shows the servo has exceeded its static accuracy limit of ±2°."
+      },
+      "explanations": {
+        "a": "Correct. The three readings deviate from the mean (~90.07°) by no more than about 0.27°, which is inside the ±0.5° repeatability specification, indicating consistent, fault-free positioning.",
+        "b": "Incorrect. A ±0.5° spread is the expected, specified repeatability for this servo, not a fault condition; a fault would typically show erratic trial-to-trial variation well beyond ±0.5° or non-repeating drift.",
+        "c": "Incorrect. The Task 1 procedure explicitly specifies repeating each target position 3 times to assess repeatability; three trials is the defined minimum for this simulation task.",
+        "d": "Incorrect. The observed spread (0.5°) is well within the ±2° static accuracy specification; accuracy and repeatability are different metrics, and this data satisfies both."
+      },
+      "correctAnswer": "a",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "In Task 1 of the stepper motor simulation, the student compares full-step motion (1.8°/step) against 1/2 microstepping (0.9°/step) while commanding a move from 0° to 90°. What is the correct observation regarding smoothness and torque?",
+      "answers": {
+        "a": "Microstepping produces smoother, finer angular resolution (0.9° vs 1.8° per step) but typically delivers reduced torque per step compared to full-step drive.",
+        "b": "Full-step and microstep modes produce identical motion smoothness because both use the same 200-step/rev motor.",
+        "c": "Microstepping increases the step angle to 3.6°, making motion coarser.",
+        "d": "Microstepping eliminates the need for STEP/DIR/ENABLE pin control."
+      },
+      "explanations": {
+        "a": "Correct. Halving the step angle via 1/2 microstepping doubles the number of discrete steps to reach 90° (100 steps vs 50), producing visibly smoother motion in the simulation, at the cost of lower per-step holding torque, consistent with the stepper's step-resolution behaviour.",
+        "b": "Incorrect. Although the underlying motor is the same, microstepping subdivides each 1.8° full step into finer 0.9° increments, which visibly changes the smoothness of motion in the simulation.",
+        "c": "Incorrect. 1/2 microstepping halves the step angle to 0.9°, not doubles it; this makes motion finer, not coarser.",
+        "d": "Incorrect. Microstepping still relies on the same STEP/DIR/ENABLE interface; only the internal current-control pattern driving each step changes."
+      },
+      "correctAnswer": "a",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "Section 8.2.3 of the simulation compares open-loop stepper positioning against closed-loop encoder-feedback positioning after a simulated missed-step event during a 0°→270° command. What is the key difference observed?",
+      "answers": {
+        "a": "Both methods detect and correct missed steps equally well since the stepper's step resolution (1.8°) guarantees accuracy.",
+        "b": "The open-loop stepper reports the commanded 270° regardless of missed steps, while the closed-loop encoder-feedback system detects the actual shaft position and reveals the discrepancy.",
+        "c": "Closed-loop encoder feedback is only used for the servo motor, not the stepper, in this simulation.",
+        "d": "Missed steps only occur in closed-loop mode because the encoder interferes with step timing."
+      },
+      "explanations": {
+        "a": "Incorrect. Open-loop stepping has no means of detecting missed steps; the 1.8° step resolution only describes the size of an intended step, not whether that step was actually achieved under load.",
+        "b": "Correct. Without feedback, the open-loop controller only tracks commanded step count, so a missed step under load goes undetected; the encoder in the closed-loop configuration measures true shaft angle, exposing any error between commanded and actual position.",
+        "c": "Incorrect. Section 8.2.3 specifically compares open-loop and closed-loop (encoder feedback) configurations for the stepper motor to illustrate missed-step detection.",
+        "d": "Incorrect. Missed steps are a consequence of insufficient torque margin under load in either configuration; the encoder does not cause missed steps, it only allows them to be detected."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "In Task 3 (acceleration profiling), the step frequency is ramped from 0 to 2000 Hz over 5 seconds using a trapezoidal profile. What would the simulation most likely show if a linear (instantaneous) jump straight to 2000 Hz were commanded instead?",
+      "answers": {
+        "a": "No difference, because the stepper motor's maximum speed rating (2000-3000 RPM loaded) guarantees successful operation at any commanded frequency.",
+        "b": "The motor would run in reverse due to STEP/DIR pin conflicts.",
+        "c": "The motor would stall almost immediately because it cannot generate enough torque to accelerate the rotor and load from standstill directly to 2000 Hz, causing the step-tracking error to exceed the synchronisation margin.",
+        "d": "The motor would reach 2000 Hz instantly with zero tracking error, making the trapezoidal ramp unnecessary."
+      },
+      "explanations": {
+        "a": "Incorrect. The torque-speed trade-off means the motor cannot deliver sufficient torque to accelerate the load instantaneously to a high step rate; the maximum-speed rating assumes the motor is already up to speed, not starting from rest.",
+        "b": "Incorrect. An instantaneous frequency jump affects step rate/torque margin, not direction; DIR pin logic is unrelated to acceleration profile shape.",
+        "c": "Correct. Stepper motors have limited torque available for acceleration; jumping straight to a high step rate exceeds the pull-in torque capability from rest, causing lost steps and stall, which is exactly why trapezoidal/S-curve ramps are recommended to keep tracking error within the synchronisation margin (±1 step).",
+        "d": "Incorrect. This contradicts the stated purpose of trapezoidal/S-curve ramps, which exist specifically to prevent stalling that occurs when acceleration demand exceeds available torque."
+      },
+      "correctAnswer": "c",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "During the Task 3 load-effect test (simulated friction torque applied to the servo, and loaded operation of the stepper), the simulation logs increased lag, reduced holding force for the servo, and torque-limited behaviour for the stepper under sustained load. What is the practical implication for continuous marine service (e.g., rudder actuation or winch indexing)?",
+      "answers": {
+        "a": "Continuous high-load operation has no thermal or performance implication as long as instantaneous torque ratings (4.8 kg·cm servo, 5-20 N·m stepper) are not exceeded at any single instant.",
+        "b": "Sustained loading that approaches the servo's holding torque (3.5 kg·cm minimum) or the stepper's torque-speed limit reduces positioning margin, meaning actuators for continuous rudder or winch duty should be sized well below their rated maximum to maintain accuracy and avoid stall.",
+        "c": "The stepper is unaffected by load because it is open-loop and therefore torque-independent.",
+        "d": "Increased lag under load only affects the stepper, never the servo, because servos use PWM control."
+      },
+      "explanations": {
+        "a": "Incorrect. Continuous/sustained loading close to rated torque leads to increased lag and reduced holding force/margin over time, which matters for duty-cycle and reliability, not just instantaneous torque limits.",
+        "b": "Correct. The simulation's observed increased lag and reduced holding force under load indicate that operating near rated torque erodes positioning accuracy and stall margin, so marine actuator selection must include a safety margin for continuous duty rather than relying on peak ratings.",
+        "c": "Incorrect. Stepper torque output is fundamentally speed- and load-dependent (per the torque-speed trade-off in Task 2/Task 3); open-loop control means lost steps go undetected, it does not mean the motor is immune to load effects.",
+        "d": "Incorrect. The Task 3 procedure explicitly applies a simulated friction torque load to the servo and observes increased lag and reduced holding force, showing the servo is also affected by sustained load."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "Task 1 of the servo simulation logs three repeated trials at a commanded angle of 45°, yielding measured angles of 46.4°, 43.9°, and 45.2°. Compute the mean absolute error from the commanded angle and the repeatability (maximum deviation from the trial mean), and determine whether both the ±2° static accuracy and ±0.5° repeatability specifications are met.",
+      "answers": {
+        "a": "Mean absolute error ≈ 0.9°, repeatability (max deviation from mean) ≈ 1.03°, accuracy spec met, repeatability spec NOT met.",
+        "b": "Mean absolute error ≈ 0.9°, repeatability ≈ 1.27°, both accuracy and repeatability specs are met because the mean error is small.",
+        "c": "Mean absolute error ≈ 3.5°, exceeding the ±2° accuracy specification, so the servo has failed Task 1.",
+        "d": "Repeatability must be computed as the deviation from the commanded angle (45°), giving ±1.4° repeatability, which fails the spec, while accuracy is undefined."
+      },
+      "explanations": {
+        "a": "Correct. Errors from 45° are +1.4°, −1.1°, +0.2°, giving mean absolute error = (1.4+1.1+0.2)/3 ≈ 0.90°, within ±2°. Trial mean = (46.4+43.9+45.2)/3 = 45.17°; deviations from this mean are +1.23°, −1.27°, +0.03°, so maximum deviation ≈ 1.27° (approx 1.03-1.3° depending on rounding), which exceeds the ±0.5° repeatability specification, indicating acceptable accuracy but poor repeatability, possibly due to gear backlash.",
+        "b": "Incorrect. While mean absolute error (0.9°) is within the ±2° accuracy spec, the repeatability figure (~1.27° max deviation from the trial mean) exceeds the ±0.5° repeatability specification, so repeatability is NOT met; small mean error does not guarantee tight repeatability.",
+        "c": "Incorrect. Computing (|46.4−45| + |43.9−45| + |45.2−45|)/3 = (1.4+1.1+0.2)/3 ≈ 0.9°, not 3.5°; this option misapplies the arithmetic.",
+        "d": "Incorrect. Repeatability is properly defined as the spread of repeated trials about their own mean (trial-to-trial consistency), not deviation from the commanded value, that latter quantity is the accuracy/error metric, which is correctly computed as mean absolute error ≈ 0.9°."
+      },
+      "correctAnswer": "a",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "In Task 2 of the stepper simulation, a step frequency of 500 Hz is commanded against an applied load of 10 N·m, and the motor is rated with holding torque in the 5-20 N·m range (NEMA 23/34) with available torque decreasing as step rate (speed) increases per the torque-speed trade-off. At 500 Hz full-step (1.8°/step), compute the resulting shaft speed in RPM, and state whether this operating point is more likely to succeed or stall given that available torque typically falls toward the lower end of the range at higher step rates.",
+      "answers": {
+        "a": "Shaft speed = 500 × 1.8° / 360° × 60 = 150 RPM; since this is a moderate step rate (below the 1000 Hz reference used for 300 RPM in the manual), available torque is likely still comparably high, so successful tracking at 10 N·m load is more probable than at 1000 Hz.",
+        "b": "Shaft speed = 500 × 200 = 100,000 RPM, an unrealistic value showing the motor will definitely stall.",
+        "c": "Shaft speed = 60 RPM, calculated from the servo's speed rating of 60 deg/s, so the two motors behave identically at this frequency.",
+        "d": "Shaft speed = 500 Hz directly equals 500 RPM because step frequency in Hz is numerically equal to RPM."
+      },
+      "explanations": {
+        "a": "Correct. Speed = (500 steps/s × 1.8°/step) / 360° × 60 s/min = 150 RPM, which is half of the 300 RPM reference speed quoted for 1000 Hz full-step operation; since torque falls off with increasing step rate, the lower step rate of 500 Hz retains more of the motor's torque capacity, making it more likely to sustain a 10 N·m load without stalling than the higher 1000 Hz case.",
+        "b": "Incorrect. This incorrectly multiplies step frequency by steps/rev without converting through degrees per step and seconds per minute; the correct method gives 150 RPM, not 100,000 RPM.",
+        "c": "Incorrect. 60 deg/s is the servo's angular speed rating and is unrelated to stepper step frequency; the stepper's shaft speed must be derived from its own step rate and step angle, giving 150 RPM, not 60 RPM, and the two motor types have distinct speed/torque characteristics.",
+        "d": "Incorrect. Step frequency (steps/second) is not numerically equal to RPM; it must be converted via step angle (1.8°) and 360°/rev, yielding 150 RPM, not 500 RPM."
+      },
+      "correctAnswer": "a",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "During PID tuning of the servo rudder-position loop, the simulation logs three trial runs for a 0°→30° step command: Trial A (high Kp, low Kd) settles in 1.8s with 28% overshoot; Trial B (balanced Kp, Kd) settles in 1.6s with 4% overshoot; Trial C (low Kp, high Kd) settles in 3.4s with 0% overshoot. Classify each trial's damping condition and identify which best meets the servo performance targets (settling time ~1.0s, overshoot <5%).",
+      "answers": {
+        "a": "Trial A = under-damped (oscillatory, overshoot >20%), Trial B = critically damped (smooth, settles <2s, overshoot <5%), Trial C = over-damped (slow, large lag); Trial B best meets the <5% overshoot target though its 1.6s settling time exceeds the ~1.0s ideal.",
+        "b": "Trial A is critically damped because it settles fastest overall (1.8s Trial A vs 1.6s Trial B is not fastest, this is a distractor).",
+        "c": "Trial C is under-damped because it has the longest settling time.",
+        "d": "All three trials meet the servo performance target of settling time ~1.0s and overshoot <5%, since PID control guarantees convergence."
+      },
+      "explanations": {
+        "a": "Correct. Trial A's 28% overshoot matches the under-damped description (oscillates, overshoot >20%); Trial C's slow 3.4s settle with no overshoot matches over-damped (slow, large lag); Trial B's 4% overshoot and settling under 2s matches critically damped behaviour and is the closest to the target performance envelope, even though its settling time is above the ~1.0s target, it is still the best of the three.",
+        "b": "Incorrect. Trial A shows 28% overshoot, which by definition (oscillates, overshoot >20%) is under-damped, not critically damped; critically damped response is smooth with minimal overshoot, which Trial A does not exhibit, and Trial A is not even the fastest to settle (Trial B at 1.6s is faster).",
+        "c": "Incorrect. Under-damped is characterized by oscillation and overshoot >20%, not settling time; Trial C has 0% overshoot and the longest settling time (3.4s) with large lag, which is the defining signature of over-damped response, not under-damped.",
+        "d": "Incorrect. None of the three trials achieve the ~1.0s settling time target (1.8s, 1.6s, and 3.4s all exceed it), and Trial A's 28% overshoot clearly violates the <5% overshoot target; PID convergence does not guarantee meeting specific performance targets without proper tuning."
+      },
+      "correctAnswer": "a",
+      "difficulty": "advanced"
+    }
+  ]
+}

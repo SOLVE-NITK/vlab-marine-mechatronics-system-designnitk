@@ -1,0 +1,1 @@
+To measure remote shaft angle using synchro transmitter/receiver systems and optical incremental encoders, implement and tune closed-loop PID position control with encoder feedback, quantify the performance characteristics (accuracy, resolution, bandwidth) of each technology, and select the appropriate position-sensing method for specified marine applications.

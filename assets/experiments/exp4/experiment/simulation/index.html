@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Experiment 4: Sensor Interface &amp; Signal Conditioning — Marine Instrumentation</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header>
+  <img src="img/inalogo.png" class="header-logo" alt="INA" style="transform: scale(1.4);">
+  <div class="header-titles">
+    <h1>Sensor Interface &amp; Signal Conditioning</h1>
+  </div>
+  <img src="img/nitklogo-removebg.png" class="header-logo" alt="NITK">
+</header>
+
+<section id="stage">
+  <div id="canvas-host"><canvas id="canvas3d"></canvas></div>
+  <div class="blueprint-grid"></div>
+  <div class="vignette"></div>
+  <i class="cross tl"></i><i class="cross tr"></i><i class="cross bl"></i><i class="cross br"></i>
+
+  <div class="overlay tl">
+    <div class="readout"><span class="k">Module</span><span class="v" id="hudSub">RTD Pt100 — main-engine cooling-water temperature</span></div>
+  </div>
+  <div class="overlay bl">
+    <div class="readout"><i class="lamp-dot on" id="sysLamp"></i><span class="v" id="lampTxt">LOOP HEALTHY &middot; ADC 10-BIT</span></div>
+  </div>
+
+</section>
+
+<aside id="panel">
+  <div class="panel-head">
+    <h2>Signal Conditioning Rack</h2>
+    <p>Sensor Interface — Marine Engine Monitoring &middot; Arduino 10-bit ADC</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-pane="rtd">RTD Temp</button>
+    <button class="tab" data-pane="press">4&ndash;20 mA</button>
+    <button class="tab" data-pane="vib">Vibration</button>
+  </div>
+
+  <!-- ============ RTD ============ -->
+  <div class="pane active" id="pane-rtd">
+    <div class="section">
+      <h2>Readouts — Pt100</h2>
+      <div class="readouts">
+        <div class="ro"><div class="lbl">Raw ADC</div><div class="val amber" id="rAdc">102</div></div>
+        <div class="ro"><div class="lbl">Sensor V</div><div class="val cyan" id="rVolt">0.50<span class="unit"> V</span></div></div>
+        <div class="ro"><div class="lbl">Raw temp</div><div class="val cyan" id="rRawT">0.0<span class="unit"> &deg;C</span></div></div>
+        <div class="ro"><div class="lbl">Filtered temp</div><div class="val" id="rFilT">0.0<span class="unit"> &deg;C</span></div></div>
+        <div class="ro"><div class="lbl">RTD resistance</div><div class="val amber" id="rRes">100.0<span class="unit"> &Omega;</span></div></div>
+        <div class="ro"><div class="lbl">Raw noise p-p</div><div class="val" id="rNoise">0.0<span class="unit"> &deg;C</span></div></div>
+        <div class="ro"><div class="lbl">Filt noise p-p</div><div class="val" id="rNoiseF">0.0<span class="unit"> &deg;C</span></div></div>
+        <div class="ro"><div class="lbl">SNR gain</div><div class="val cyan" id="rSnr">0.0<span class="unit"> dB</span></div></div>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Coolant Temperature Input</h2>
+      <div class="ctl">
+        <div class="row"><label>True water temperature</label><output id="oTemp">25 &deg;C</output></div>
+        <input type="range" id="sTemp" min="0" max="100" step="1" value="25">
+      </div>
+      <div class="preset-row">
+        <button class="preset" data-t="0">0&deg;</button>
+        <button class="preset" data-t="25">25&deg;</button>
+        <button class="preset" data-t="50">50&deg;</button>
+        <button class="preset" data-t="75">75&deg;</button>
+        <button class="preset" data-t="100">100&deg;</button>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Calibration Log (Task 1)</h2>
+      <div class="preset-row">
+        <button class="preset" id="bCal">&#65291; Record point</button>
+        <button class="preset danger" id="bCalClr">Clear</button>
+      </div>
+      <div class="table-host" style="height:160px">
+        <table class="data-table">
+          <thead><tr><th>True &deg;C</th><th>ADC</th><th>Calc &deg;C</th><th>Err</th></tr></thead>
+          <tbody id="calBody"></tbody>
+        </table>
+      </div>
+      <div class="note" id="calFit">Fit: record &ge; 2 points &rarr; T = a&middot;V + b</div>
+    </div>
+    <div class="section">
+      <h2>Conditioning — Filter &amp; Noise (Task 2)</h2>
+      <div class="preset-row" id="segFilt">
+        <button class="preset" data-f="1">RAW</button>
+        <button class="preset" data-f="5">MA-5</button>
+        <button class="preset active" data-f="10">MA-10</button>
+        <button class="preset" data-f="20">MA-20</button>
+      </div>
+      <div class="preset-row">
+        <button class="preset" id="bNoise">Inject 50 Hz mains noise</button>
+      </div>
+      <div class="note">Expected: raw &asymp; <b>1&ndash;2 &deg;C</b> noise &middot; MA-10 &asymp; <b>0.2 &deg;C</b> &middot; MA-20 &asymp; <b>0.1 &deg;C</b> (but slower response).</div>
+    </div>
+    <div class="section">
+      <h2>Dynamic Response &amp; Time Constant (Task 3)</h2>
+      <div class="preset-row">
+        <button class="preset primary" id="bStep">Step 50&rarr;75 &deg;C</button>
+      </div>
+      <div class="note">Sensor time constant &tau; = <b>15 s</b> — the probe responds slowly. Watch 63.2&nbsp;% rise on the trace.</div>
+      <div class="note" id="tauNote">63.2&nbsp;% point of 50&rarr;75 step = <b>65.8 &deg;C</b> &middot; raw: <b>—</b> &middot; filtered: <b>—</b></div>
+    </div>
+    <div class="section">
+      <h2>Temperature Trace</h2>
+      <canvas class="scope" id="scopeRtd"></canvas>
+      <div class="legend"><b class="lgSp">&mdash; true</b><b class="lgRaw">&mdash; raw sensor</b><b class="lgFil">&mdash; filtered</b></div>
+    </div>
+  </div>
+
+  <!-- ============ PRESSURE ============ -->
+  <div class="pane" id="pane-press">
+    <div class="section">
+      <h2>Readouts — Ballast Discharge</h2>
+      <div class="readouts">
+        <div class="ro"><div class="lbl">Loop current</div><div class="val amber" id="pmA">8.00<span class="unit"> mA</span></div></div>
+        <div class="ro"><div class="lbl">Burden V (250 &Omega;)</div><div class="val cyan" id="pV">2.00<span class="unit"> V</span></div></div>
+        <div class="ro"><div class="lbl">Raw ADC</div><div class="val cyan" id="pAdc">409</div></div>
+        <div class="ro"><div class="lbl">Pressure</div><div class="val" id="pBar">2.50<span class="unit"> bar</span></div></div>
+        <div class="ro"><div class="lbl">Hysteresis H</div><div class="val amber" id="pHyst">&mdash;<span class="unit"> bar</span></div></div>
+        <div class="ro"><div class="lbl">Step &tau; (63.2 %)</div><div class="val" id="pTau">&mdash;<span class="unit"> ms</span></div></div>
+      </div>
+      <div class="alarmbar" id="pAlarm">LOOP OK — 4–20 mA HEALTHY</div>
+    </div>
+    <div class="section">
+      <h2>Pump Discharge Pressure</h2>
+      <div class="ctl">
+        <div class="row"><label>Commanded pressure</label><output id="oPr">2.5 bar</output></div>
+        <input type="range" id="sPr" min="0" max="10" step="0.1" value="2.5">
+      </div>
+    </div>
+    <div class="section">
+      <h2>Hysteresis Log (Task 1)</h2>
+      <div class="preset-row">
+        <button class="preset" id="bHyst">&#9654; Hysteresis sweep 0&rarr;10&rarr;0</button>
+      </div>
+      <div class="note" id="hystRes">Run the sweep — measured pressure is logged every <b>0.5 bar</b> rising and falling, then H = max&nbsp;|P&uarr; &minus; P&darr;| is computed.</div>
+      <div class="table-host" style="height:160px">
+        <table class="data-table">
+          <thead><tr><th>Cmd bar</th><th>P&uarr; bar</th><th>P&darr; bar</th><th>|H| bar</th></tr></thead>
+          <tbody id="hystBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Accuracy Under Load Changes (Task 2)</h2>
+      <div class="preset-row">
+        <button class="preset primary" id="bPStep">Step 5&rarr;7 bar</button>
+      </div>
+      <div class="note">First-order exponential settle time typically <b>50&ndash;100 ms</b>.</div>
+      <div class="note" id="pStepRes">63.2&nbsp;% time <b>—</b> &middot; settle &plusmn;2&nbsp;% <b>—</b> &middot; overshoot <b>—</b></div>
+    </div>
+    <div class="section">
+      <h2>Fault Injection (Task 3)</h2>
+      <div class="preset-row">
+        <button class="preset danger" id="bOpen">Open circuit &lt; 3.5 mA</button>
+        <button class="preset danger" id="bShort">Short circuit &gt; 21 mA</button>
+        <button class="preset on" id="bClear">&#10003; Clear fault</button>
+      </div>
+      <div class="note">Diagnostics: current &lt; <b>3.5 mA</b> &rarr; OPEN alarm &middot; &gt; <b>21 mA</b> &rarr; SHORT alarm &middot; recovery is automatic when fault removed.</div>
+    </div>
+    <div class="section">
+      <h2>Pressure Trace</h2>
+      <canvas class="scope" id="scopePr"></canvas>
+      <div class="legend"><b class="lgSp">&mdash; commanded</b><b class="lgFil">&mdash; measured</b></div>
+    </div>
+  </div>
+
+  <!-- ============ VIBRATION ============ -->
+  <div class="pane" id="pane-vib">
+    <div class="section">
+      <h2>Readouts — Main Bearing</h2>
+      <div class="readouts">
+        <div class="ro"><div class="lbl">Accel (inst)</div><div class="val cyan" id="vG">0.00<span class="unit"> g</span></div></div>
+        <div class="ro"><div class="lbl">RMS (100 smp)</div><div class="val" id="vRms">0.00<span class="unit"> g</span></div></div>
+        <div class="ro"><div class="lbl">Peak |g|</div><div class="val amber" id="vPk">0.00<span class="unit"> g</span></div></div>
+        <div class="ro"><div class="lbl">Sensor out</div><div class="val cyan" id="vV">2.500<span class="unit"> V</span></div></div>
+        <div class="ro"><div class="lbl">Offset &epsilon;</div><div class="val amber" id="vOff">&mdash; <span class="unit">V</span></div></div>
+        <div class="ro"><div class="lbl">Inject freq</div><div class="val" id="vF">0<span class="unit"> Hz</span></div></div>
+      </div>
+      <div class="alarmbar" id="vAlarm">BEARING NORMAL — RMS &lt; 2 g</div>
+    </div>
+    <div class="section">
+      <h2>Static Offset Calibration (Task 1)</h2>
+      <div class="preset-row">
+        <button class="preset primary" id="bZeroCal">&#8960; Calibrate 0g (Horizontal)</button>
+        <button class="preset" id="bPkReset">Reset peak</button>
+      </div>
+      <div class="note">Sensor: &plusmn;10 g, <b>100 mV/g</b>, 2.5 V @ 0 g. Click calibrate when resting to calculate &epsilon;.</div>
+    </div>
+    
+    <div class="section">
+      <h2>High-Frequency Injection (Task 2)</h2>
+      <div class="ctl">
+        <div class="row"><label>Sine injection (2 g amplitude)</label><output id="oVf">off</output></div>
+        <input type="range" id="sVf" min="0" max="5000" step="10" value="0">
+      </div>
+      <div class="preset-row" id="segFreq">
+        <button class="preset" data-f="0">Off</button>
+        <button class="preset" data-f="10">10Hz</button>
+        <button class="preset" data-f="100">100Hz</button>
+        <button class="preset" data-f="500">500Hz</button>
+        <button class="preset" data-f="1000">1kHz</button>
+        <button class="preset" data-f="5000">5kHz</button>
+      </div>
+      <div class="preset-row">
+        <button class="preset primary" id="bFrRec">&#65291; Record point @ freq</button>
+        <button class="preset danger" id="bFrClr">Clear</button>
+      </div>
+      <canvas class="scope" id="scopeFr"></canvas>
+      <div class="legend"><b class="lgFil">&mdash; measured amplitude (g)</b><b class="lgSp">&mdash; &minus;3 dB (1.41 g)</b></div>
+      <div class="note">Inject the <b>2 g</b> sine at 10 / 100 / 500 / 1k / 5k Hz and record each point — the <b>1 kHz</b> anti-alias filter rolls the amplitude off (log frequency axis).</div>
+    </div>
+
+    <div class="section">
+      <h2>Bearing-Fault Detection (Task 3)</h2>
+      <div class="preset-row" id="segCond">
+        <button class="preset active" data-c="0">Normal</button>
+        <button class="preset" data-c="1">Induce bearing spall</button>
+        <button class="preset" data-c="2">Advanced spall</button>
+      </div>
+      <div class="note" style="margin-bottom: 15px;">Thresholds: RMS &gt; <b>5 g</b> &rarr; warning &middot; |peak| &gt; <b>8 g</b> &rarr; SPALL ALARM. Notice how impulsive shocks trigger peak alarms even if RMS is low.</div>
+      <canvas class="scope" id="scopeVib"></canvas>
+      <div class="legend"><b class="lgFil">&mdash; acceleration (&plusmn;10 g)</b><b class="lgSp">&mdash; &plusmn;8 g alarm</b></div>
+    </div>
+  </div>
+</aside>
+
+<footer>
+  <span>Sensor Interface &amp; Signal Conditioning</span>
+</footer>
+
+<script src="js/script.js"></script>
+</body>
+</html>

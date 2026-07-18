@@ -1,0 +1,1 @@
+To characterise the flow behaviour of three types of marine control valves (equal-percentage, linear, and quick-opening), measure their inherent and installed flow characteristics under varying pressure drops, quantify energy-efficiency metrics, and diagnose simulated actuator faults including valve stiction and pilot-pressure failure.

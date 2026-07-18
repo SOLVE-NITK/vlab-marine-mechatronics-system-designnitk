@@ -1,1 +1,2 @@
-# vlab-marine-mechatronics-system-designnitk
+# lab_template
+General lab template

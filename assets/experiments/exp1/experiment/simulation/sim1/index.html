@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marine Ballast Water Tank</title>
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+</head>
+
+<body>
+  <header>
+    <img src="img/inalogo.png" class="header-logo" alt="INA" style="transform: scale(1.4);">
+    <div class="header-titles">
+      <div class="brand"><span class="mark">Defense Technology (Navy)</span></div>
+      <h1>Ballast Water Tank System &amp; PLC Control</h1>
+    </div>
+    <img src="img/nitklogo-removebg.png" class="header-logo" alt="NITK">
+  </header>
+
+  <!-- 75% 3D VIEWPORT -->
+  <div id="container">
+    <div id="badge"> WATER TANK SYSTEM</div>
+    <div id="hud">
+      <div class="lbl">Tank Water Level</div>
+      <div class="val" id="lvl-val">45%</div>
+      <div class="bar-bg">
+        <div class="bar-fg" id="lvl-bar" style="width:45%"></div>
+      </div>
+      <div class="lbl">Volumetric Flow</div>
+      <div class="val" id="flow-val">0.00 m³/h</div>
+    </div>
+
+  </div>
+
+  <!-- 25% CONTROL PANEL & DETAILS -->
+  <div id="side-panel">
+    <div class="panel-header">PLC CONTROL CENTER</div>
+
+    <div class="sidebar-tabs">
+      <button class="tab-btn active" id="btn-show-controls" onclick="switchSidebarView('controls')">CONTROLS</button>
+      <button class="tab-btn" id="btn-show-analysis" onclick="switchSidebarView('analysis')">ANALYSIS</button>
+    </div>
+
+    <div id="controls-view">
+
+    <div class="section-title">System Status Overview</div>
+    <div style="padding: 0 24px 8px;">
+      <div id="status-summary" style="background: var(--accent); color: white; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 14px; text-align: center; box-shadow: 0 4px 12px var(--accent-glow);">
+        SYSTEM INITIALIZING...
+      </div>
+    </div>
+
+    <!-- FAULT DIAGNOSTIC PANEL (Appears on Alarm) -->
+    <div id="fault-diagnostic" class="hidden" style="margin: 0 24px 16px; padding: 16px; border: 3px solid #cc0000; background: #fff; box-shadow: 6px 6px 0 #cc0000;">
+      <div style="font-size: 9px; font-weight: 900; color: #cc0000; letter-spacing: 2px; margin-bottom: 4px;">⚠ DIAGNOSTIC ALERT</div>
+      <div id="fault-title" style="font-size: 14px; font-weight: 900; margin-bottom: 8px; text-transform: uppercase;">FAULT DETECTED</div>
+      <div id="fault-desc" style="font-size: 11px; line-height: 1.5; color: #333; margin-bottom: 12px;">...</div>
+      
+      <div style="background: #fdf2f2; border: 1px solid #ffcaca; padding: 10px; border-radius: 4px; margin-bottom: 12px;">
+        <div style="font-size: 10px; font-weight: 800; color: #cc0000; margin-bottom: 4px;">OPERATOR RECOVERY ACTION:</div>
+        <div id="fault-recovery" style="font-size: 10.5px; color: #444; line-height: 1.4;">...</div>
+        <div id="fault-prediction" class="hidden" style="margin-top: 8px; font-size: 11px; font-weight: 800; color: #000; border-top: 1px solid #ffcaca; padding-top: 6px;">
+          PREDICTED FILL TIME: <span id="prediction-val">--:--</span>
+        </div>
+      </div>
+
+      <button id="btn-isolate-valve" class="btn btn-red" onclick="isolateValve()" style="width: 100%; display: none; background: #cc0000; border-color: #cc0000; color: #fff;">MANUALLY ISOLATE OUTLET</button>
+      <button id="btn-boost-pump" class="btn" onclick="boostPump()" style="width: 100%; display: none; background: #000; color: #fff;">BOOST PUMP PRESSURE (RECOVERY)</button>
+    </div>
+
+    <div class="section-title">Normal Operation Testing</div>
+    <div class="scenario-list">
+      <div class="scenario-card active" onclick="runScenario('A')">
+        <h4>Scenario A: Auto-Fill</h4>
+        <p>Empty tank fill-test. Shutdown at 91%.</p>
+      </div>
+      <div class="scenario-card" onclick="runScenario('B')">
+        <h4>Scenario B: Maintaining Level against Outlet Leak</h4>
+        <p>Maintain level against 2m³/h outlet flow. Observe duty cycle.</p>
+      </div>
+    </div>
+
+    <div class="section-title">Fault Injection and Recovery</div>
+    <div class="scenario-list">
+      <div class="scenario-card" onclick="runScenario('C')">
+        <h4>Scenario C: Fault Detection & Recovery</h4>
+        <p>Injects sensor failures and stuck valve. Requires manual operator recovery for F03.</p>
+      </div>
+    </div>
+    <div class="btn-group hidden" id="fault-injection-list">
+      <button class="btn fault-btn" data-fault="low_sensor">Low Sens Fail (I0.0)</button>
+      <button class="btn fault-btn" data-fault="high_stuck">High Sens Stuck (I0.2)</button>
+      <button class="btn fault-btn" data-fault="valve_stuck">Valve Stuck OPEN</button>
+      <button class="btn fault-btn" data-fault="cavitation">Pump Cavitation (50%)</button>
+    </div>
+
+    <div class="section-title">PLC System Status</div>
+    <div class="status-grid">
+      <div class="status-item">
+        <div class="led" id="led-pump"></div>
+        <span>Pump (Q0.0)</span>
+      </div>
+      <div class="status-item">
+        <div class="led" id="led-valve"></div>
+        <span>Valve (Q0.1)</span>
+      </div>
+      <div class="status-item">
+        <div class="led led-red" id="led-alarm"></div>
+        <span>Alarm (Q0.2)</span>
+      </div>
+      <div class="status-item">
+        <div class="bit" id="bit-i00"></div> <span>Low Lvl (I0.0)</span>
+      </div>
+      <div class="status-item">
+        <div class="bit" id="bit-i01"></div> <span>Mid Lvl (I0.1)</span>
+      </div>
+      <div class="status-item">
+        <div class="bit" id="bit-i02"></div> <span>High Lvl (I0.2)</span>
+      </div>
+    </div>
+
+    <div class="section-title"> Ladder Logic Monitor</div>
+    <div id="ladder-monitor">
+
+      <!-- NETWORK 1 -->
+      <div class="net-block" id="nb-1">
+        <div class="net-hdr">
+          <span>NET 1 · AUTO FILL</span>
+          <span class="net-badge badge-idle" id="nb1-badge">IDLE</span>
+        </div>
+        <div class="net-rung">
+          <div class="contact-no" id="nb1-c-i00">I0.0<small>LOW</small></div>
+          <span class="rung-and">·</span>
+          <div class="contact-nc" id="nb1-c-i02">/I0.2<small>¬HIGH</small></div>
+          <div class="rung-line"></div>
+          <div class="output-coil" id="nb1-coil">Q0.0<small>PUMP</small></div>
+        </div>
+      </div>
+
+      <!-- NETWORK 2 -->
+      <div class="net-block" id="nb-2">
+        <div class="net-hdr">
+          <span>NET 2 · HIGH-LEVEL SHUTOFF</span>
+          <span class="net-badge badge-idle" id="nb2-badge">IDLE</span>
+        </div>
+        <div class="net-rung">
+          <div class="contact-no" id="nb2-c-i02">I0.2<small>HIGH</small></div>
+          <div class="rung-line"></div>
+          <div class="output-coil reset-coil" id="nb2-coil">(R)Q0.0<small>PUMP OFF</small></div>
+        </div>
+      </div>
+
+      <!-- NETWORK 3 -->
+      <div class="net-block" id="nb-3">
+        <div class="net-hdr">
+          <span>NET 3 · OUTLET VALVE (FAIL-SAFE)</span>
+          <span class="net-badge badge-idle" id="nb3-badge">IDLE</span>
+        </div>
+        <div class="net-rung">
+          <div class="contact-no" id="nb3-c-alarm">OVERFILL<small>ALARM</small></div>
+          <div class="rung-line"></div>
+          <div class="output-coil" id="nb3-coil">Q0.1<small>VALVE</small></div>
+        </div>
+      </div>
+
+      <!-- NETWORK 4 -->
+      <div class="net-block" id="nb-4">
+        <div class="net-hdr">
+          <span>NET 4 · SENSOR FAIL SAFE</span>
+          <span class="net-badge badge-idle" id="nb4-badge">OK</span>
+        </div>
+        <div class="net-rung">
+          <div class="contact-no" id="nb4-c-fail">SENS.VAL<small>FAILED</small></div>
+          <div class="rung-line"></div>
+          <div class="output-coil reset-coil" id="nb4-coil">Q0.0/Q0.1/Q0.2<small>SHUTDOWN</small></div>
+        </div>
+      </div>
+
+      <!-- NETWORK 5 -->
+      <div class="net-block" id="nb-5">
+        <div class="net-hdr">
+          <span>NET 5 · MANUAL STOP</span>
+          <span class="net-badge badge-idle" id="nb5-badge">IDLE</span>
+        </div>
+        <div class="net-rung">
+          <div class="contact-no" id="nb5-c-stop">MAN.STOP<small>PRESSED</small></div>
+          <div class="rung-line"></div>
+          <div class="output-coil reset-coil" id="nb5-coil">(R)Q0.0/Q0.1<small>STOP+DRAIN</small></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="section-title">Step 3: I/O Configuration</div>
+    <div style="padding: 0 24px 16px;">
+      <table class="io-tbl">
+        <thead>
+          <tr><th>Signal</th><th>PLC Addr</th><th>State</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Low Level Sensor (10%)</td><td class="io-addr">I 0.0</td><td id="io-state-i00" class="io-state">□ OFF</td></tr>
+          <tr><td>Mid Level Sensor (50%)</td><td class="io-addr">I 0.1</td><td id="io-state-i01" class="io-state">□ OFF</td></tr>
+          <tr><td>High Level Sensor (90%)</td><td class="io-addr">I 0.2</td><td id="io-state-i02" class="io-state">□ OFF</td></tr>
+          <tr class="io-row-out"><td>Pump Motor</td><td class="io-addr">Q 0.0</td><td id="io-state-q00" class="io-state">□ OFF</td></tr>
+          <tr><td>Outlet Solenoid (NC)</td><td class="io-addr">Q 0.1</td><td id="io-state-q01" class="io-state">□ OFF</td></tr>
+          <tr><td>Alarm Beacon</td><td class="io-addr">Q 0.2</td><td id="io-state-q02" class="io-state">□ OFF</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-title">Manual Controls & Speed</div>
+    <div class="btn-group">
+      <div class="control-group">
+        <div class="lbl">Simulation Speed: <span id="speed-val">1x</span></div>
+        <input type="range" id="speed-slider" min="1" max="100" value="1" step="1" class="slider">
+      </div>
+      <button class="btn" id="active-force-pump">FORCE PUMP INLET</button>
+      <button class="btn" style="background: #004400; color: white;" id="btn-manual-pump">MANUAL PUMP START</button>
+      <button class="btn btn-red" id="btn-stop">EMERGENCY STOP</button>
+      <button class="btn" id="btn-reset">RESET SYSTEM</button>
+    </div>
+
+
+    <div class="section-title">Live Performance Chart</div>
+    <div style="padding: 0 24px 16px;">
+      <canvas id="realtime-chart" style="width: 100%; height: 240px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--border);"></canvas>
+    </div>
+
+    <div class="section-title"> Tank Configuration</div>
+    <div style="padding: 0 24px 16px;">
+      <div style="background: rgba(0,0,0,0.05); padding: 12px; border-radius: 8px; border: 2px solid #000; font-size: 11px; line-height: 1.6;">
+        <div style="display: flex; justify-content: space-between;"><span>Tank Type:</span> <span style="color: #000; font-weight: 800;">Cylindrical</span></div>
+        <div style="display: flex; justify-content: space-between;"><span>Dimensions:</span> <span style="color: #000; font-weight: 800;">2m Ø x 5m H</span></div>
+        <div style="display: flex; justify-content: space-between;"><span>Pump Cap:</span> <span id="spec-pump-cap" style="color: #000; font-weight: 800;">10.0 m³/h</span></div>
+        <div style="display: flex; justify-content: space-between;"><span>Sensors:</span> <span style="color: #000; font-weight: 800;">10%, 50%, 90%</span></div>
+        <div style="display: flex; justify-content: space-between;"><span>Valve Resp:</span> <span style="color: #000; font-weight: 800;">2.0 Seconds</span></div>
+      </div>
+    </div>
+
+    <div class="section-title">Scenario Selection</div>
+    <div id="scenario-details" style="padding: 0 24px 16px; font-size: 13px; line-height: 1.5; color: var(--text-dim);">
+      <div style="background: rgba(0,0,0,0.05); padding: 12px; border-radius: 8px; border: 2px solid #000;">
+        <strong style="color: var(--accent); display: block; margin-bottom: 4px; font-weight: 900;">ACTIVE: NO SCENARIO SELECTED</strong>
+        Select a scenario above to view detailed benchmarks.
+      </div>
+    </div>
+
+    <div id="results-container" class="hidden">
+      <div class="section-title">Expected Results Plot</div>
+      <div style="padding: 0 24px 16px;">
+        <img id="scenario-plot" src="img/scenario_a_plot.png" alt="Expected Results Plot" style="width: 100%; height: auto; background: #fff; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+      </div>
+
+    <div id="log-box" class="log-box"></div>
+    
+    <div style="padding: 12px 24px;">
+      <button id="btn-download-csv" class="btn" style="width: 100%; background: #222; color: #fff; border: 2px solid #fff; font-weight: 900; letter-spacing: 1px;">
+        EXPORT DATA LOG (CSV)
+      </button>
+    </div>
+
+    </div>
+    </div>
+    <!-- End of controls-view -->
+
+    <div id="analysis-view" class="hidden">
+
+    <div class="section-title">Data Collection and Analysis</div>
+
+    <!-- TASK 1: Hysteresis Characterization -->
+    <div class="analysis-task-card" id="task1-card">
+      <div class="task-card-header" onclick="toggleTask('task1')">
+        <div class="task-title-row">
+          <span class="task-number">TASK 1</span>
+          <span class="task-name">Hysteresis Characterization</span>
+        </div>
+        <span class="task-chevron" id="task1-chevron">▼</span>
+      </div>
+      <div class="task-body hidden" id="task1-body">
+        <div class="task-steps">
+          <div class="task-step"><span class="step-dot"></span>Calculate sensor trigger points — actual level at which switching occurs</div>
+          <div class="task-step"><span class="step-dot"></span>Compute hysteresis band — difference between rising and falling trigger levels</div>
+          <div class="task-step"><span class="step-dot"></span>Compare measured hysteresis to sensor specification (±1%)</div>
+        </div>
+        <div class="task1-status-bar" id="task1-status-bar">
+          <span class="task1-status-dot" id="task1-status-dot"></span>
+          <span id="task1-status-text">Ready — click START to run the hysteresis experiment automatically.</span>
+        </div>
+        <button class="btn task-run-btn" id="task1-run-btn" onclick="startTask1()">▶ START TASK 1</button>
+        <div class="task-results hidden" id="task1-results">
+          <div class="task-results-title">⬡ RESULTS</div>
+          <div id="task1-output"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TASK 2: System Response Time -->
+    <div class="analysis-task-card" id="task2-card">
+      <div class="task-card-header" onclick="toggleTask('task2')">
+        <div class="task-title-row">
+          <span class="task-number">TASK 2</span>
+          <span class="task-name">System Response Time</span>
+        </div>
+        <span class="task-chevron" id="task2-chevron">▼</span>
+      </div>
+      <div class="task-body hidden" id="task2-body">
+        <div class="task-steps">
+          <div class="task-step"><span class="step-dot"></span>Measure delay between high-level sensor trigger (I0.2 ON) and pump shutdown (Q0.0 OFF)</div>
+          <div class="task-step"><span class="step-dot"></span>Separate electrical response (PLC scan + solenoid) from mechanical coast-down</div>
+          <div class="task-step"><span class="step-dot"></span>Verify total response within 2–5 s marine specification</div>
+        </div>
+        <div class="task1-status-bar" id="task2-status-bar">
+          <span class="task1-status-dot" id="task2-status-dot"></span>
+          <span id="task2-status-text">Ready — click START to run Scenario A and capture shutdown timing.</span>
+        </div>
+        <button class="btn task-run-btn" id="task2-run-btn" onclick="startTask2()">▶ START TASK 2</button>
+        <div class="task-results hidden" id="task2-results">
+          <div class="task-results-title">⬡ RESULTS</div>
+          <div id="task2-output"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TASK 3: Steady-State Behavior -->
+    <div class="analysis-task-card" id="task3-card">
+      <div class="task-card-header" onclick="toggleTask('task3')">
+        <div class="task-title-row">
+          <span class="task-number">TASK 3</span>
+          <span class="task-name">Steady-State Behavior</span>
+        </div>
+        <span class="task-chevron" id="task3-chevron">▼</span>
+      </div>
+      <div class="task-body hidden" id="task3-body">
+        <div class="task-steps">
+          <div class="task-step"><span class="step-dot"></span>Analyze hunting (oscillations) around setpoint with outlet leak</div>
+          <div class="task-step"><span class="step-dot"></span>Calculate average tank level, minimum, and maximum levels during steady state</div>
+          <div class="task-step"><span class="step-dot"></span>Determine pump duty cycle percentage: D = t<sub>on</sub> / (t<sub>on</sub> + t<sub>off</sub>)</div>
+        </div>
+        <div class="task1-status-bar" id="task3-status-bar">
+          <span class="task1-status-dot" id="task3-status-dot"></span>
+          <span id="task3-status-text">Ready — click START to run Scenario B (level maintenance).</span>
+        </div>
+        <button class="btn task-run-btn" id="task3-run-btn" onclick="startTask3()">▶ START TASK 3</button>
+        <div class="task-results hidden" id="task3-results">
+          <div class="task-results-title">⬡ RESULTS</div>
+          <div id="task3-output"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TASK 4: Fault Detection -->
+    <div class="analysis-task-card" id="task4-card">
+      <div class="task-card-header" onclick="toggleTask('task4')">
+        <div class="task-title-row">
+          <span class="task-number">TASK 4</span>
+          <span class="task-name">Fault Detection &amp; Safety Interlocks</span>
+        </div>
+        <span class="task-chevron" id="task4-chevron">▼</span>
+      </div>
+      <div class="task-body hidden" id="task4-body">
+        <div class="task-steps">
+          <div class="task-step"><span class="step-dot"></span>Run automated fault injection timeline (Scenario C)</div>
+          <div class="task-step"><span class="step-dot"></span>Identify diagnostic signatures (PLC logic patterns) for each fault</div>
+          <div class="task-step"><span class="step-dot"></span>Calculate Time-to-Detect (TTD) latency for each safety interlock</div>
+          <div class="task-step"><span class="step-dot"></span>Recommend optimized threshold and timeout values for production</div>
+        </div>
+        <div class="task1-status-bar" id="task4-status-bar">
+          <span class="task1-status-dot" id="task4-status-dot"></span>
+          <span id="task4-status-text">Ready — click START to run Scenario C fault timeline.</span>
+        </div>
+        <button class="btn task-run-btn" id="task4-run-btn" onclick="startTask4()">▶ START TASK 4</button>
+        <div class="task-results hidden" id="task4-results">
+          <div class="task-results-title">⬡ RESULTS</div>
+          <div id="task4-output"></div>
+        </div>
+      </div>
+    </div>
+
+    </div>
+    <!-- End of analysis-view -->
+
+  </div>
+
+  <footer>
+    <span>Ballast Water Tank System &amp; PLC Control</span>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+  <script src="js/plc.js"></script>
+  <script src="js/tasks.js"></script>
+  <script src="js/index.js"></script>
+</body>
+
+</html>

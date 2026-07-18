@@ -1,0 +1,243 @@
+{
+  "version": 2.0,
+  "questions": [
+  {
+    "question": "What does the quadrature relationship between encoder channels A and B provide?",
+    "answers": {
+      "a": "Higher voltage output from the encoder. Incorrect. Voltage level is fixed at TTL/LVTTL levels; quadrature refers to phase angle.",
+      "b": "The ability to determine both position (count) and direction of rotation from the phase relationship between the two channels. Correct. If A leads B, rotation is one direction; if B leads A, rotation is the other.",
+      "c": "Protection against electromagnetic interference. Incorrect. Quadrature refers to signal geometry, not shielding.",
+      "d": "An analog output proportional to shaft angle. Incorrect. Encoders generate digital pulse trains, not analog outputs."
+    },
+    "explanations": {
+      "a": "Incorrect. Voltage level is fixed at TTL/LVTTL levels; quadrature refers to phase angle.",
+      "b": "Correct. If A leads B, rotation is one direction; if B leads A, rotation is the other.",
+      "c": "Incorrect. Quadrature refers to signal geometry, not shielding.",
+      "d": "Incorrect. Encoders generate digital pulse trains, not analog outputs."
+    },
+    "correctAnswer": "b",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "What is the angular resolution of a 1024 PPR encoder with quadrature decoding?",
+    "answers": {
+      "a": "0.352° per count. Incorrect. This is the resolution without quadrature decoding.",
+      "b": "0.088° per count. Correct. Quadrature decoding counts all four edges per cycle: 1024 x 4 = 4096 counts/rev. Resolution = 360/4096 = 0.088°.",
+      "c": "1.8° per count. Incorrect. 1.8° per step corresponds to a 200-step stepper motor.",
+      "d": "0.022° per count. Incorrect. 0.022° corresponds to a 14-bit (16384 counts/rev) absolute encoder."
+    },
+    "explanations": {
+      "a": "Incorrect. This is the resolution without quadrature decoding.",
+      "b": "Correct. Quadrature decoding counts all four edges per cycle: 1024 x 4 = 4096 counts/rev. Resolution = 360/4096 = 0.088°.",
+      "c": "Incorrect. 1.8° per step corresponds to a 200-step stepper motor.",
+      "d": "Incorrect. 0.022° corresponds to a 14-bit (16384 counts/rev) absolute encoder."
+    },
+    "correctAnswer": "b",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "What is the primary advantage of a synchro system over an optical encoder in a naval/marine environment?",
+    "answers": {
+      "a": "Higher angular resolution. Incorrect. Encoders (0.088° with quad decoding) are more accurate than synchros (±0.3, 0.5°).",
+      "b": "Inherent robustness to shock, vibration, and the ship's electromagnetic environment without requiring electronic signal processing. Correct. Synchros were developed precisely for the harsh naval environment; they predate solid-state electronics.",
+      "c": "Lower cost. Incorrect. Synchros ($200, 500) are significantly more expensive than encoders ($30, 100).",
+      "d": "Digital output compatible with microcontrollers. Incorrect. Synchros output multi-phase AC; digital interface requires resolver-to-digital converter (RDC) ICs."
+    },
+    "explanations": {
+      "a": "Incorrect. Encoders (0.088° with quad decoding) are more accurate than synchros (±0.3, 0.5°).",
+      "b": "Correct. Synchros were developed precisely for the harsh naval environment; they predate solid-state electronics.",
+      "c": "Incorrect. Synchros ($200, 500) are significantly more expensive than encoders ($30, 100).",
+      "d": "Incorrect. Synchros output multi-phase AC; digital interface requires resolver-to-digital converter (RDC) ICs."
+    },
+    "correctAnswer": "b",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "What event does the encoder index (Z) channel signal?",
+    "answers": {
+      "a": "A step change in shaft speed. Incorrect. Speed changes are inferred from the A/B channel frequency, not the index.",
+      "b": "One pulse per complete revolution, providing a homing reference. Correct. The Z channel allows the controller to establish absolute position after power-up or loss-of-count events.",
+      "c": "A fault in the encoder optical disc. Incorrect. Faults typically manifest as missing A/B pulses or logic errors, not Z-channel behaviour.",
+      "d": "The moment when shaft direction reverses. Incorrect. Direction reversal is detected from A/B phase relationship, not the index."
+    },
+    "explanations": {
+      "a": "Incorrect. Speed changes are inferred from the A/B channel frequency, not the index.",
+      "b": "Correct. The Z channel allows the controller to establish absolute position after power-up or loss-of-count events.",
+      "c": "Incorrect. Faults typically manifest as missing A/B pulses or logic errors, not Z-channel behaviour.",
+      "d": "Incorrect. Direction reversal is detected from A/B phase relationship, not the index."
+    },
+    "correctAnswer": "b",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "In the PID control code, what does constrain(p_term + i_term + d_term, -255, 255) ensure?",
+    "answers": {
+      "a": "The motor runs at exactly 50% speed. Incorrect. Constrain clips to ±255 range; it does not fix a specific value.",
+      "b": "The motor control output stays within the PWM range (-255 to +255), preventing hardware damage from out-of-range PWM commands. Correct. constrain() clips the PID output to the valid PWM duty cycle range.",
+      "c": "The gains Kp, Ki, Kd are normalised to unity sum. Incorrect. constrain() affects the output, not the gains.",
+      "d": "The integral term is reset to zero. Incorrect. Integral reset requires explicitly setting sumError = 0."
+    },
+    "explanations": {
+      "a": "Incorrect. Constrain clips to ±255 range; it does not fix a specific value.",
+      "b": "Correct. constrain() clips the PID output to the valid PWM duty cycle range.",
+      "c": "Incorrect. constrain() affects the output, not the gains.",
+      "d": "Incorrect. Integral reset requires explicitly setting sumError = 0."
+    },
+    "correctAnswer": "b",
+    "difficulty": "beginner"
+  },
+  {
+    "question": "The experiment reports that the synchro receiver hunts (oscillates around the null position). What causes this, and how is it reduced in practice?",
+    "answers": {
+      "a": "Hunting is caused by insufficient AC excitation voltage; reduced by increasing excitation to 230 V. Incorrect. Standard excitation is 115 V; increasing voltage beyond specification damages the synchro.",
+      "b": "Hunting is caused by the receiver rotor's inertia and insufficient mechanical damping; it is reduced by adding a viscous-damper or a damper winding to the receiver. Correct. Without damping, the receiver's electromagnetic restoring torque and rotor inertia form an under-damped second-order system that overshoots null.",
+      "c": "Hunting is caused by the encoder losing synchronisation. Incorrect. Synchro systems do not use encoders; hunting is a purely electromechanical effect.",
+      "d": "Hunting is eliminated by increasing cable length between transmitter and receiver. Incorrect. Longer cables increase resistance and slightly reduce torque, but do not address the damping problem."
+    },
+    "explanations": {
+      "a": "Incorrect. Standard excitation is 115 V; increasing voltage beyond specification damages the synchro.",
+      "b": "Correct. Without damping, the receiver's electromagnetic restoring torque and rotor inertia form an under-damped second-order system that overshoots null.",
+      "c": "Incorrect. Synchro systems do not use encoders; hunting is a purely electromechanical effect.",
+      "d": "Incorrect. Longer cables increase resistance and slightly reduce torque, but do not address the damping problem."
+    },
+    "correctAnswer": "b",
+    "difficulty": "intermediate"
+  },
+  {
+    "question": "At 1000 RPM shaft speed, what is the channel A output frequency for a 1024 PPR encoder?",
+    "answers": {
+      "a": "1024 Hz. Incorrect. This would be at 60 RPM (1 rev/s).",
+      "b": "17,067 Hz. Correct. f = RPM x PPR / 60 = 1000 x 1024 / 60 = 17,067 Hz.",
+      "c": "1000 Hz. Incorrect. This confuses RPM with PPR.",
+      "d": "60,000 Hz. Incorrect. This would require ~3516 RPM at 1024 PPR."
+    },
+    "explanations": {
+      "a": "Incorrect. This would be at 60 RPM (1 rev/s).",
+      "b": "Correct. f = RPM x PPR / 60 = 1000 x 1024 / 60 = 17,067 Hz.",
+      "c": "Incorrect. This confuses RPM with PPR.",
+      "d": "Incorrect. This would require ~3516 RPM at 1024 PPR."
+    },
+    "correctAnswer": "b",
+    "difficulty": "intermediate"
+  },
+  {
+    "question": "Derive the PID control output in encoder counts when target angle = 90°, current position = 45°, Kp = 0.5, Ki = 0.01, previous integral sum = 50 counts, and Kd = 0.1 with previous error = 100 counts.",
+    "answers": {
+      "a": "Motor command = 65. Incorrect. Full calculation required.",
+      "b": "Motor command ≈ 70. Correct. Target = 90/360 x 1024 = 256 counts. Current = 45/360 x 1024 = 128 counts. Error = 128. P = 0.5 x 128 = 64. sumError = 50+128 = 178. I = 0.01 x 178 = 1.78. D = 0.1 x (128-100) = 2.8. Total = 64+1.78+2.8 = 68.6 ≈ 69 (constrained within ±255).",
+      "c": "Motor command = 255 (maximum PWM). Incorrect. The combined PID output does not saturate at these gain values.",
+      "d": "Motor command = 0 (system at setpoint). Incorrect. The current position (45°) is not equal to the target (90°)."
+    },
+    "explanations": {
+      "a": "Incorrect. Full calculation required.",
+      "b": "Correct. Target = 90/360 x 1024 = 256 counts. Current = 45/360 x 1024 = 128 counts. Error = 128. P = 0.5 x 128 = 64. sumError = 50+128 = 178. I = 0.01 x 178 = 1.78. D = 0.1 x (128-100) = 2.8. Total = 64+1.78+2.8 = 68.6 ≈ 69 (constrained within ±255).",
+      "c": "Incorrect. The combined PID output does not saturate at these gain values.",
+      "d": "Incorrect. The current position (45°) is not equal to the target (90°)."
+    },
+    "correctAnswer": "b",
+    "difficulty": "intermediate"
+  },
+  {
+    "question": "Compare the bandwidth of synchro (10 Hz) and incremental encoder (10 kHz) systems. What does this mean for selecting a sensor for a fast-acting missile guidance platform vs. a ship-heading indicator?",
+    "answers": {
+      "a": "Both sensors are suitable for both applications. Incorrect. The 1000x bandwidth difference is application-critical.",
+      "b": "The encoder's 10 kHz bandwidth is required for the missile guidance system (high-rate dynamics), while the synchro's 10 Hz bandwidth is adequate for the slowly changing ship heading application. Correct. Bandwidth must exceed the highest-frequency component of the measured variable; ship heading changes are < 1 Hz, while missile dynamics demand kHz bandwidth.",
+      "c": "Synchro is better for both because it requires no electronics. Incorrect. Missile guidance electronics can handle encoder interfacing; bandwidth is the determining factor.",
+      "d": "Encoders cannot measure shaft angles above 360°. Incorrect. Incremental encoders count continuously and can track multiple revolutions without limit."
+    },
+    "explanations": {
+      "a": "Incorrect. The 1000x bandwidth difference is application-critical.",
+      "b": "Correct. Bandwidth must exceed the highest-frequency component of the measured variable; ship heading changes are < 1 Hz, while missile dynamics demand kHz bandwidth.",
+      "c": "Incorrect. Missile guidance electronics can handle encoder interfacing; bandwidth is the determining factor.",
+      "d": "Incorrect. Incremental encoders count continuously and can track multiple revolutions without limit."
+    },
+    "correctAnswer": "b",
+    "difficulty": "intermediate"
+  },
+  {
+    "question": "In the simulation, the closed-loop PID tracking test (0°→360° over 30 s) showed a tracking lag. How would increasing the shaft speed (same angle range, shorter time) affect the tracking lag and what PID adjustment would help?",
+    "answers": {
+      "a": "Tracking lag decreases with higher speed. Incorrect. Higher commanded speed increases the rate of change of error, causing the controller to lag further.",
+      "b": "Tracking lag increases with higher speed because the PID output saturates at 255 PWM before achieving the required velocity; increasing Kp or implementing feedforward (adding shaft velocity to the output) reduces lag. Correct. Feedforward is the standard technique for reducing tracking lag in position control loops without sacrificing stability.",
+      "c": "No adjustment is needed; the PID automatically adapts. Incorrect. A fixed-gain PID does not self-adapt; gains must be manually tuned or an adaptive controller used.",
+      "d": "Increasing Ki eliminates tracking lag. Incorrect. Ki reduces steady-state error, not dynamic tracking lag; only Kp or feedforward addresses lag."
+    },
+    "explanations": {
+      "a": "Incorrect. Higher commanded speed increases the rate of change of error, causing the controller to lag further.",
+      "b": "Correct. Feedforward is the standard technique for reducing tracking lag in position control loops without sacrificing stability.",
+      "c": "Incorrect. A fixed-gain PID does not self-adapt; gains must be manually tuned or an adaptive controller used.",
+      "d": "Incorrect. Ki reduces steady-state error, not dynamic tracking lag; only Kp or feedforward addresses lag."
+    },
+    "correctAnswer": "b",
+    "difficulty": "intermediate"
+  },
+  {
+    "question": "A synchro transmitter-receiver pair is specified with a steady-state accuracy of ±0.3-0.5°. If the transmitter shaft is set to 90° and then to 360°, how does the expected receiver error compare between the two settings?",
+    "answers": {
+      "a": "The error at 360° will be roughly 4x larger than at 90°, since error scales linearly with shaft angle. Incorrect. Synchro accuracy is not a percentage-of-reading specification; it is a fixed mechanical/electromagnetic null-detection error independent of the commanded angle.",
+      "b": "The error at both 90° and 360° will lie within the same ±0.3-0.5° band, because synchro accuracy is a constant absolute specification independent of shaft position. Correct. The synchro's error arises from fixed sources (winding symmetry, bearing friction, null-detection torque threshold) that do not vary with commanded angle, so the ±0.3-0.5° spec applies uniformly across all quadrants, consistent with the uniform accuracy across all quadrants result expected in Task 1.",
+      "c": "The error at 360° will be zero because 360° coincides with the 0° reference and the synchro self-calibrates at the reference point. Incorrect. 360° is not a special calibration point for a synchro; it is electrically identical to 0° but still subject to the same ±0.3-0.5° tolerance band, not zero error.",
+      "d": "The error is unpredictable and cannot be bounded because synchros do not have a repeatable error specification. Incorrect. Synchros have a well-defined, repeatable accuracy specification (±0.3-0.5°) precisely because the electromagnetic null-seeking behavior is consistent and repeatable at any shaft angle."
+    },
+    "explanations": {
+      "a": "Incorrect. Synchro accuracy is not a percentage-of-reading specification; it is a fixed mechanical/electromagnetic null-detection error independent of the commanded angle.",
+      "b": "Correct. The synchro's error arises from fixed sources (winding symmetry, bearing friction, null-detection torque threshold) that do not vary with commanded angle, so the ±0.3-0.5° spec applies uniformly across all quadrants.",
+      "c": "Incorrect. 360° is not a special calibration point for a synchro; it is electrically identical to 0° but still subject to the same ±0.3-0.5° tolerance band, not zero error.",
+      "d": "Incorrect. Synchros have a well-defined, repeatable accuracy specification (±0.3-0.5°) precisely because the electromagnetic null-seeking behavior is consistent and repeatable at any shaft angle."
+    },
+    "correctAnswer": "b",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "Design a missing-pulse diagnostic for the 1024 PPR incremental encoder using the index (Z) channel. If channel A is expected to produce exactly 1024 rising edges between two consecutive Z pulses, but only 1021 edges are counted in one revolution, what is the resulting angular measurement error before the next Z pulse re-syncs the count, and what is the correct diagnostic conclusion?",
+    "answers": {
+      "a": "Error = 3 x 0.088° = 0.264°; conclusion: 3 quadrature edges were missed and the position count silently drifts by 0.264° until the next Z pulse resets it. Correct. With quadrature decoding, each A edge corresponds to one 0.088° count (360/4096). Missing 3 of the expected edges leaves the running count 3 counts low, i.e., 3 x 0.088° = 0.264° of accumulated error, which persists until the Z (index) pulse forces a re-synchronization of the counter to the known home position.",
+      "b": "Error = 0° because the index pulse corrects the count instantaneously on every A edge, not just once per revolution. Incorrect. The Z pulse occurs only once per revolution, so it cannot correct errors that accumulate between index pulses; correction only happens at the Z event.",
+      "c": "Error = 3 x 0.352° = 1.056°, since resolution without quadrature (0.352°) applies to diagnostic counting. Incorrect. The system uses quadrature decoding (stated resolution 0.088°/count), so the diagnostic must use the quadrature-corrected resolution, not the raw 1x resolution.",
+      "d": "Missing pulses cannot be detected at all with an incremental encoder, regardless of the index channel. Incorrect. This is exactly what the Z (index) channel is designed to catch: comparing the A-edge count accumulated between two Z pulses against the expected 1024 (or 4096 with quadrature) reveals missed or extra pulses."
+    },
+    "explanations": {
+      "a": "Correct. With quadrature decoding, each A edge corresponds to one 0.088° count (360/4096). Missing 3 of the expected edges leaves the running count 3 counts low, i.e., 3 x 0.088° = 0.264° of accumulated error, which persists until the Z (index) pulse forces a re-synchronization of the counter to the known home position.",
+      "b": "Incorrect. The Z pulse occurs only once per revolution, so it cannot correct errors that accumulate between index pulses; correction only happens at the Z event.",
+      "c": "Incorrect. The system uses quadrature decoding (stated resolution 0.088°/count), so the diagnostic must use the quadrature-corrected resolution, not the raw 1x resolution.",
+      "d": "Incorrect. This is exactly what the Z (index) channel is designed to catch: comparing the A-edge count accumulated between two Z pulses against the expected 1024 (or 4096 with quadrature) reveals missed or extra pulses."
+    },
+    "correctAnswer": "a",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "Explain why Gray code is used in the absolute encoder's disk pattern instead of standard binary, using the decimal 3→4 transition as a worked example (3-bit codes).",
+    "answers": {
+      "a": "Binary 3→4 is 011→100 (all 3 bits change simultaneously); Gray code 3→4 is 010→110 (only 1 bit changes). Correct. In binary, transitioning between 3 (011) and 4 (100) requires all three bits to flip at once; if the optical sensors are not perfectly aligned, transient misreads (e.g., 000, 111, 101) can occur during the transition, causing large momentary position errors. Gray code guarantees that adjacent decimal values differ by exactly one bit (3=010, 4=110), so even with slight sensor misalignment, the worst-case transient reading differs from the true value by at most one code, i.e., one encoder count, not a large ambiguous jump.",
+      "b": "Binary and Gray code both change only 1 bit between 3 and 4, so there is no practical difference between them. Incorrect. Binary 011→100 changes all 3 bits simultaneously; only Gray code guarantees the single-bit-change property, which is the entire reason it is chosen for absolute encoders.",
+      "c": "Gray code changes all bits between adjacent values, which averages out sensor misalignment errors. Incorrect. This describes binary's behavior (multi-bit change), which is the problem Gray code solves, not the mechanism Gray code uses. Gray code changes exactly one bit between adjacent values.",
+      "d": "Gray code is used because it requires fewer bits than binary to represent the same number of positions. Incorrect. Gray code and binary use the same number of bits for the same resolution (e.g., 14 bits for 16384 counts/rev in either scheme); the advantage is transition reliability, not bit-count reduction."
+    },
+    "explanations": {
+      "a": "Correct. In binary, transitioning between 3 (011) and 4 (100) requires all three bits to flip at once; Gray code guarantees that adjacent decimal values differ by exactly one bit.",
+      "b": "Incorrect. Binary 011→100 changes all 3 bits simultaneously; only Gray code guarantees the single-bit-change property.",
+      "c": "Incorrect. Gray code changes exactly one bit between adjacent values.",
+      "d": "Incorrect. Gray code and binary use the same number of bits for the same resolution; the advantage is transition reliability, not bit-count reduction."
+    },
+    "correctAnswer": "a",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "For a safety-critical propulsion shaft position sensor that must recover its exact angular position immediately after a power loss (e.g., emergency generator failover), compare incremental (1024 PPR) and absolute (14-bit) encoder suitability.",
+    "answers": {
+      "a": "The incremental encoder is preferred because its 0.088° resolution with quadrature is finer than the absolute encoder's stated ±0.09° accuracy. Incorrect. Resolution is not the deciding factor here; the requirement is immediate position recovery after power loss, which resolution alone does not provide.",
+      "b": "Both encoders are equally suitable because both output an electrical signal proportional to shaft angle at all times. Incorrect. An incremental encoder's output (pulse count) is only meaningful relative to a counter that must be initialized/homed; it does not inherently encode absolute position at all times.",
+      "c": "The absolute encoder is preferred because its Gray-code output represents a unique code for every shaft position, so position is known immediately on power-up with no homing/re-referencing move required. Correct. The comparison table states the absolute encoder's synchronization is immediate versus requires counter for the incremental type. After a power loss, an incremental encoder's pulse counter resets to zero and the true shaft angle is lost until a homing routine (using the Z index) is performed, which may not be acceptable for a safety-critical propulsion system that must not perform an uncommanded homing rotation. The absolute encoder directly outputs the unique Gray code for the current mechanical position with no motion required.",
+      "d": "The incremental encoder is preferred because its bandwidth (~10kHz) is much higher than the absolute encoder's (~100Hz), and higher bandwidth is always safer. Incorrect. Bandwidth relates to how fast position changes can be tracked, not to power-loss position recovery; for the stated failover requirement, immediate absolute position readout is the governing criterion, not tracking bandwidth."
+    },
+    "explanations": {
+      "a": "Incorrect. Resolution is not the deciding factor here; the requirement is immediate position recovery after power loss, which resolution alone does not provide.",
+      "b": "Incorrect. An incremental encoder's output (pulse count) is only meaningful relative to a counter that must be initialized/homed; it does not inherently encode absolute position at all times.",
+      "c": "Correct. The absolute encoder directly outputs the unique Gray code for the current mechanical position with no motion required.",
+      "d": "Incorrect. Bandwidth relates to how fast position changes can be tracked, not to power-loss position recovery."
+    },
+    "correctAnswer": "c",
+    "difficulty": "advanced"
+  }
+]
+}

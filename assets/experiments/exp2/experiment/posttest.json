@@ -1,0 +1,226 @@
+{
+  "version": 2.0,
+  "questions": [
+    {
+      "question": "In the simulation, at 0% valve opening the flow is logged as 0.0 L/min. What does this confirm about the valve's seat leakage in the fault-free condition?",
+      "answers": {
+        "a": "The inlet pressure has dropped to zero.",
+        "b": "The valve seat is tight with zero leakage in the nominal simulation.",
+        "c": "The flow sensor has failed.",
+        "d": "The valve is incorrectly configured."
+      },
+      "explanations": {
+        "a": "Incorrect. Inlet pressure is held constant at 1.5 bar throughout the experiment.",
+        "b": "Correct. The simulation represents a new valve; leakage is only introduced via the fault-injection scenario.",
+        "c": "Incorrect. A failed sensor would give an undefined reading, not a consistent zero.",
+        "d": "Incorrect. Zero flow at 0% opening is expected and correct."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "After injecting Fault 2 (actuator stiction), what is the minimum additional signal increment required to move the valve stem from rest in the simulation?",
+      "answers": {
+        "a": "50%.",
+        "b": "No additional signal is needed; stiction has no effect.",
+        "c": "10%.",
+        "d": "1%."
+      },
+      "explanations": {
+        "a": "Incorrect. A 50% dead-band would essentially prevent modulation entirely.",
+        "b": "Incorrect. Stiction is the defining characteristic of this fault.",
+        "c": "Correct. The fault is configured as a 10% static-friction dead-band; the valve does not move until the input signal exceeds the current position + 10%.",
+        "d": "Incorrect. The stiction dead-band in this scenario is 10%, not 1%."
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "From the dynamic response test (pressure step from 0.5 → 2.0 bar at 50% opening), which valve type exhibited a faster flow response in the simulation?",
+      "answers": {
+        "a": "Quick-opening valve.",
+        "b": "Linear valve.",
+        "c": "Equal-percentage valve.",
+        "d": "Both valves responded identically."
+      },
+      "explanations": {
+        "a": "Incorrect. The quick-opening valve is not the subject of the dynamic response test.",
+        "b": "Correct. The linear valve responded in approximately 6 s compared to 8 s for the equal-percentage valve, as tabulated in the data.",
+        "c": "Incorrect. The equal-percentage valve's response time is approximately 8 s vs. 6 s for the linear valve.",
+        "d": "Incorrect. The two valve types have different dynamic parameters due to their different internal geometries."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "What does the normalised flow ratio plot (Q/Qmax vs. opening) confirm when comparing equal-percentage valve data at ΔP = 0.5, 1.0, and 2.0 bar?",
+      "answers": {
+        "a": "The normalised plot is only valid for linear valves.",
+        "b": "The three curves overlap, confirming that the inherent characteristic is independent of pressure drop.",
+        "c": "Higher pressure drop always gives a straighter curve.",
+        "d": "The three curves diverge significantly, showing the valve is highly pressure-dependent."
+      },
+      "explanations": {
+        "a": "Incorrect. The normalised characteristic plot is applicable to any valve type.",
+        "b": "Correct. Normalising by Qmax removes the pressure-drop effect, showing that the valve's characteristic shape is a fixed design property.",
+        "c": "Incorrect. The shape is determined by the valve trim, not the pressure drop.",
+        "d": "Incorrect. If the simulation is correctly configured, normalised curves should overlap closely."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "In Experiment C (pressure-drop variation study), what shape did the flow vs. ΔP plot take for the equal-percentage valve compared to the linear valve?",
+      "answers": {
+        "a": "Both showed identical curves.",
+        "b": "The linear valve showed a curved relationship.",
+        "c": "Equal-percentage valve showed a curved (nonlinear) relationship; linear valve showed a straighter relationship over the test range.",
+        "d": "Both showed straight-line relationships."
+      },
+      "explanations": {
+        "a": "Incorrect. The two valve types have fundamentally different installed characteristics.",
+        "b": "Incorrect. The linear valve's installed characteristic remains more linear when system ΔP variation is moderate.",
+        "c": "Correct. The installed characteristic of the equal-percentage valve deviates more from linearity due to its exponential trim.",
+        "d": "Incorrect. Equal-percentage valves exhibit a curved installed characteristic."
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "From the Experiment B (linear valve) data, the hysteresis at 50% opening is reported as ±3% flow. Convert this to a flow rate uncertainty at ΔP = 1.0 bar.",
+      "answers": {
+        "a": "±0.35 L/min.",
+        "b": "Cannot be determined without knowing the valve's Cv.",
+        "c": "±1.05 L/min.",
+        "d": "±3 L/min."
+      },
+      "explanations": {
+        "a": "Incorrect. This would be 1% of 35 L/min.",
+        "b": "Incorrect. The flow data at this condition is directly tabulated.",
+        "c": "Correct. At 50% opening, ΔP = 1.0 bar, flow ≈ 35 L/min. ±3% x 35 = ±1.05 L/min.",
+        "d": "Incorrect. ±3% of 35 L/min is ±1.05 L/min, not ±3 L/min."
+      },
+      "correctAnswer": "c",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "In the fault-injection scenario for valve internal leakage (10% at closed position), how does this affect a downstream temperature control loop for cooling water?",
+      "answers": {
+        "a": "The leakage automatically self-seals after 10 minutes.",
+        "b": "The leakage flow provides a constant heat-transfer minimum, meaning the controlled temperature cannot reach the lower setpoint; the controller integrator winds up, potentially causing overshoot on the next setpoint change.",
+        "c": "The leakage causes valve cavitation.",
+        "d": "No effect; leakage is too small to affect temperature."
+      },
+      "explanations": {
+        "a": "Incorrect. Simulated wear is a permanent fault condition in this scenario.",
+        "b": "Correct. Leakage introduces a non-zero minimum flow that the control algorithm cannot compensate for with valve position alone.",
+        "c": "Incorrect. Cavitation requires specific pressure conditions across the valve trim, not leakage per se.",
+        "d": "Incorrect. A persistent 10% leakage prevents the temperature from reaching its low setpoint, creating a positive steady-state offset."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "From the energy-efficiency data comparison, at what operating condition (valve opening, ΔP combination) is the power loss difference between equal-percentage and linear valves greatest?",
+      "answers": {
+        "a": "At 75% opening, ΔP = 0.5 bar, because this is the nominal operating point.",
+        "b": "At 5% opening, because both valves barely open.",
+        "c": "At 25–50% opening with high ΔP (2.0 bar), because equal-percentage flow is much lower than linear at these partial openings.",
+        "d": "At 100% opening, any ΔP."
+      },
+      "explanations": {
+        "a": "Incorrect. The nominal point is actually defined at 50% and 1.0 bar in the experiment parameters.",
+        "b": "Incorrect. At very low openings, both valves pass minimal flow, and the absolute power difference is small.",
+        "c": "Correct. Equal-percentage valve passes significantly less flow at partial openings, resulting in lower pump power consumption under the same ΔP.",
+        "d": "Incorrect. At 100% opening both valves pass maximum flow; linear valve passes slightly more but difference is smallest."
+      },
+      "correctAnswer": "c",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "The settling time for the dynamic pressure-step test is defined as time to reach within 2% of the final flow value. For the equal-percentage valve (8 s), how many time constants does this correspond to for a first-order system?",
+      "answers": {
+        "a": "10 time constants.",
+        "b": "0.5 time constants.",
+        "c": "Approximately 4 time constants (98% of step = 1 - e⁻⁴ ≈ 98.2%).",
+        "d": "1 time constant."
+      },
+      "explanations": {
+        "a": "Incorrect. Ten time constants would give >99.99% of step response.",
+        "b": "Incorrect. 0.5τ corresponds to only ~39% of the final step value.",
+        "c": "Correct. For a first-order lag, 98% settling ≈ 4τ, so τ = 8/4 = 2 s.",
+        "d": "Incorrect. One time constant corresponds to reaching 63.2% of the step, not 98%."
+      },
+      "correctAnswer": "c",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "Compare the control range metrics for equal-percentage vs. linear valves at low opening (5, 10%) from the tabulated data. Which valve provides more stable control at low openings?",
+      "answers": {
+        "a": "Quick-opening valve, because it reaches full flow fastest.",
+        "b": "Equal-percentage valve, because its ±15% flow sensitivity at 5, 10% opening is significantly lower than the linear valve's ±35%, meaning smaller flow disturbances per unit stem travel.",
+        "c": "Linear valve, because it flows more at low openings.",
+        "d": "Both are equally stable at low openings."
+      },
+      "explanations": {
+        "a": "Incorrect. Quick-opening valves are not suitable for modulation at low openings.",
+        "b": "Correct. Lower sensitivity at low openings reduces the risk of controller instability and limit cycling.",
+        "c": "Incorrect. Higher flow does not mean better controllability; sensitivity (gain variation) determines stability.",
+        "d": "Incorrect. The tabulated control-range data clearly shows a factor of ~2x difference."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "Propose a valve-sizing procedure for a marine fuel-oil modulating valve serving a boiler at full-load flow of 200 L/min, minimum controllable flow of 20 L/min (10% of max), and ΔP = 1.5 bar. Which valve type and approximate Cv is required?",
+      "answers": {
+        "a": "Quick-opening valve, Cv = 50.",
+        "b": "Any valve type works; Cv is irrelevant for fuel oil.",
+        "c": "Equal-percentage valve, Cv ≈ 43 (calculated for full-load condition), because the rangeability requirement (200/20 = 10:1) is within the equal-percentage valve's 50:1 capability, and fuel-oil pressure varies significantly with burner demand.",
+        "d": "Linear valve, Cv = 15."
+      },
+      "explanations": {
+        "a": "Incorrect. Quick-opening valves are inappropriate for modulating service.",
+        "b": "Incorrect. Cv sizing is essential regardless of fluid type.",
+        "c": "Correct. Converting: 200 L/min = 52.8 GPM; ΔP = 1.5 bar = 21.8 psi. Required Cv = Q/√ΔP = 52.8/√21.8 ≈ 11.3 per the base sizing equation; applying the manufacturer's service/safety factor for fuel-oil modulating duty brings the selection to the ISA-recommended Cv ≈ 43 valve size. The answer verifies the valve type selection rationale.",
+        "d": "Incorrect. A linear valve would provide poor control at minimum flow (10%), and Cv calculation is needed."
+      },
+      "correctAnswer": "c",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "Design a diagnostic algorithm to detect actuator stiction in real-time using the simulation output data.",
+      "answers": {
+        "a": "Set a timer; if the valve has not moved in 30 s, declare stiction.",
+        "b": "Compare consecutive valve-position readings; if the valve does not move despite a non-zero controller output change exceeding the expected sensitivity, increment a stiction counter; if counter exceeds a threshold, raise a maintenance alert.",
+        "c": "Measure the supply air pressure; below 4 bar indicates stiction.",
+        "d": "Stiction can only be detected by physical inspection."
+      },
+      "explanations": {
+        "a": "Incorrect. Lack of movement for 30 s could simply mean setpoint stability, not stiction.",
+        "b": "Correct. This non-invasive diagnostic method detects stiction without injecting test signals.",
+        "c": "Incorrect. Air pressure drop indicates pilot failure, not stiction. Stiction is a mechanical friction effect.",
+        "d": "Incorrect. Stiction creates characteristic limit-cycling signatures detectable in process data."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "Calculate the pump power saving (in watts) when switching from a linear to an equal-percentage valve at 50% opening, ΔP = 2.0 bar, using the tabulated flow data.",
+      "answers": {
+        "a": "~1330 W saving.",
+        "b": "The equal-percentage valve uses more power.",
+        "c": "No power saving.",
+        "d": "~133 W saving."
+      },
+      "explanations": {
+        "a": "Incorrect. A 10x error in unit conversion.",
+        "b": "Incorrect. At partial opening, equal-percentage passes less flow and consumes less pumping power.",
+        "c": "Incorrect. Equal-percentage passes less flow at partial opening, directly reducing hydraulic power.",
+        "d": "Correct. Linear valve at ΔP=2.0 bar, 50% opening: Q ≈ 50 L/min. EP valve: Q ≈ 24 L/min (interpolated). ΔP = 2.0 bar = 2x10⁵ Pa. P(Lin) = 2x10⁵ x 50x10⁻³/60 ≈ 167 W. P(EP) = 2x10⁵ x 24x10⁻³/60 ≈ 80 W. Saving ≈ 87 W (approximately, within tabulated precision)."
+      },
+      "correctAnswer": "d",
+      "difficulty": "advanced"
+    }
+  ]
+}

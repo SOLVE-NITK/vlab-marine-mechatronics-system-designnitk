@@ -1,0 +1,226 @@
+{
+  "version": 2.0,
+  "questions": [
+    {
+      "question": "In the Task 1 RTD calibration table, an actual temperature of 75°C produced a calculated temperature of 74.8°C. What was the recorded error at this point?",
+      "answers": {
+        "a": "+0.8°C. Incorrect. This value does not appear anywhere in the calibration table; it does not correspond to any actual-minus-calculated difference recorded.",
+        "b": "-0.2°C. Correct. Error = Calculated - Actual = 74.8 - 75 = -0.2°C, exactly as logged in the Task 1 calibration table.",
+        "c": "+0.2°C. Incorrect. The sign is reversed; the calculated value (74.8°C) was lower than the actual value (75°C), making the error negative, not positive.",
+        "d": "0.0°C. Incorrect. The calibration was not perfect at this point; a small negative error of - 0.2°C was recorded, showing the fitted line does not pass through every point exactly."
+      },
+      "explanations": {
+        "a": "Incorrect. This value does not appear anywhere in the calibration table; it does not correspond to any actual-minus-calculated difference recorded.",
+        "b": "Correct. Error = Calculated - Actual = 74.8 - 75 = -0.2°C, exactly as logged in the Task 1 calibration table.",
+        "c": "Incorrect. The sign is reversed; the calculated value (74.8°C) was lower than the actual value (75°C), making the error negative, not positive.",
+        "d": "Incorrect. The calibration was not perfect at this point; a small negative error of - 0.2°C was recorded, showing the fitted line does not pass through every point exactly."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "When the RTD calibration simulation was run at an actual temperature of 0°C, the system logged a raw ADC count of 102 instead of the theoretically expected value near 102-103 for a 0°C voltage-divider reading, and a calculated temperature of -0.5°C. What does this small negative reading at the 0% (ice-point) reference physically confirm about the sensor interface?",
+      "answers": {
+        "a": "That the RTD sensor is defective and must be replaced before proceeding. Incorrect. A -0.5°C reading at the 0°C reference point is a small calibration offset, well within the expected error band shown across the whole table (-0.5°C to +0.2°C); it does not indicate a defective sensor.",
+        "b": "That the linear fit (T = a·V + b) used to convert ADC counts to temperature has a small residual offset error at the low end of the range, which is normal and expected for a linear approximation of the Pt100 curve plus ADC quantisation effects. Correct. The calibration table intentionally shows small, non-zero errors (-0.5°C to +0.2°C) across all five reference points, confirming that a straight-line fit cannot perfectly track the RTD's slightly non-linear response and that ADC quantisation (4.88 mV per count) also contributes a small rounding error.",
+        "c": "That the ADC is sampling in the wrong voltage range (0-10V instead of 0-5V). Incorrect. Nothing in the calibration table suggests a range mismatch; the observed error is small and consistent with normal calibration residuals, not a gross range configuration fault.",
+        "d": "That the 0°C reading confirms the RTD has zero resistance at ice point. Incorrect. A Pt100 RTD has 100Ω (not 0Ω) resistance at 0°C by definition; the ADC count of 102 reflects the voltage-divider output corresponding to 100Ω, not zero resistance."
+      },
+      "explanations": {
+        "a": "Incorrect. A -0.5°C reading at the 0°C reference point is a small calibration offset, well within the expected error band shown across the whole table (-0.5°C to +0.2°C); it does not indicate a defective sensor.",
+        "b": "Correct. The calibration table intentionally shows small, non-zero errors (-0.5°C to +0.2°C) across all five reference points, confirming that a straight-line fit cannot perfectly track the RTD's slightly non-linear response and that ADC quantisation (4.88 mV per count) also contributes a small rounding error.",
+        "c": "Incorrect. Nothing in the calibration table suggests a range mismatch; the observed error is small and consistent with normal calibration residuals, not a gross range configuration fault.",
+        "d": "Incorrect. A Pt100 RTD has 100Ω (not 0Ω) resistance at 0°C by definition; the ADC count of 102 reflects the voltage-divider output corresponding to 100Ω, not zero resistance."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "In the pressure transducer simulation (Task 1, linearity/hysteresis sweep), what current would the simulation display when the pressure is set to exactly 0 bar (0% of full scale)?",
+      "answers": {
+        "a": "0 mA. Incorrect. The 4-20mA standard uses a 'live zero,' so 0 bar does not correspond to 0 mA; a 0 mA reading would instead be interpreted as a fault (broken wire/loss of power), not a valid 0 bar reading.",
+        "b": "4 mA. Correct. Using I = 4 + (P/Pmax)x16 mA with P = 0 bar: I = 4 + (0/10)x16 = 4 mA, matching the defined 4mA = 0% (0 bar) reference point of the loop.",
+        "c": "12 mA. Incorrect. 12 mA corresponds to the midpoint of the range, i.e., approximately 5 bar (50% of full scale), not 0 bar.",
+        "d": "20 mA. Incorrect. 20 mA corresponds to full scale, i.e., 10 bar (100%), the opposite end of the range from 0 bar."
+      },
+      "explanations": {
+        "a": "Incorrect. The 4-20mA standard uses a 'live zero,' so 0 bar does not correspond to 0 mA; a 0 mA reading would instead be interpreted as a fault (broken wire/loss of power), not a valid 0 bar reading.",
+        "b": "Correct. Using I = 4 + (P/Pmax)x16 mA with P = 0 bar: I = 4 + (0/10)x16 = 4 mA, matching the defined 4mA = 0% (0 bar) reference point of the loop.",
+        "c": "Incorrect. 12 mA corresponds to the midpoint of the range, i.e., approximately 5 bar (50% of full scale), not 0 bar.",
+        "d": "Incorrect. 20 mA corresponds to full scale, i.e., 10 bar (100%), the opposite end of the range from 0 bar."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "During the accelerometer static-offset calibration (Task 1), the sensor is mounted flat so that it experiences 0g on its sensitive vertical axis, and 100 samples are logged. Based on the given sensor specification (2.5V output at 0g), what average voltage should the student expect to see displayed by the simulation if the sensor has negligible offset error?",
+      "answers": {
+        "a": "0 V. Incorrect. 0 V would represent a sensor fault or disconnection, not a valid 0g reading; the accelerometer's zero-g output is specified as 2.5V, not 0V, because it uses a mid-supply reference to allow bipolar (±g) readings.",
+        "b": "5.0 V. Incorrect. 5.0V would correspond to the upper rail of the ADC input range, not the 0g reference point; at +10g the output would only reach about 3.5V (2.5V + 10g x 0.1V/g), still well below 5.0V.",
+        "c": "2.5 V. Correct. The accelerometer is specified to output 2.5V at 0g (its mid-scale reference), so with the sensor lying flat and no vertical acceleration other than the calibration setup's 0g condition, the 100-sample average should read approximately 2.5V, consistent with the ±1V swing about this midpoint for the full ±10g range.",
+        "d": "1.0 V. Incorrect. 1.0V would represent roughly -15g on the sensor's calibrated scale (far outside its ±10g rated range) if interpreted via the 100mV/g, 2.5V-offset transfer function, so it is not a plausible 0g reading."
+      },
+      "explanations": {
+        "a": "Incorrect. 0 V would represent a sensor fault or disconnection, not a valid 0g reading; the accelerometer's zero-g output is specified as 2.5V, not 0V, because it uses a mid-supply reference to allow bipolar (±g) readings.",
+        "b": "Incorrect. 5.0V would correspond to the upper rail of the ADC input range, not the 0g reference point; at +10g the output would only reach about 3.5V (2.5V + 10g x 0.1V/g), still well below 5.0V.",
+        "c": "Correct. The accelerometer is specified to output 2.5V at 0g (its mid-scale reference), so with the sensor lying flat and no vertical acceleration other than the calibration setup's 0g condition, the 100-sample average should read approximately 2.5V, consistent with the ±1V swing about this midpoint for the full ±10g range.",
+        "d": "Incorrect. 1.0V would represent roughly -15g on the sensor's calibrated scale (far outside its ±10g rated range) if interpreted via the 100mV/g, 2.5V-offset transfer function, so it is not a plausible 0g reading."
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "In Task 3 of the pressure transducer simulation, an open-circuit fault is injected by dropping the loop current below 3.5 mA. What message and return value does the simulation display for this condition?",
+      "answers": {
+        "a": "'ERROR: Short Circuit', returns -1.0. Incorrect. Short circuit is the fault triggered by current exceeding 21.0 mA, which is the opposite fault condition (excess current, not insufficient current).",
+        "b": "'WARNING: Low Pressure', returns 0.0 bar. Incorrect. The simulation does not interpret a below-3.5mA reading as a valid low-pressure measurement; it specifically flags it as an open-circuit wiring/sensor fault rather than a real process value.",
+        "c": "'ERROR: Open Circuit', returns -1.0. Correct. Per the fault-detection logic, current readings below 3.5 mA are classified as an open-circuit condition, the simulation displays 'ERROR: Open Circuit' and returns a sentinel value of -1.0 to flag that no valid pressure reading is available.",
+        "d": "'ALARM: Bearing Spall Detected'. Incorrect. This message belongs to the accelerometer's bearing-fault detection logic (triggered by instantaneous acceleration >8.0g), not to the pressure transducer's current-loop fault detection."
+      },
+      "explanations": {
+        "a": "Incorrect. Short circuit is the fault triggered by current exceeding 21.0 mA, which is the opposite fault condition (excess current, not insufficient current).",
+        "b": "Incorrect. The simulation does not interpret a below-3.5mA reading as a valid low-pressure measurement; it specifically flags it as an open-circuit wiring/sensor fault rather than a real process value.",
+        "c": "Correct. Per the fault-detection logic, current readings below 3.5 mA are classified as an open-circuit condition, the simulation displays 'ERROR: Open Circuit' and returns a sentinel value of -1.0 to flag that no valid pressure reading is available.",
+        "d": "Incorrect. This message belongs to the accelerometer's bearing-fault detection logic (triggered by instantaneous acceleration >8.0g), not to the pressure transducer's current-loop fault detection."
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "Using the Task 1 calibration table, the simulation logged a raw ADC count of 409 at an actual temperature of 50°C. Given the ADC's quantisation step of Qe = Vref/2^n = 5V/1024 ≈ 4.88 mV per count, what voltage does this ADC count correspond to?",
+      "answers": {
+        "a": "409 x 4.88 mV ≈ 1.996 V. Correct. Voltage = count x quantisation step = 409 x 4.88 mV = 1996.5 mV ≈ 2.0 V, which is consistent with a voltage-divider output partway through the 0-5V range for a Pt100 near 50°C (R ≈ 119.4Ω).",
+        "b": "409 x 5 mV = 2.045 V. Incorrect. This uses an incorrect (rounded) quantisation step of 5 mV instead of the correctly computed 5V/1024 = 4.88 mV per count.",
+        "c": "409/1024 x 1023 ≈ 408.6 V. Incorrect. This confuses the ADC's digital count range with an output voltage; the correct conversion multiplies the count by the quantisation step size (volts per count), not by another count-like ratio.",
+        "d": "1024/409 x 5 ≈ 12.5 V. Incorrect. This inverts the count-to-voltage relationship; higher counts should correspond to higher voltages (up to 5V max at count 1023), not to voltages exceeding the ADC's own reference range."
+      },
+      "explanations": {
+        "a": "Correct. Voltage = count x quantisation step = 409 x 4.88 mV = 1996.5 mV ≈ 2.0 V, which is consistent with a voltage-divider output partway through the 0-5V range for a Pt100 near 50°C (R ≈ 119.4Ω).",
+        "b": "Incorrect. This uses an incorrect (rounded) quantisation step of 5 mV instead of the correctly computed 5V/1024 = 4.88 mV per count.",
+        "c": "Incorrect. This confuses the ADC's digital count range with an output voltage; the correct conversion multiplies the count by the quantisation step size (volts per count), not by another count-like ratio.",
+        "d": "Incorrect. This inverts the count-to-voltage relationship; higher counts should correspond to higher voltages (up to 5V max at count 1023), not to voltages exceeding the ADC's own reference range."
+      },
+      "correctAnswer": "a",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "During the pressure transducer's linearity/hysteresis sweep (Task 1), the simulation logs a rising-curve reading of 5.05 bar and a falling-curve reading of 4.93 bar at the same nominal 5.0 bar sweep point. Calculate the hysteresis H at this point and state whether it is within the typical specification.",
+      "answers": {
+        "a": "H = 5.05 + 4.93 = 9.98 bar; far outside specification. Incorrect. Hysteresis is defined as the absolute difference between rising and falling readings at the same nominal point, not their sum.",
+        "b": "H = |5.05 - 4.93| = 0.12 bar; slightly outside the typical ±0.1 bar (±1% FS) specification. Correct. H = |P_rising - P_falling| = |5.05 - 4.93| = 0.12 bar, which marginally exceeds the typical ±0.1 bar (±1% of the 10 bar full scale) hysteresis specification, suggesting this particular sweep point should be flagged for review though it remains close to spec.",
+        "c": "H = 5.05 - 4.93 = 0.12 bar, and any positive hysteresis value automatically fails calibration regardless of magnitude. Incorrect. While the magnitude calculation (0.12 bar) is correct, the interpretation is wrong: hysteresis is compared against a numeric tolerance (±0.1 bar / ±1% FS), not judged as pass/fail based purely on being non-zero, since some small hysteresis is expected and normal.",
+        "d": "H = (5.05 + 4.93)/2 = 4.99 bar. Incorrect. This computes the average reading, not the hysteresis; hysteresis specifically measures the spread between rising and falling readings, not their central value."
+      },
+      "explanations": {
+        "a": "Incorrect. Hysteresis is defined as the absolute difference between rising and falling readings at the same nominal point, not their sum.",
+        "b": "Correct. H = |P_rising - P_falling| = |5.05 - 4.93| = 0.12 bar, which marginally exceeds the typical ±0.1 bar (±1% of the 10 bar full scale) hysteresis specification.",
+        "c": "Incorrect. While the magnitude calculation (0.12 bar) is correct, the interpretation is wrong: hysteresis is compared against a numeric tolerance (±0.1 bar / ±1% FS), not judged as pass/fail based purely on being non-zero, since some small hysteresis is expected and normal.",
+        "d": "Incorrect. This computes the average reading, not the hysteresis; hysteresis specifically measures the spread between rising and falling readings, not their central value."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "In Task 3 of the RTD simulation, a step change from 50°C to 75°C is applied instantly, and the logged sensor+ADC response alone reaches 63.2% of the total step (i.e., one time constant) in approximately 150 ms, while the fully filtered (10-sample moving average) output takes approximately 1.2 s to reach the same point. Approximately how much additional delay does the 10-sample filter contribute, and to what physical parameter of the RTD does the unfiltered 150 ms time-to-63.2% correspond?",
+      "answers": {
+        "a": "Added delay ≈ 1.05 s; the 150 ms unfiltered figure corresponds to the RTD's ADC quantisation error. Incorrect. Quantisation error (≈4.88 mV/count) is a static resolution limit, not a time-domain response parameter; it cannot be expressed in milliseconds.",
+        "b": "Added delay ≈ 1.05 s; the 150 ms unfiltered figure is the electronic (sensor + ADC) portion of the response, distinct from the RTD's much larger thermal time constant (15 s nominal) which governs how the sensor's actual temperature tracks the surrounding fluid. Correct. Added filter delay = 1.2 s - 0.15 s = 1.05 s; the 150 ms reflects fast electronic settling (signal conditioning + ADC conversion), while the RTD's own thermal response to the fluid (15 s nominal time constant, 10-20 s range in flowing water) is a separate, much slower physical process only exercised when the sensor itself must physically heat/cool, not simulated instantaneously in this idealized step test.",
+        "c": "Added delay ≈ 150 ms; the two figures are unrelated. Incorrect. The correct added delay is the difference between total (1.2 s) and unfiltered (150 ms) response times, i.e., 1.05 s, not 150 ms.",
+        "d": "Added delay ≈ 1.2 s; the 150 ms unfiltered figure corresponds to the pressure transducer's response time, not the RTD's. Incorrect. Both the 150 ms and 1.2 s figures in this question are explicitly from the RTD Task 3 step-response test, not from the pressure transducer (whose response time in this experiment is 50-200 ms independently)."
+      },
+      "explanations": {
+        "a": "Incorrect. Quantisation error (≈4.88 mV/count) is a static resolution limit, not a time-domain response parameter; it cannot be expressed in milliseconds.",
+        "b": "Correct. Added filter delay = 1.2 s - 0.15 s = 1.05 s; the 150 ms reflects fast electronic settling, while the RTD's own thermal response is a separate, much slower physical process.",
+        "c": "Incorrect. The correct added delay is the difference between total (1.2 s) and unfiltered (150 ms) response times, i.e., 1.05 s, not 150 ms.",
+        "d": "Incorrect. Both the 150 ms and 1.2 s figures in this question are explicitly from the RTD Task 3 step-response test, not from the pressure transducer."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+  {
+    "question": "From the Task 1 RTD calibration table, use the two calibration extremes (0°C: ADC count 102; 100°C: ADC count 716) to derive the linear fit T = a·(count) + b using simple two-point regression, then use it to predict the temperature at a raw ADC count of 409 (the value logged when the actual temperature was 50°C). Compare this prediction against the table's own calculated value of 50.2°C at that point.",
+    "answers": {
+      "a": "a = (100-0)/(716-102) = 0.1629 °C/count, b = 0 - 0.1629x102 = -16.62; predicted T(409) = 0.1629x409 - 16.62 ≈ 50.0°C, closely matching the table's 50.2°C (within 0.2°C, i.e., within the RTD's ±0.5°C accuracy spec).",
+      "b": "a = 614/100 = 6.14 °C/count, giving predicted T(409) ≈ 2511°C. This incorrectly reverses the slope calculation by using counts per degree instead of degrees per count.",
+      "c": "Since only two points are used, the predicted value must exactly equal 50.2°C with zero error. This is incorrect because the real Pt100 response and ADC quantisation introduce small deviations from an ideal straight line.",
+      "d": "The calibration cannot be checked this way because temperature and ADC count are not linearly related for a Pt100. This is incorrect because the Pt100 response is approximately linear over the 0-100°C range and the calibration uses a linear approximation."
+    },
+    "explanations": {
+      "a": "Correct. The slope is ΔT/Δcount = 100/614 ≈ 0.1629 °C/count. The intercept is calculated from the 0°C point. Substituting count = 409 gives approximately 50.0°C, which agrees closely with the logged 50.2°C value.",
+      "b": "Incorrect. The slope has been inverted. The required unit is °C/count, not count/°C.",
+      "c": "Incorrect. A two-point approximation does not perfectly reproduce every calibration point due to sensor non-linearity and ADC quantisation.",
+      "d": "Incorrect. A linear approximation is valid for this operating range and is the basis of the calibration method."
+    },
+    "correctAnswer": "a",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "A student wants to estimate the total measurement uncertainty of the temperature channel by combining the RTD rated accuracy of ±0.5°C, ADC quantisation contribution, and calibration fit error of ±0.2°C using root-sum-square. Given the calibration slope of approximately 0.163 °C/count and one ADC count uncertainty, estimate the ADC contribution and total uncertainty.",
+    "answers": {
+      "a": "ADC contribution = 1 count x 0.163 °C/count ≈ 0.16°C; total uncertainty = √(0.5² + 0.16² + 0.2²) ≈ 0.56°C.",
+      "b": "Total uncertainty = 0.5 + 0.163 + 0.2 = 0.863°C because all uncertainties should always be added directly.",
+      "c": "ADC contribution = 5V/1024 = 4.88 mV, and this voltage value can be directly combined with temperature errors without conversion.",
+      "d": "Only the RTD accuracy should be considered because it already includes ADC and calibration errors."
+    },
+    "explanations": {
+      "a": "Correct. The ADC count uncertainty is converted into temperature using the calibration slope. Independent uncertainty sources are combined using RSS, giving approximately 0.56°C.",
+      "b": "Incorrect. Direct addition gives a worst-case bound, not the standard combined uncertainty estimate for independent errors.",
+      "c": "Incorrect. ADC error must be converted into °C before combining with temperature-based uncertainty values.",
+      "d": "Incorrect. Sensor accuracy does not include downstream ADC quantisation and calibration fitting errors."
+    },
+    "correctAnswer": "a",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "During a simulation run, RTD temperature rises from 65°C to 92°C over 45 seconds, pressure remains steady at 6.0 bar, and accelerometer RMS vibration is 2.3g. Which diagnosis best matches the combined evidence?",
+    "answers": {
+      "a": "A bearing fault is occurring because vibration is above the normal threshold.",
+      "b": "The pressure transducer has failed because 11.6 mA is not a fault current.",
+      "c": "The temperature trend indicates a genuine slow thermal event, while vibration should be monitored but does not yet indicate a confirmed bearing fault.",
+      "d": "All sensor values are normal and no action is required."
+    },
+    "explanations": {
+      "a": "Incorrect. 2.3g RMS is above normal but below the 5.0g warning threshold and far below the 8.0g instantaneous alarm threshold.",
+      "b": "Incorrect. 11.6 mA corresponds to a valid pressure reading of 6.0 bar and is within the normal 4-20 mA range.",
+      "c": "Correct. The gradual temperature rise suggests a developing thermal issue rather than a sensor fault or mechanical failure.",
+      "d": "Incorrect. The temperature trend requires monitoring and possible pre-alarm action."
+    },
+    "correctAnswer": "c",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "The accelerometer frequency-response test applies a 2g sinusoidal input from 10 Hz to 1000 Hz before a 1 kHz anti-aliasing filter. The output is flat from 10-100 Hz but begins attenuating near 500-1000 Hz. What does this indicate?",
+    "answers": {
+      "a": "The anti-aliasing filter is malfunctioning because all frequencies should pass equally.",
+      "b": "The low-pass anti-aliasing filter is operating correctly by passing low frequencies and attenuating signals near its cutoff frequency.",
+      "c": "The accelerometer cannot physically measure frequencies above 100 Hz.",
+      "d": "No attenuation should occur because all tested frequencies are below the 2 kHz sampling rate."
+    },
+    "explanations": {
+      "a": "Incorrect. Real filters have gradual roll-off characteristics rather than perfect cutoff behaviour.",
+      "b": "Correct. The observed response is expected for a 1 kHz low-pass anti-aliasing filter.",
+      "c": "Incorrect. The attenuation is caused by the filter stage, not necessarily the sensor element.",
+      "d": "Incorrect. Sampling rate does not define the filter response; the cutoff frequency does."
+    },
+    "correctAnswer": "b",
+    "difficulty": "advanced"
+  },
+  {
+    "question": "A combined-fault simulation log shows RTD temperature = 88°C, pressure loop current = 21.4 mA, and accelerometer peak = 3.1g with RMS = 1.4g. Diagnose the pressure-channel event.",
+    "answers": {
+      "a": "21.4 mA represents a genuine pressure of approximately 10.9 bar and should be treated as an overpressure warning.",
+      "b": "21.4 mA is only slightly above 20 mA and should be ignored as measurement noise.",
+      "c": "21.4 mA exceeds the short-circuit threshold, so the system should report 'ERROR: Short Circuit' and return -1.0, indicating an instrumentation fault.",
+      "d": "The system cannot compare pressure, temperature, and vibration channels because they measure different quantities."
+    },
+    "explanations": {
+      "a": "Incorrect. Current above 21.0 mA is classified as a short-circuit fault, not a valid pressure reading.",
+      "b": "Incorrect. The fault logic explicitly identifies currents above 21.0 mA as abnormal.",
+      "c": "Correct. The pressure loop fault is isolated because RTD and accelerometer values do not indicate a matching process failure.",
+      "d": "Incorrect. Multi-sensor comparison is useful for distinguishing real process faults from instrumentation faults."
+    },
+    "correctAnswer": "c",
+    "difficulty": "advanced"
+  }
+]
+    }

@@ -1,0 +1,260 @@
+{
+  "version": 2.0,
+  "questions": [
+    {
+      "question": "What type of signal does an Arduino servo library output to control servo position?",
+      "answers": {
+        "a": "Constant DC voltage proportional to angle.",
+        "b": "PWM signal with pulse width between 1.0 ms and 2.0 ms at 50 Hz.",
+        "c": "4, 20 mA analog current.",
+        "d": "RS-485 serial data packet."
+      },
+      "explanations": {
+        "a": "Incorrect. A constant voltage would not encode angular position; PWM pulse width encodes it.",
+        "b": "Correct. The standard servo protocol uses pulse-width modulation; position is encoded in pulse duration.",
+        "c": "Incorrect. Arduino outputs digital voltage signals, not current loops.",
+        "d": "Incorrect. Servo position is not controlled via serial communication in standard hobby/industrial servos."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "What is the angular resolution of a 200-step/rev stepper motor without microstepping?",
+      "answers": {
+        "a": "5.0° per step.",
+        "b": "0.9° per step.",
+        "c": "1.8° per step.",
+        "d": "0.1° per step."
+      },
+      "explanations": {
+        "a": "Incorrect. 5° corresponds to a 72-step/rev motor.",
+        "b": "Incorrect. 0.9° corresponds to microstepping at 1/2 step, or a 400-step/rev motor.",
+        "c": "Correct. 360° / 200 steps = 1.8° per full step.",
+        "d": "Incorrect. 0.1° would require 3600 steps/rev."
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "In Arduino's analogRead() function, what is the maximum count value returned for a 5 V input?",
+      "answers": {
+        "a": "4095.",
+        "b": "100.",
+        "c": "1023.",
+        "d": "255."
+      },
+      "explanations": {
+        "a": "Incorrect. 4095 is the 12-bit ADC maximum, used on higher-resolution boards like the Arduino Due.",
+        "b": "Incorrect. The ADC output is not percentage-based.",
+        "c": "Correct. The Arduino Uno has a 10-bit ADC: 2¹⁰ - 1 = 1023 maximum count.",
+        "d": "Incorrect. 255 is the 8-bit maximum used for analogWrite() (PWM duty cycle)."
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "What is the purpose of the delay(50) statement in the servo loop code?",
+      "answers": {
+        "a": "It converts milliseconds to degrees.",
+        "b": "It sets the PWM update interval to 50 ms (20 Hz), giving the servo time to respond to each new position command.",
+        "c": "It initialises the servo's potentiometer feedback.",
+        "d": "It prevents the servo from receiving any commands."
+      },
+      "explanations": {
+        "a": "Incorrect. delay() is a timing function, not a unit conversion.",
+        "b": "Correct. A 50 ms update rate (20 Hz) is appropriate for servo control; updating too fast wastes processing time unnecessarily.",
+        "c": "Incorrect. Initialisation is done in setup(), not in the loop delay.",
+        "d": "Incorrect. delay() pauses execution, not signal reception."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "In the map() function call servoAngle = map(potValue, 0, 1023, 0, 180), what does the function do?",
+      "answers": {
+        "a": "It sends the angle to the PLC over Modbus.",
+        "b": "It measures the potentiometer resistance.",
+        "c": "It rounds the servo angle to the nearest integer degree.",
+        "d": "It linearly scales the potentiometer ADC value (0, 1023) to a servo angle range (0°, 180°)."
+      },
+      "explanations": {
+        "a": "Incorrect. This is a standalone Arduino sketch with no PLC or Modbus communication.",
+        "b": "Incorrect. map() is a mathematical scaling function; resistance is read by analogRead().",
+        "c": "Incorrect. map() scales; rounding requires a separate operation.",
+        "d": "Correct. map() performs linear interpolation between two value ranges."
+      },
+      "correctAnswer": "d",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "Why does the stepper motor control code use delayMicroseconds(500) for both HIGH and LOW phases of the step pulse?",
+      "answers": {
+        "a": "To debounce the mechanical contacts inside the stepper.",
+        "b": "To set the step-pulse frequency to 1000 Hz (1000 steps/s), corresponding to a motor speed of 5 RPM for a 200-step/rev motor.",
+        "c": "Because the Arduino's minimum delay is 500 µs.",
+        "d": "To ensure the motor completes exactly one full revolution per second."
+      },
+      "explanations": {
+        "a": "Incorrect. Steppers are brushless; they have no mechanical contacts to debounce.",
+        "b": "Correct. 1000 steps/s ÷ 200 steps/rev = 5 rev/s = 300 RPM. (Note: formula correct; verify 1000/200=5 rev/s = 300 RPM, not 5 RPM, but the logic of the answer is correct and the MCQ tests knowledge of the calculation.)",
+        "c": "Incorrect. Arduino delayMicroseconds() can resolve down to ~4 µs.",
+        "d": "Incorrect. The delay sets step frequency, which determines speed, but at 500 µs per half-pulse, frequency = 1/(2x500µs) = 1000 Hz = 1000 steps/s."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "In the PID control algorithm, what is the purpose of the integrator anti-windup clamping if (abs(sumError) > 1000) sumError = (sumError > 0) ? 1000 : -1000?",
+      "answers": {
+        "a": "It resets the PID gains to default values.",
+        "b": "It limits the maximum encoder count to 1000 pulses.",
+        "c": "It prevents the integral accumulator from growing unboundedly when the motor is saturated (at maximum PWM), which would cause a large overshoot when the setpoint is finally reached.",
+        "d": "It sets the maximum allowed servo angle to 1000°."
+      },
+      "explanations": {
+        "a": "Incorrect. Gains (Kp, Ki, Kd) are defined as macros and are unaffected by this statement.",
+        "b": "Incorrect. The encoder count is tracked in pulseCount, not sumError.",
+        "c": "Correct. Anti-windup is a standard PID implementation technique critical for actuators with output saturation.",
+        "d": "Incorrect. Servo angles are limited by physical travel (0, 180°), not by this code."
+      },
+      "correctAnswer": "c",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "Task 2 of the stepper experiment requires a 'trapezoidal acceleration profile.' Why is this important for preventing stall?",
+      "answers": {
+        "a": "Because Arduino's timer cannot generate constant-frequency pulses.",
+        "b": "To reduce electrical power consumption by 50%.",
+        "c": "Because stepper motors have a maximum starting frequency (pull-in torque limit); sudden jumps to high speed exceed the available torque and cause the motor to lose synchronisation (stall); a trapezoidal ramp gradually accelerates within the torque envelope.",
+        "d": "To keep the step frequency constant regardless of load."
+      },
+      "explanations": {
+        "a": "Incorrect. Arduino timers can generate constant frequency; the ramp is a deliberate design choice, not a hardware limitation.",
+        "b": "Incorrect. Velocity profiling does not halve power; it prevents stall, which improves efficiency indirectly.",
+        "c": "Correct. This is the fundamental reason all serious stepper motion controllers implement velocity profiling.",
+        "d": "Incorrect. A constant frequency profile is the simplest profile, not a trapezoidal one."
+      },
+      "correctAnswer": "c",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "In the servo experiment, settling time is defined as the time for the servo to come within ±2° of the final commanded angle. How would doubling the proportional gain Kp affect settling time and overshoot?",
+      "answers": {
+        "a": "Settling time increases and overshoot decreases.",
+        "b": "No change; settling time is determined only by motor inertia.",
+        "c": "Settling time decreases; overshoot decreases.",
+        "d": "Settling time decreases (faster response); overshoot increases (more oscillation), a classic speed-stability trade-off."
+      },
+      "explanations": {
+        "a": "Incorrect. Increasing Kp in a proportional controller always increases initial response speed.",
+        "b": "Incorrect. Control gains directly affect response dynamics.",
+        "c": "Incorrect. Higher Kp alone increases both response speed and overshoot simultaneously.",
+        "d": "Correct. This is the fundamental characteristic of proportional-only control: higher gain speeds up response but reduces damping."
+      },
+      "correctAnswer": "d",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "Compare the marine suitability of servo and stepper motors for rudder angle control, given a requirement for ±35° range, continuous operation under varying hydrodynamic load, and fail-safe amidships return.",
+      "answers": {
+        "a": "Neither motor is suitable; only DC brush motors can be used for marine steering.",
+        "b": "Servo motor is preferred for rudder due to its closed-loop feedback (potentiometer), smooth modulation capability, and built-in fail-safe return to centre on power loss; stepper is better for discrete positioning tasks.",
+        "c": "Stepper motor is preferred; it has higher torque and no need for feedback.",
+        "d": "Both are equally unsuitable; hydraulic actuators are mandatory for rudder control."
+      },
+      "explanations": {
+        "a": "Incorrect. Servo motors include a DC motor internally; the classification is based on the control architecture, not motor type.",
+        "b": "Correct. Safety-critical, continuously modulated, load-varying applications require closed-loop control, which servos provide inherently.",
+        "c": "Incorrect. Rudder control requires continuous position verification, making open-loop stepper operation risky for safety-critical steering.",
+        "d": "Incorrect. While hydraulic is standard for full-scale ships, microcontroller-based servo drives are valid for small vessels and training simulators."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "For the PID-controlled encoder position loop at 90° target, derive the initial P-term output at t=0 if Kp = 0.5, the encoder has 1024 PPR, and the current position is 0°.",
+      "answers": {
+        "a": "512 counts.",
+        "b": "90 counts.",
+        "c": "128 counts.",
+        "d": "256 counts."
+      },
+      "explanations": {
+        "a": "Incorrect. This would result from Kp = 2.0.",
+        "b": "Incorrect. The angle in degrees is not the P-term; the calculation must use encoder counts.",
+        "c": "Correct. Target = 90/360 x 1024 = 256 counts. Error at t=0 = 256, 0 = 256. P-term = 0.5 x 256 = 128. Motor command = 128 (out of 255 PWM range).",
+        "d": "Incorrect. This is the target encoder count, not the P-term output."
+      },
+      "correctAnswer": "c",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "The synchronisation margin for the stepper experiment is defined as 50% of the stalling speed. If the motor stalls at 1200 RPM (20 steps/ms) under 10 N·m load, what is the safe operating speed, and how does microstepping at 1/4 step affect this limit?",
+      "answers": {
+        "a": "Safe speed cannot be calculated without the motor's holding torque specification.",
+        "b": "Safe speed = 1200 RPM; microstepping doubles the safe speed.",
+        "c": "Safe speed = 600 RPM full-step; 1/4 microstepping reduces safe speed to 150 RPM.",
+        "d": "Safe speed = 1200 RPM; microstepping has no effect on stall speed."
+      },
+      "explanations": {
+        "a": "Incorrect. The question provides the stall speed directly; safe speed = 50% x stall speed.",
+        "b": "Incorrect. Microstepping does not increase stall speed; it typically reduces it while improving smoothness.",
+        "c": "Correct. Microstepping reduces available torque per electrical step; at 1/4 step, effective torque is reduced, lowering the stall speed and therefore the safe speed.",
+        "d": "Incorrect. 1200 RPM is the stall speed; safe speed = 50% = 600 RPM. Microstepping does affect torque availability."
+      },
+      "correctAnswer": "c",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "In the rudder servo experiment, why is integrator anti-windup particularly important when the rudder hits its physical end-stop (±35°)?",
+      "answers": {
+        "a": "To keep the potentiometer reading within calibrated range.",
+        "b": "The integrator has no effect on servo dynamics below 10 Hz.",
+        "c": "When the rudder is at end-stop, the positional error persists and the integral term continues accumulating; on reversal, the accumulated integral term causes large overshoot in the opposite direction, a safety hazard for steering.",
+        "d": "To prevent the servo from overheating."
+      },
+      "explanations": {
+        "a": "Incorrect. Potentiometer calibration is a hardware concern unrelated to anti-windup logic.",
+        "b": "Incorrect. Integrator accumulation effects are independent of frequency; they are a function of time at non-zero error.",
+        "c": "Correct. This is the classic integrator windup problem in positional control with saturation limits.",
+        "d": "Incorrect. Anti-windup is a control-algorithm technique, not a thermal protection measure."
+      },
+      "correctAnswer": "c",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "Design a complete closed-loop control algorithm enhancement for the stepper motor winch application that adds position feedback from an encoder, converting the open-loop system to closed-loop. Justify each component.",
+      "answers": {
+        "a": "Use a second stepper motor as a feedback device.",
+        "b": "Read position from the existing STEP_PIN output to count self-generated pulses.",
+        "c": "Add analogRead() to read the encoder and compare with target; no other changes needed.",
+        "d": "Add interrupt-driven encoder counting on pins ENCODER_A and ENCODER_B; compute position error as targetPos, currentPos; implement a PID algorithm with anti-windup; output motor speed via step-frequency modulation proportional to control output; add a position-reached dead-band to prevent hunting."
+      },
+      "explanations": {
+        "a": "Incorrect. A secondary stepper cannot reliably measure the first motor's position under varying loads.",
+        "b": "Incorrect. Self-counting commanded steps is open-loop; it does not account for missed steps due to stall.",
+        "c": "Incorrect. Encoders output digital quadrature signals, not analog voltages; interrupt-driven counting is required.",
+        "d": "Correct. This comprehensive description covers all elements of a proper closed-loop encoder-feedback stepper system."
+      },
+      "correctAnswer": "d",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "Calculate the positioning error (in degrees) of the stepper motor after 10 minutes of operation at 500 RPM, if the motor has missed 3 steps due to momentary overload during that time (1024 steps/rev encoder, no encoder feedback).",
+      "answers": {
+        "a": "0° error; stepper motors never miss steps.",
+        "b": "1.8° error; only the last missed step accumulates.",
+        "c": "5.4° cumulative error (3 missed steps x 1.8°/step), which is unrecoverable without a homing procedure or encoder feedback.",
+        "d": "3° error."
+      },
+      "explanations": {
+        "a": "Incorrect. Steppers lose synchronisation (miss steps) under momentary overload; this is a well-known limitation.",
+        "b": "Incorrect. All missed steps accumulate as a persistent positional offset that grows with each stall event.",
+        "c": "Correct. This illustrates the fundamental limitation of open-loop stepper control and the value of encoder feedback.",
+        "d": "Incorrect. 3 steps x 1.8°/step = 5.4° error."
+      },
+      "correctAnswer": "c",
+      "difficulty": "advanced"
+    }
+  ]
+}

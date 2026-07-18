@@ -1,0 +1,1 @@
+To program an Arduino microcontroller to control servo and stepper motors for marine applications (rudder positioning and winch indexing), characterise static and dynamic actuator performance, implement and tune proportional / PID control algorithms, and compare the suitability of each motor type for specific shipboard tasks.

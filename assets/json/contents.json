@@ -1,0 +1,22 @@
+{
+  "labName": "Mining Ventilation Lab",
+  "labTitle": "Mining Ventilation Lab",
+  "domainName": "Civil Engineering",
+  "introduction": ["<p>The Marine Mechatronics System Design Laboratory is a web-based virtual laboratory that provides immersive, simulation-based learning experiences in industrial control systems, automation, and sensor technologies as applied to shipboard marine engineering.</p>",
+"<p>Modern warships and merchant vessels rely on tightly integrated control and automation systems covering ballast management, propulsion, steering, and machinery monitoring. The International Maritime Organization (IMO) mandates automation competencies in maritime education through the STCW Code, yet hands-on exposure to actual shipboard equipment remains limited by high costs, operational safety restrictions, and restricted student access. This virtual laboratory addresses those constraints by offering browser-accessible, risk-free simulations of real-world marine mechatronics scenarios, enabling students to experiment, fail safely, and learn at their own pace.</p>",
+"<p>The laboratory currently provides five integrated experiments spanning Programmable Logic Controllers (PLCs), marine control valves, microcontroller-based actuator drives, analog sensor interfacing and signal conditioning, and synchro/encoder position measurement systems. Each experiment is built on a modular simulation framework that integrates MATLAB Simulink marine-system models, virtual PLC and Arduino environments, and a web-based Human-Machine Interface (HMI).</p>"],
+
+  "objective": ["<p>Upon completing this virtual laboratory, students will be able to:</p><ul><li>Design and implement PLC sequence-control logic with appropriate interlocks for marine ballast and tank management systems.</li><li>Characterise marine control valves (equal-percentage, linear, and quick-opening types), interpret inherent and installed flow characteristics, and evaluate energy efficiency metrics.</li><li>Program an Arduino microcontroller to drive servo and stepper motors, tune proportional/PID control gains, and evaluate actuator performance in marine steering and deck-machinery contexts.</li><li>Interface industry-standard analog sensors (RTD Pt100, 4-20 mA pressure transducers, and accelerometers) with a microcontroller, implement signal-conditioning techniques (amplification, filtering, offset correction, scaling), and perform sensor calibration and fault detection.</li><li>Apply synchro and incremental/absolute optical encoder principles to remote shaft-angle measurement, implement closed-loop PID position control with encoder feedback, and compare the performance of different position-sensing technologies.</li><li>Diagnose and recover from simulated hardware and software faults commonly encountered in marine automation systems.</li></ul>"],
+
+    "experimentList": {
+              "Ballast and Water Tank Level Control Using PLC": "assets/experiments/exp1/index.html",
+              "Marine Control Valve Characterization": "assets/experiments/exp2/index.html",
+              "Microcontroller Based Actuator Control": "assets/experiments/exp3/index.html",
+              "Sensor Interface and Signal Conditioning": "assets/experiments/exp4/index.html",
+              "Synchro / Encoder Position Measurement": "assets/experiments/exp5/index.html"
+  },
+
+  "targetAudience": [],
+
+  "coarseAlignment": []
+}

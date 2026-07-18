@@ -1,0 +1,260 @@
+{
+  "version": 2.0,
+  "questions": [
+    {
+      "question": "In the simulation, when the low-level sensor changes from OFF to ON, what does the PLC output do?",
+      "answers": {
+        "a": "Opens the outlet valve immediately.",
+        "b": "Energises the pump motor output (Q0.0).",
+        "c": "Activates the alarm beacon.",
+        "d": "Halts the PLC scan cycle."
+      },
+      "explanations": {
+        "a": "Incorrect. The outlet opens only on overfill alarm or fault condition.",
+        "b": "Correct. Network 1 starts the pump when the low sensor activates and the high sensor is not active.",
+        "c": "Incorrect. The alarm activates only on fault or overfill, not on normal low-level detection.",
+        "d": "Incorrect. PLC scan cycles run continuously and cannot be halted by a field input."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "During Scenario A (automatic filling from empty), at approximately what time does the mid-level sensor (50%) activate?",
+      "answers": {
+        "a": "At t = 25s.",
+        "b": "At approximately t = 90-110s.",
+        "c": "At t = 300s.",
+        "d": "The mid sensor never activates during normal filling."
+      },
+      "explanations": {
+        "a": "Incorrect. 25s is too short to reach 50% from near-empty at the given pump rate.",
+        "b": "Correct. At approximately 0.5%/s fill rate, filling from about 5% to 50% takes roughly 90 seconds.",
+        "c": "Incorrect. 300s is the total run time of the scenario, by which the tank should be near 90%.",
+        "d": "Incorrect. The mid sensor activates as the level crosses 50%."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "In Fault Injection Scenario 3 (outlet valve stuck open), what is the observable symptom in the simulation display?",
+      "answers": {
+        "a": "The pump runs but the tank level continuously declines toward empty.",
+        "b": "The alarm beacon illuminates without any other change.",
+        "c": "The PLC program stops executing.",
+        "d": "The high-level sensor activates continuously."
+      },
+      "explanations": {
+        "a": "Correct. With the outlet always open, outflow exceeds or matches inflow, and the level cannot be maintained.",
+        "b": "Incorrect. The alarm is a consequence; the primary observable symptom is falling level.",
+        "c": "Incorrect. A field fault does not halt PLC execution; the program continues and responds based on its logic.",
+        "d": "Incorrect. With a stuck-open outlet, the level falls, not rises."
+      },
+      "correctAnswer": "a",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "What is the function of the 'Manual Override' network (Network 5) in the PLC ladder program?",
+      "answers": {
+        "a": "It allows an engineer to bypass all interlocks and run the pump at maximum speed.",
+        "b": "It forces the pump OFF and the outlet valve OPEN when the manual stop switch is pressed, providing emergency shutdown.",
+        "c": "It switches the PLC to manual programming mode.",
+        "d": "It disables the high-level sensor during manual operation."
+      },
+      "explanations": {
+        "a": "Incorrect. The override stops the pump and opens the outlet; it is a safety shutdown, not a bypass.",
+        "b": "Correct. Network 5 gives operators direct physical control independent of the automatic logic.",
+        "c": "Incorrect. That is a PLC software function, not a field-level network.",
+        "d": "Incorrect. Sensors remain active during manual override to continue logging and alarming."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "When the simulation data is exported as a CSV file, what does the 'pump duty cycle' column represent?",
+      "answers": {
+        "a": "The electrical voltage applied to the pump motor at each time step.",
+        "b": "The ratio of time the pump output (Q0.0) is ON to total elapsed time, expressed as a percentage.",
+        "c": "The number of pump start events per minute.",
+        "d": "The mechanical efficiency of the pump impeller."
+      },
+      "explanations": {
+        "a": "Incorrect. Voltage is not directly logged in a discrete on/off PLC output.",
+        "b": "Correct. Duty cycle = (ON time / total time) x 100%, a key metric for assessing energy use and control quality.",
+        "c": "Incorrect. That would be described as start frequency or cycling rate.",
+        "d": "Incorrect. Mechanical efficiency requires torque and flow measurements beyond the scope of this PLC simulation."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "After injecting a 'high-level sensor stuck ON' fault at t = 200s, how did the simulation demonstrate the watchdog timer detection?",
+      "answers": {
+        "a": "The pump immediately shut off and a fault flag was logged.",
+        "b": "The watchdog timer accumulated the duration of the high-sensor ON condition; when it exceeded the expected fill duration without the level rising, a sensor-fault alarm was logged.",
+        "c": "The outlet valve opened and flooded the engine room.",
+        "d": "The PLC switched to a backup sensor automatically."
+      },
+      "explanations": {
+        "a": "Incorrect. Immediate shutdown on high-sensor ON is normal behaviour; the watchdog adds temporal logic.",
+        "b": "Correct. The watchdog differentiates a genuine high level from a stuck sensor by monitoring signal duration and process behaviour.",
+        "c": "Incorrect. The system enters a defined safe state; flooding is not simulated.",
+        "d": "Incorrect. Automatic switchover to a redundant sensor requires additional programming."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "From the data collected in Scenario B (level maintenance against a 2m³/h leak), calculate the pump cycling period if the tank oscillates between 85% and 92%.",
+      "answers": {
+        "a": "~20 s.",
+        "b": "~28-35 s per complete on-off cycle.",
+        "c": "~5 s.",
+        "d": "The pump runs continuously without cycling."
+      },
+      "explanations": {
+        "a": "Incorrect. The 7% hysteresis band produces a longer cycle.",
+        "b": "Correct. The expected cycle is approximately 28-35 seconds based on the simulated operating conditions.",
+        "c": "Incorrect. A 5-second cycle would cause excessive switching and wear.",
+        "d": "Incorrect. Hysteresis control produces periodic pump cycling."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "In the fault-recovery sequence for Fault 1 (open-circuit low sensor), which recovery action was most effective in the simulation?",
+      "answers": {
+        "a": "Restarting the PLC.",
+        "b": "Activating the manual override to start the pump and logging the sensor fault for maintenance.",
+        "c": "Switching to a higher-pressure water supply.",
+        "d": "Increasing the fill setpoint to 95%."
+      },
+      "explanations": {
+        "a": "Incorrect. Restarting the PLC does not resolve a sensor hardware fault.",
+        "b": "Correct. The operator uses the manual override while logging the sensor fault for maintenance.",
+        "c": "Incorrect. Supply pressure does not compensate for a failed sensor.",
+        "d": "Incorrect. Raising the setpoint does not resolve the failed low-level sensor."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "In the simulation, what observable difference distinguishes pump cavitation (Fault 4) from a stuck-open outlet valve (Fault 3)?",
+      "answers": {
+        "a": "Cavitation causes noise; outlet fault is silent.",
+        "b": "In cavitation the pump continues running but fill rate halves; in outlet fault the level continuously falls despite the pump running at full rated displacement.",
+        "c": "Both faults produce identical symptoms.",
+        "d": "Outlet fault doubles the pump speed."
+      },
+      "explanations": {
+        "a": "Incorrect. The simulation does not model acoustic signatures.",
+        "b": "Correct. Cavitation reduces inflow, whereas an outlet fault increases outflow beyond control.",
+        "c": "Incorrect. Their level trends are diagnostically distinguishable.",
+        "d": "Incorrect. Outlet valve faults do not affect pump speed."
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "Using the simulation CSV export, how would you calculate the Integral Absolute Error (IAE) for level control under the leaky-outlet scenario?",
+      "answers": {
+        "a": "Sum the absolute difference between the setpoint level (90%) and the actual level at each time step, multiplied by the sampling interval.",
+        "b": "Average the pump ON-time values in the CSV.",
+        "c": "Divide the maximum level deviation by the total experiment duration.",
+        "d": "Count the number of rows where level < 85%."
+      },
+      "explanations": {
+        "a": "Correct. IAE = Σ |e(t)| x Δt, where e(t) is the difference between the setpoint and actual level.",
+        "b": "Incorrect. Pump ON-time measures duty cycle, not control error.",
+        "c": "Incorrect. This is not the definition of Integral Absolute Error.",
+        "d": "Incorrect. Counting alarm events does not measure cumulative control error."
+      },
+      "correctAnswer": "a",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "The simulation shows that after the high sensor activates, the pump coast-down adds 2s of additional flow before the impeller fully stops. How would you modify the PLC logic to compensate for this mechanical lag and prevent consistent overfill?",
+      "answers": {
+        "a": "Increase the high-sensor threshold to 95%.",
+        "b": "Add a predictive shutdown command: stop the pump when level reaches about 88%, compensating for the 2s coast-down.",
+        "c": "Increase the PLC scan time to 2s.",
+        "d": "Replace the pump with a variable-speed drive."
+      },
+      "explanations": {
+        "a": "Incorrect. Raising the threshold increases overfill risk.",
+        "b": "Correct. Predictive shutdown compensates for actuator lag by stopping the pump before the target level.",
+        "c": "Incorrect. Increasing scan time reduces controller responsiveness.",
+        "d": "Incorrect. The question asks for a PLC logic modification rather than a hardware upgrade."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "Based on your simulation results, propose a complete diagnostic decision tree for the four fault scenarios, distinguishing each by observable simulation parameters.",
+      "answers": {
+        "a": "All four faults produce identical symptoms and cannot be distinguished without physical inspection.",
+        "b": "Fault 1: pump does not start despite low-level condition → open-circuit low sensor; Fault 2: pump shuts down without level rising → stuck-ON high sensor; Fault 3: level falls continuously with pump running → outlet stuck open; Fault 4: fill rate halves with no outlet fault → pump cavitation.",
+        "c": "Fault 1 and Fault 2 are identical because both prevent the pump from running.",
+        "d": "Only Fault 3 is detectable without additional sensors."
+      },
+      "explanations": {
+        "a": "Incorrect. Each fault has a unique combination of sensor state, pump status, and level trend.",
+        "b": "Correct. Each fault can be uniquely identified from the logged process variables.",
+        "c": "Incorrect. Fault 1 prevents starting from a low-level condition, whereas Fault 2 falsely indicates a full tank.",
+        "d": "Incorrect. All four faults are distinguishable using the available simulation data."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "If the simulation tank dimensions are changed to a rectangular tank (2m X 3m base, height 5m), how does this affect the fill time compared to the original cylindrical tank (diameter 2m)?",
+      "answers": {
+        "a": "Fill time decreases because the rectangular tank has less volume.",
+        "b": "Fill time approximately doubles because the rectangular tank volume (30m³) is about twice the cylindrical volume (~15.7m³) at the same pump rate.",
+        "c": "Fill time is identical because height and pump rate are unchanged.",
+        "d": "Fill time cannot be calculated without knowing fluid density."
+      },
+      "explanations": {
+        "a": "Incorrect. The rectangular tank has a much larger volume.",
+        "b": "Correct. Fill time is proportional to tank volume at a constant pump flow rate.",
+        "c": "Incorrect. Tank volume depends on cross-sectional area as well as height.",
+        "d": "Incorrect. Density is not required when using volumetric flow rates."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "In a real IMO-compliant ballast system (per DNV Rules for Classification), what is the consequence if the high-level alarm fails to actuate during an actual overfill event?",
+      "answers": {
+        "a": "A minor notation is added to the Ship Safety Certificate.",
+        "b": "The vessel may face structural damage, reduced stability, and a condition of class or class withdrawal until the deficiency is corrected.",
+        "c": "Only the insurance premium increases.",
+        "d": "The IMO issues a circular but no direct action is taken on the vessel."
+      },
+      "explanations": {
+        "a": "Incorrect. Failure of a safety-critical alarm is a serious non-conformity.",
+        "b": "Correct. Classification societies may impose conditions of class and require repairs before continued operation.",
+        "c": "Incorrect. Regulatory and classification actions are the immediate consequences.",
+        "d": "Incorrect. Enforcement is carried out by classification societies and port state control."
+      },
+      "correctAnswer": "b",
+      "difficulty": "advanced"
+    },
+    {
+      "question": "Design a logic enhancement to Network 4 that distinguishes between a transient sensor glitch (< 200ms) and a true sensor failure (> 200ms), avoiding nuisance alarms.",
+      "answers": {
+        "a": "Add a 200ms TON timer to the sensor-validation failure path; activate the safe state only if the fault persists beyond the timer preset.",
+        "b": "Remove Network 4 entirely to prevent nuisance alarms.",
+        "c": "Increase the PLC scan time to 200ms.",
+        "d": "Use a hardware filter capacitor on all sensor wires."
+      },
+      "explanations": {
+        "a": "Correct. A TON debounce timer filters transient disturbances while maintaining fail-safe operation.",
+        "b": "Incorrect. Removing fault detection violates fail-safe design principles.",
+        "c": "Incorrect. Increasing scan time degrades the performance of the entire control system.",
+        "d": "Incorrect. Hardware filtering alone cannot provide configurable timing and diagnostic logging."
+      },
+      "correctAnswer": "a",
+      "difficulty": "advanced"
+    }
+  ]
+}
